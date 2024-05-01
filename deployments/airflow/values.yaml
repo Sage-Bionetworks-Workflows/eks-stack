@@ -1,0 +1,3 @@
+config:
+    secrets:
+        backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'

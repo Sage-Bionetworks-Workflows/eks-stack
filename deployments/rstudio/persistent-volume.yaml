@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rstudio-deployment
+  namespace: rstudio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rstudio
+  template:
+    metadata:
+      labels:
+        app: rstudio
+    spec:
+      containers:
+      - name: rstudio
+        image: your-registry/rstudio:latest
+        ports:
+        - containerPort: 8787
+        volumeMounts:
+        - name: rstudio-storage
+          mountPath: /home/rstudio
+      volumes:
+      - name: rstudio-storage
+        persistentVolumeClaim:
+          claimName: rstudio-pvc

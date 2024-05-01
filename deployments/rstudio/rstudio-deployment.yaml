@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rstudio-deployment
+  namespace: rstudio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rstudio
+  template:
+    metadata:
+      labels:
+        app: rstudio
+    spec:
+      containers:
+      - name: rstudio
+        image: rocker/rstudio:latest
+        env:
+        - name: USER
+          value: rstudio
+        - name: PASSWORD
+          value: rstudio
+        ports:
+        - containerPort: 8787
+          name: http
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
