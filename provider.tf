@@ -1,9 +1,9 @@
 provider "aws" {
-  region = local.region
+  region = var.region
 }
 
 provider "spotinst" {
-  account = local.spotinst_account
+  account = var.spotinst_account
   token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
 }
 

@@ -1,23 +1,3 @@
-locals {
-    cluster_name = "tyu-spot-ocean"
-    cluster_version = "1.29"
-    # This is the orca-vpc
-    vpc_id = "vpc-0451035edd61bca1f"
-    # These are private subnets
-    subnet_ids=[
-        "subnet-041a1e077243cdb07",
-        "subnet-0826300f0c95283bd",
-        "subnet-0b6798133e603e122",
-        "subnet-04dfa7fb6a9e476d7"
-    ]
-    region = "us-east-1"
-    eks_nodeGroup = "airflow-node-group"
-    spotinst_account = "act-ac6522b4"
-
-    tags = {
-        "CostCenter" = "No Program / 000000"
-    }
-}
 
 # module "oidc_github" {
 #   source  = "unfunco/oidc-github/aws"
@@ -44,7 +24,7 @@ resource "aws_iam_role" "admin_role" {
     ]
   })
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "admin_policy" {
@@ -57,8 +37,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = local.cluster_name
-  cluster_version = local.cluster_version
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
   cluster_endpoint_public_access  = true
 
@@ -77,8 +57,8 @@ module "eks" {
     }
   }
 
-  vpc_id                   = local.vpc_id
-  subnet_ids               = local.subnet_ids
+  vpc_id                   = var.vpc_id
+  subnet_ids               = var.subnet_ids
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -87,7 +67,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     one = {
-      name         = local.eks_nodeGroup
+      name         = var.eks_nodeGroup
       desired_size = 1
       min_size     = 0
       max_size     = 10
@@ -113,12 +93,12 @@ module "eks" {
 
 #   aws_auth_users = [
 #     {
-#       userarn  = local.aws_auth_users_userarn
-#       username = local.aws_auth_users_username
-#       groups   = local.aws_auth_users_groups
+#       userarn  = var.aws_auth_users_userarn
+#       username = var.aws_auth_users_username
+#       groups   = var.aws_auth_users_groups
 #     },
 #   ]
-  tags = local.tags
+  tags = var.tags
 }
 
 module "ocean-aws-k8s" {
@@ -127,15 +107,15 @@ module "ocean-aws-k8s" {
   depends_on = [module.eks]
 
   # Configuration
-  cluster_name                = local.cluster_name
-  region                      = local.region
-  subnet_ids                  = local.subnet_ids
+  cluster_name                = var.cluster_name
+  region                      = var.region
+  subnet_ids                  = var.subnet_ids
   worker_instance_profile_arn = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
   security_groups             = [module.eks.node_security_group_id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage = 33
   # Overwrite Name Tag and add additional
-  tags = local.tags
+  tags = var.tags
 
 }
 
@@ -146,9 +126,9 @@ module "ocean-controller" {
 
   # Credentials.
   spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account = local.spotinst_account
+  spotinst_account = var.spotinst_account
 
   # Configuration.
   tolerations = []
-  cluster_identifier = local.cluster_name
+  cluster_identifier = var.cluster_name
 }
