@@ -75,6 +75,16 @@ module "eks" {
       instance_types = ["t3.large"]
       capacity_type  = "SPOT"
     }
+    # ,
+    # two = {
+    #   name         = "seqera"
+    #   desired_size = 1
+    #   min_size     = 0
+    #   max_size     = 10
+
+    #   instance_types = ["t3.large"]
+    #   capacity_type  = "SPOT"
+    # }
   }
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
@@ -115,9 +125,27 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage = 33
   # Overwrite Name Tag and add additional
-  tags = var.tags
-
+  tags = {
+    "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
+  }
 }
+
+# ## Create additional Ocean Virtual Node Group (launchspec) ##
+# module "ocean-aws-k8s-vng_gpu" {
+#   source = "spotinst/ocean-aws-k8s-vng/spotinst"
+
+#   name = "seqera"  # Name of VNG in Ocean
+#   ocean_id = module.ocean-aws-k8s.ocean_id
+#   subnet_ids = var.subnet_ids
+
+#   iam_instance_profile = tolist(data.aws_iam_instance_profiles.profile2.arns)[0]
+#   # instance_types = ["g4dn.xlarge","g4dn.2xlarge"] # Limit VNG to specific instance types
+#   # spot_percentage = 50 # Change the spot %
+#   tags = {
+#     "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
+#   }
+
+# }
 
 module "ocean-controller" {
   source = "spotinst/ocean-controller/spotinst"

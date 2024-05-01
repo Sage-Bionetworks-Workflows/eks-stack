@@ -12,6 +12,10 @@ data "aws_iam_instance_profiles" "profile" {
   depends_on = [module.eks]
   role_name = module.eks.eks_managed_node_groups["one"].iam_role_name
 }
+# data "aws_iam_instance_profiles" "profile2" {
+#   depends_on = [module.eks]
+#   role_name = module.eks.eks_managed_node_groups["two"].iam_role_name
+# }
 
 data "aws_secretsmanager_secret" "spotinst_token" {
  name = "spotinst_token"
