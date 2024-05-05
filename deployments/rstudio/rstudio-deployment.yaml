@@ -31,3 +31,12 @@ spec:
           limits:
             memory: "2Gi"
             cpu: "2"
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      namespace: rstudio
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 50Gi

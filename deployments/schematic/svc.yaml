@@ -1,0 +1,48 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: schematic-aws-service
+# spec:
+#   type: LoadBalancer
+#   ports:
+#     - port: 3001
+#       targetPort: 3001
+#       protocol: TCP
+#       name: http
+#   selector:
+#     app: schematic-aws
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: schematic-headless
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: schematic-aws
+  ports:
+    - port: 443
+      targetPort: 443
+      name: https
+    - port: 81
+      targetPort: 80
+      name: http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: schematic-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: schematic-aws
+  ports:
+    - port: 443
+      targetPort: 443
+      name: https
+    - port: 81
+      targetPort: 80
+      name: http
