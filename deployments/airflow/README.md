@@ -26,9 +26,15 @@ helm upgrade --install airflow apache-airflow/airflow \
   --set dags.gitSync.enabled=true \
   --set dags.gitSync.repo=https://github.com/Sage-Bionetworks-Workflows/orca-recipes \
   --set dags.gitSync.subPath=dags \
-  --set dags.gitSync.branch=main \
+  --set dags.gitSync.branch=IBCDPE-831-pegs-dag-update \
   -f values.yaml \
   --namespace airflow
+  # --set service.annotations."alb\.ingress\.kubernetes\.io/scheme"="internal"
+  # --set dags.gitSync.branch=main \
+```
+
+```
+kubectl annotate svc airflow-webserver alb.ingress.kubernetes.io/scheme=internal --namespace airflow --overwrite
 ```
 
 3. Port forward
