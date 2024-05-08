@@ -159,4 +159,5 @@ module "ocean-controller" {
   # Configuration.
   tolerations = []
   cluster_identifier = var.cluster_name
+  
 }

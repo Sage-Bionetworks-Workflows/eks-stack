@@ -13,6 +13,7 @@ variable "cluster_version" {
 variable "vpc_id" {
     description = "AWS VPC ID"
     type        = string
+    # default     = "vpc-0451035edd61bca1f"
     default     = "vpc-05171ae8175d69c55"
 }
 
@@ -20,6 +21,10 @@ variable "subnet_ids" {
     description = "List of private subnet ids"
     type        = list(string)
     default     = [
+        # "subnet-041a1e077243cdb07",
+        # "subnet-0826300f0c95283bd",
+        # "subnet-0b6798133e603e122",
+        # "subnet-04dfa7fb6a9e476d7"
         "subnet-0201b7533f1e4557e",
         "subnet-01d60989e0bb57681",
         "subnet-029617557f40d6408"
