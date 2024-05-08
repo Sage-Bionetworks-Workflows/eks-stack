@@ -32,10 +32,27 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
+# resource "kubernetes_config_map" "aws_auth" {
+#   metadata {
+#     name      = "aws-auth"
+#     namespace = "kube-system"
+#   }
+
+#   data = {
+#     mapRoles = yamlencode([
+#       {
+#         rolearn  = aws_iam_role.admin_role.arn
+#         username = "admin"
+#         groups   = ["system:masters"]
+#       }
+#     ])
+#   }
+# }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
+  # version = "~> 20.8"
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
@@ -159,5 +176,15 @@ module "ocean-controller" {
   # Configuration.
   tolerations = []
   cluster_identifier = var.cluster_name
-  
+}
+
+module "kubernetes-controller" {
+  source = "spotinst/kubernetes-controller/ocean"
+
+  # Credentials
+  spotinst_token = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+  spotinst_account = var.spotinst_account
+
+  # Configuration
+  cluster_identifier = var.cluster_name
 }

@@ -1,7 +1,7 @@
 variable "cluster_name" {
     description = "Name of K8 cluster"
     type        = string
-    default     = "tyu-spot-ocean"
+    default     = "dpe-k8"
 }
 
 variable "cluster_version" {
@@ -54,5 +54,8 @@ variable "tags" {
     type        = map(string)
     default     = {
         "CostCenter" = "No Program / 000000"
+        "kubernetes.io/cluster/tyu-spot-ocean" = "owned",
+        "key"   = "kubernetes.io/cluster/tyu-spot-ocean",
+        "value" = "owned"
     }
 }
