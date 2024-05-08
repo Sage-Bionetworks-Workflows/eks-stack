@@ -32,27 +32,40 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-resource "kubernetes_config_map" "aws_auth" {
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
 
-  data = {
-    mapRoles = yamlencode([
-      {
-        rolearn  = aws_iam_role.admin_role.arn
-        username = "admin"
-        groups   = ["system:masters"]
-      }
-    ])
-  }
-}
+# module "eks_auth" {
+#   source = "aidanmelen/eks-auth/aws"
+#   eks    = module.eks
+
+#   map_roles = [
+#     {
+#         rolearn  = aws_iam_role.admin_role.arn
+#         username = "admin"
+#         groups   = ["system:masters"]
+#     },
+#   ]
+
+#   map_users = [
+#     {
+#       userarn  = "arn:aws:sts::766808016710:assumed-role/AWSReservedSSO_Administrator_e1acc9f84863534e/thomas.yu@sagebase.org"
+#       username = "user1"
+#       groups   = ["system:masters"]
+#     },
+#     # {
+#     #   userarn  = "arn:aws:iam::66666666666:user/user2"
+#     #   username = "user2"
+#     #   groups   = ["system:masters"]
+#     # },
+#   ]
+#   map_accounts = [
+#     "766808016710"
+#   ]
+# }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  # version = "~> 19.0"
-  version = "~> 20.8"
+  version = "~> 19.0"
+  # version = "~> 20.9"
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
@@ -91,6 +104,10 @@ module "eks" {
 
       instance_types = ["t3.large"]
       capacity_type  = "SPOT"
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+        SecretsManagerReadWrite = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+      }
     }
     # ,
     # two = {
@@ -108,23 +125,15 @@ module "eks" {
     SecretsManagerReadWrite = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
   }
   # aws-auth configmap
-  # manage_aws_auth_configmap = true
+  manage_aws_auth_configmap = true
 
-  # aws_auth_roles = [
-  #   {
-  #     rolearn  = aws_iam_role.admin_role.arn
-  #     username = "admin"
-  #     groups   = ["system:masters"]
-  #   },
-  # ]
-
-#   aws_auth_users = [
-#     {
-#       userarn  = var.aws_auth_users_userarn
-#       username = var.aws_auth_users_username
-#       groups   = var.aws_auth_users_groups
-#     },
-#   ]
+  aws_auth_roles = [
+    {
+      rolearn  = aws_iam_role.admin_role.arn
+      username = "admin"
+      groups   = ["system:masters"]
+    },
+  ]
   tags = var.tags
 }
 
@@ -142,9 +151,9 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage = 33
   # Overwrite Name Tag and add additional
-  tags = {
-    "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
-  }
+  # tags = {
+  #   "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
+  # }
 }
 
 # ## Create additional Ocean Virtual Node Group (launchspec) ##
@@ -176,15 +185,16 @@ module "ocean-controller" {
   # Configuration.
   tolerations = []
   cluster_identifier = var.cluster_name
+  # config_map_name = module.eks_auth
 }
 
-module "kubernetes-controller" {
-  source = "spotinst/kubernetes-controller/ocean"
+# module "kubernetes-controller" {
+#   source = "spotinst/kubernetes-controller/ocean"
 
-  # Credentials
-  spotinst_token = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account = var.spotinst_account
+#   # Credentials
+#   spotinst_token = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+#   spotinst_account = var.spotinst_account
 
-  # Configuration
-  cluster_identifier = var.cluster_name
-}
+#   # Configuration
+#   cluster_identifier = var.cluster_name
+# }
