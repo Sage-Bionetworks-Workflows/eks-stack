@@ -14,7 +14,7 @@ config:
     #     ssl_cert = <path to cert>
     #     ssl_cacert = <path to cacert>
 
-service:
-  type: LoadBalancer # or another type as needed
-  annotations:
-    alb.ingress.kubernetes.io/scheme: "internal"
+# service:
+#   type: LoadBalancer # or another type as needed
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: "internal"

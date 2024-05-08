@@ -26,11 +26,12 @@ helm upgrade --install airflow apache-airflow/airflow \
   --set dags.gitSync.enabled=true \
   --set dags.gitSync.repo=https://github.com/Sage-Bionetworks-Workflows/orca-recipes \
   --set dags.gitSync.subPath=dags \
-  --set dags.gitSync.branch=IBCDPE-831-pegs-dag-update \
+  --set dags.gitSync.branch=main \
   -f values.yaml \
   --namespace airflow
+
+  
   # --set service.annotations."alb\.ingress\.kubernetes\.io/scheme"="internal"
-  # --set dags.gitSync.branch=main \
 ```
 
 ```
