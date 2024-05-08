@@ -34,6 +34,8 @@ kubectl create namespace schematic
 cd local
 kubectl create secret generic schematic-config --from-literal=config="$(cat config.yml)" -n schematic
 kubectl create secret generic schematic-service-account --from-literal=schematic_service_account_creds="$(cat schematic_service_account_creds.json)" -n schematic
+kubectl create secret generic dca-oauth-client --from-literal=dca_client_id="" -n schematic
+kubectl create secret generic dca-oauth-secret --from-literal=dca_client_secret="" -n schematic
 ```
 
 2. Deploy
@@ -47,5 +49,8 @@ kubectl apply -f svc.yaml -n schematic
 
 4. load
 ```
-kubectl --namespace=schematic port-forward service/schematic-aws-service 3001:3001
+kubectl --namespace=schematic port-forward service/schematic-aws-service 443:443
+
+kubectl --namespace=schematic port-forward service/dca-service 3838:3838
+
 ```
