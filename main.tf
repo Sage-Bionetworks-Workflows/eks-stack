@@ -32,27 +32,27 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# resource "kubernetes_config_map" "aws_auth" {
-#   metadata {
-#     name      = "aws-auth"
-#     namespace = "kube-system"
-#   }
+resource "kubernetes_config_map" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
 
-#   data = {
-#     mapRoles = yamlencode([
-#       {
-#         rolearn  = aws_iam_role.admin_role.arn
-#         username = "admin"
-#         groups   = ["system:masters"]
-#       }
-#     ])
-#   }
-# }
+  data = {
+    mapRoles = yamlencode([
+      {
+        rolearn  = aws_iam_role.admin_role.arn
+        username = "admin"
+        groups   = ["system:masters"]
+      }
+    ])
+  }
+}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
-  # version = "~> 20.8"
+  # version = "~> 19.0"
+  version = "~> 20.8"
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
@@ -108,15 +108,15 @@ module "eks" {
     SecretsManagerReadWrite = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
   }
   # aws-auth configmap
-  manage_aws_auth_configmap = true
+  # manage_aws_auth_configmap = true
 
-  aws_auth_roles = [
-    {
-      rolearn  = aws_iam_role.admin_role.arn
-      username = "admin"
-      groups   = ["system:masters"]
-    },
-  ]
+  # aws_auth_roles = [
+  #   {
+  #     rolearn  = aws_iam_role.admin_role.arn
+  #     username = "admin"
+  #     groups   = ["system:masters"]
+  #   },
+  # ]
 
 #   aws_auth_users = [
 #     {

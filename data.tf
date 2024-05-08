@@ -1,10 +1,12 @@
 data "aws_eks_cluster" "cluster" {
   depends_on = [module.eks.cluster_id]
+  # count = var.create_eks ? 1 : 0
   name       = module.eks.cluster_name
 }
 
 data "aws_eks_cluster_auth" "cluster" {
   depends_on = [module.eks.cluster_id]
+  # count = var.create_eks ? 1 : 0
   name       = module.eks.cluster_name
 }
 
