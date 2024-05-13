@@ -17,7 +17,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:root"  # Replace YOUR_AWS_ACCOUNT_ID with your actual AWS account ID
+          AWS = "arn:aws:iam::766808016710:root" # Replace YOUR_AWS_ACCOUNT_ID with your actual AWS account ID
         }
         Action = "sts:AssumeRole"
       },
@@ -70,7 +70,7 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
-  cluster_endpoint_public_access  = true
+  cluster_endpoint_public_access = true
 
   cluster_addons = {
     coredns = {
@@ -87,8 +87,8 @@ module "eks" {
     }
   }
 
-  vpc_id                   = var.vpc_id
-  subnet_ids               = var.subnet_ids
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -106,7 +106,7 @@ module "eks" {
       capacity_type  = "SPOT"
       iam_role_additional_policies = {
         AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-        SecretsManagerReadWrite = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+        SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
       }
     }
     # ,
@@ -122,7 +122,7 @@ module "eks" {
   }
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-    SecretsManagerReadWrite = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+    SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
   }
   # aws-auth configmap
   manage_aws_auth_configmap = true
@@ -138,18 +138,19 @@ module "eks" {
 }
 
 module "ocean-aws-k8s" {
-  source = "spotinst/ocean-aws-k8s/spotinst"
+  source  = "spotinst/ocean-aws-k8s/spotinst"
+  version = "1.2.0"
 
   depends_on = [module.eks]
 
   # Configuration
-  cluster_name                = var.cluster_name
-  region                      = var.region
-  subnet_ids                  = var.subnet_ids
-  worker_instance_profile_arn = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
-  security_groups             = [module.eks.node_security_group_id]
+  cluster_name                     = var.cluster_name
+  region                           = var.region
+  subnet_ids                       = var.subnet_ids
+  worker_instance_profile_arn      = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
+  security_groups                  = [module.eks.node_security_group_id]
   is_aggressive_scale_down_enabled = true
-  max_scale_down_percentage = 33
+  max_scale_down_percentage        = 33
   # Overwrite Name Tag and add additional
   # tags = {
   #   "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
@@ -189,11 +190,11 @@ module "ocean-aws-k8s" {
 # }
 
 module "kubernetes-controller" {
-  source = "spotinst/kubernetes-controller/ocean"
+  source     = "spotinst/kubernetes-controller/ocean"
   depends_on = [module.ocean-aws-k8s]
 
   # Credentials
-  spotinst_token = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+  spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
   spotinst_account = var.spotinst_account
 
   # Configuration
