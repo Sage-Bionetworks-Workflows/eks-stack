@@ -48,6 +48,12 @@ variable "aws_secret_key" {
   sensitive   = true
 }
 
+variable "aws_session_token" {
+  description = "AWS session token"
+  type        = string
+  sensitive   = true
+}
+
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
