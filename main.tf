@@ -145,6 +145,19 @@ module "eks" {
         }
       }
     }
+    cluser_administrator_2 = {
+      kubernetes_groups = []
+      principal_arn     = "arn:aws:iam::766808016710:role/Administrator"
+
+      policy_associations = {
+        cluser_administrator_2 = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
   }
   tags = var.tags
 }
