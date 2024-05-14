@@ -64,7 +64,7 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.10"
+  version = "~> 20.10.0"
   # version = "~> 20.9"
 
   cluster_name    = var.cluster_name
