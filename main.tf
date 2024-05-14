@@ -17,7 +17,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:root" # Replace YOUR_AWS_ACCOUNT_ID with your actual AWS account ID
+          AWS = "arn:aws:iam::766808016710:role/administrator"
         }
         Action = "sts:AssumeRole"
       },
