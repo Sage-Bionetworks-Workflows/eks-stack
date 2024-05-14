@@ -17,7 +17,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:role/administrator"
+          AWS = "arn:aws:iam::766808016710:root" # Replace YOUR_AWS_ACCOUNT_ID with your actual AWS account ID
         }
         Action = "sts:AssumeRole"
       },
@@ -129,12 +129,7 @@ module "eks" {
 
   aws_auth_roles = [
     {
-      rolearn  = aws_iam_role.admin_role.arn
-      username = "admin"
-      groups   = ["system:masters"]
-    },
-    {
-      rolearn  = "arn:aws:iam::766808016710:role/Administrator"
+      rolearn  = "arn:aws:iam::766808016710:role/administrator"
       username = "admin"
       groups   = ["system:masters"]
     },
