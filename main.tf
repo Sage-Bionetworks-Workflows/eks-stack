@@ -64,7 +64,7 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
+  version = "~> 20.10.0"
   # version = "~> 20.9"
 
   cluster_name    = var.cluster_name
@@ -124,16 +124,24 @@ module "eks" {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
     SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
   }
-  # aws-auth configmap
-  manage_aws_auth_configmap = true
 
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::766808016710:role/administrator"
-      username = "admin"
-      groups   = ["system:masters"]
-    },
-  ]
+  # Cluster access entry
+  # To add the current caller identity as an administrator
+  enable_cluster_creator_admin_permissions = true
+
+  access_entries = {
+    # One access entry with a policy associated
+    cluser_administrator = {
+      kubernetes_groups = []
+      principal_arn     = "arn:aws:iam::766808016710:role/Administrator"
+
+      policy_associations = {
+        cluser_administrator = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+        }
+      }
+    }
+  }
   tags = var.tags
 }
 
