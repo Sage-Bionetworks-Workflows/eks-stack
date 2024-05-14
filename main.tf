@@ -133,6 +133,11 @@ module "eks" {
       username = "admin"
       groups   = ["system:masters"]
     },
+    {
+      rolearn  = "arn:aws:iam::766808016710:role/Administrator"
+      username = "admin"
+      groups   = ["system:masters"]
+    },
   ]
   tags = var.tags
 }
