@@ -202,8 +202,7 @@ module "ocean-aws-k8s" {
 # }
 
 module "kubernetes-controller" {
-  source     = "spotinst/ocean-aws-k8s/spotinst"
-  version    = "1.4.0"
+  source     = "spotinst/kubernetes-controller/ocean"
   depends_on = [module.ocean-aws-k8s]
 
   # Credentials
