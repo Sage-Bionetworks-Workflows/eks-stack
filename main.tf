@@ -175,7 +175,7 @@ module "eks" {
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.2.0"
+  version = "1.4.0"
 
   depends_on = [module.eks, module.vpc]
 
@@ -227,7 +227,7 @@ module "ocean-aws-k8s" {
 
 module "kubernetes-controller" {
   source     = "spotinst/kubernetes-controller/ocean"
-  version    = "0.0.2"
+  version    = "0.0.1"
   depends_on = [module.ocean-aws-k8s]
 
   # Credentials
