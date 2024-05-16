@@ -62,10 +62,34 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
 #   ]
 # }
 
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "spacelift-created-vpc"
+  cidr = var.cidr
+
+  azs             = var.azs
+  private_subnets = var.private_subnet_cidrs
+  public_subnets  = var.public_subnet_cidrs
+
+  enable_nat_gateway = true
+  enable_vpn_gateway = true
+
+  tags = merge(
+    var.tags,
+    {
+      Terraform   = "true"
+      Environment = "dev"
+    }
+  )
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.10"
   # version = "~> 20.9"
+
+  depends_on = [module.vpc]
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
@@ -87,8 +111,8 @@ module "eks" {
     }
   }
 
-  vpc_id     = var.vpc_id
-  subnet_ids = var.subnet_ids
+  vpc_id     = module.vpc.default_vpc_id
+  subnet_ids = module.vpc.private_subnets
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -151,14 +175,14 @@ module "eks" {
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.2.0"
+  version = "1.4.0"
 
-  depends_on = [module.eks]
+  depends_on = [module.eks, module.vpc]
 
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = var.subnet_ids
+  subnet_ids                       = module.vpc.private_subnets
   worker_instance_profile_arn      = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
   security_groups                  = [module.eks.node_security_group_id]
   is_aggressive_scale_down_enabled = true
@@ -202,8 +226,8 @@ module "ocean-aws-k8s" {
 # }
 
 module "kubernetes-controller" {
-  source     = "spotinst/ocean-aws-k8s/spotinst"
-  version    = "1.4.0"
+  source     = "spotinst/kubernetes-controller/ocean"
+  version    = "0.0.2"
   depends_on = [module.ocean-aws-k8s]
 
   # Credentials
