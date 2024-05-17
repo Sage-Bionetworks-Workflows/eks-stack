@@ -13,5 +13,3 @@ data "aws_secretsmanager_secret" "spotinst_token" {
 data "aws_secretsmanager_secret_version" "secret_credentials" {
   secret_id = data.aws_secretsmanager_secret.spotinst_token.id
 }
-
-
