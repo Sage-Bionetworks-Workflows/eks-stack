@@ -10,13 +10,6 @@ variable "cluster_version" {
   default     = "1.29"
 }
 
-variable "vpc_id" {
-  description = "AWS VPC ID"
-  type        = string
-  default     = "vpc-0451035edd61bca1f"
-  # default     = "vpc-05171ae8175d69c55"
-}
-
 variable "cidr" {
   description = "CIDR block for the VPC"
   type        = string

@@ -40,7 +40,7 @@ resource "helm_release" "airflow" {
   repository = "https://airflow.apache.org"
   chart      = "airflow"
   namespace  = "airflow"
-  version    = "1.13.1"
+  version    = "1.11.0"
   depends_on = [kubernetes_namespace.airflow]
 
   set {
@@ -65,7 +65,7 @@ resource "helm_release" "airflow" {
 
   set {
     name  = "airflowVersion"
-    value = "2.8.3"
+    value = "2.7.1"
   }
 
   set {
@@ -75,7 +75,7 @@ resource "helm_release" "airflow" {
 
   set {
     name  = "defaultAirflowTag"
-    value = "2.8.3-python-3.10"
+    value = "2.7.1-python-3.10"
   }
 
   set {
