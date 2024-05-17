@@ -16,9 +16,10 @@ resource "kubernetes_namespace" "airflow" {
   }
 }
 
-resource "random_string" "secret_key" {
-  length  = 16
-  special = false
+resource "random_password" "airflow" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 resource "kubernetes_secret" "airflow_webserver_secret" {
@@ -28,7 +29,7 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
   }
 
   data = {
-    "webserver-secret-key" = random_string.secret_key.result
+    "webserver-secret-key" = random_password.airflow.result
   }
 
   depends_on = [kubernetes_namespace.airflow]
