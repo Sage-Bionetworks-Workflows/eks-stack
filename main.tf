@@ -116,8 +116,10 @@ module "eks" {
     }
   }
 
-  vpc_id     = module.vpc.default_vpc_id
-  subnet_ids = module.vpc.private_subnets
+  vpc_id                    = module.vpc.default_vpc_id
+  subnet_ids                = module.vpc.private_subnets
+  cluster_security_group_id = module.vpc.default_security_group_id
+
 
   # EKS Managed Node Group(s)
   # eks_managed_node_group_defaults = {
