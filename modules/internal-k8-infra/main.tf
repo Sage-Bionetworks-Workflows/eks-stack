@@ -16,6 +16,23 @@ resource "kubernetes_namespace" "airflow" {
   }
 }
 
+data "external" "python_script" {
+  program = ["python3", "-c", "import secrets; print(secrets.token_hex(16))"]
+}
+
+resource "kubernetes_secret" "airflow_webserver_secret" {
+  metadata {
+    name      = "airflow-webserver-secret"
+    namespace = "airflow"
+  }
+
+  data = {
+    "webserver-secret-key" = data.external.python_script.result["stdout"]
+  }
+
+  depends_on = [kubernetes_namespace.airflow]
+}
+
 resource "helm_release" "airflow" {
   name       = "apache-airflow"
   repository = "https://airflow.apache.org"
