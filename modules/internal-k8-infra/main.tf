@@ -77,7 +77,6 @@ resource "helm_release" "airflow" {
     value = "main"
   }
 
-  values = [
-    file("${path.module}/templates/airflow-values.yaml.yaml")
-  ]
+
+  values = [templatefile("templates/airflow-values.yaml", {})]
 }
