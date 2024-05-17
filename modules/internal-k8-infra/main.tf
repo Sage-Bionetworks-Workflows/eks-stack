@@ -12,8 +12,8 @@ module "kubernetes-controller" {
 
 resource "helm_release" "airflow" {
   name       = "airflow"
-  repository = "https://airflow.apache.org"
-  chart      = "apache-airflow/airflow"
+  repository = data.helm_repository.airflow.metadata[0].name
+  chart      = "apache-airflow"
   namespace  = "airflow"
   version    = "2.8.3"
 
