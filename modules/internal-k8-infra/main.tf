@@ -70,7 +70,7 @@ resource "helm_release" "airflow" {
 
   set {
     name  = "defaultAirflowRepository"
-    value = "thomasvyu/airflow"
+    value = "bfaublesage/airflow"
   }
 
   set {
