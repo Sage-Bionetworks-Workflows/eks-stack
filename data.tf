@@ -26,3 +26,8 @@ data "aws_secretsmanager_secret" "spotinst_token" {
 data "aws_secretsmanager_secret_version" "secret_credentials" {
   secret_id = data.aws_secretsmanager_secret.spotinst_token.id
 }
+
+data "aws_iam_instance_profiles" "profile" {
+  depends_on = [module.eks]
+  role_name  = module.eks.eks_managed_node_groups["one"].iam_role_name
+}
