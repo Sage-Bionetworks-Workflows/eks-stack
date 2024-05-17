@@ -169,6 +169,19 @@ module "eks" {
         }
       }
     }
+    second_administrator = {
+      kubernetes_groups = []
+      principal_arn     = "arn:aws:iam::766808016710:role/spacelift_admin_role"
+
+      policy_associations = {
+        second_administrator = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
   }
   tags = var.tags
 }
