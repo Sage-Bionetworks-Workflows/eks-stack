@@ -91,12 +91,12 @@ module "vpc" {
 
 import {
   to = aws_eks_access_entry.spacelift_admin_role
-  id = "${var.cluster_name}:arn:aws:iam::766808016710:role/spacelift_admin_role"
+  id = "dpe-k8:arn:aws:iam::766808016710:role/spacelift_admin_role"
 }
 
 import {
   to = aws_eks_access_entry.eks_admin_role
-  id = "${var.cluster_name}:arn:aws:iam::766808016710:role/eks_admin_role"
+  id = "dpe-k8:arn:aws:iam::766808016710:role/eks_admin_role"
 }
 
 module "eks" {
