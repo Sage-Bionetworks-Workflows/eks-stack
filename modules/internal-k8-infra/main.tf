@@ -11,11 +11,11 @@ module "kubernetes-controller" {
 }
 
 resource "helm_release" "airflow" {
-  name       = "airflow"
-  repository = data.helm_repository.airflow.metadata[0].name
-  chart      = "apache-airflow"
+  name       = "apache-airflow"
+  repository = "https://airflow.apache.org"
+  chart      = "airflow"
   namespace  = "airflow"
-  version    = "2.8.3"
+  version    = "1.13.1"
 
   set {
     name  = "config.webserver.expose_config"
