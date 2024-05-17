@@ -191,7 +191,7 @@ module "eks" {
     }
     dpe_admin = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:role/Administrator"
+      principal_arn     = "arn:aws:iam::766808016710:Administrator/bryan.fauble@sagebase.org"
 
       policy_associations = {
         dpe_admin = {
@@ -204,7 +204,7 @@ module "eks" {
     }
     dpe_developer = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:role/Developer"
+      principal_arn     = "arn:aws:iam::766808016710:Administrator/bryan.fauble@sagebase.org"
 
       policy_associations = {
         dpe_developer = {
