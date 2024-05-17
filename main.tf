@@ -72,6 +72,10 @@ module "vpc" {
   private_subnets = var.private_subnet_cidrs
   public_subnets  = var.public_subnet_cidrs
 
+  private_subnet_tags = {
+    Name = "private"
+  }
+
   enable_nat_gateway = true
   enable_vpn_gateway = true
   single_nat_gateway = true
@@ -213,25 +217,6 @@ module "eks" {
   tags = var.tags
 }
 
-module "ocean-aws-k8s" {
-  source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.2.0"
-
-  depends_on = [module.eks, module.vpc]
-
-  # Configuration
-  cluster_name                     = var.cluster_name
-  region                           = var.region
-  subnet_ids                       = module.vpc.private_subnets
-  worker_instance_profile_arn      = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
-  security_groups                  = [module.eks.node_security_group_id]
-  is_aggressive_scale_down_enabled = true
-  max_scale_down_percentage        = 33
-  # Overwrite Name Tag and add additional
-  # tags = {
-  #   "kubernetes.io/cluster/tyu-spot-ocean" = "owned"
-  # }
-}
 
 # ## Create additional Ocean Virtual Node Group (launchspec) ##
 # module "ocean-aws-k8s-vng_gpu" {
@@ -265,15 +250,4 @@ module "ocean-aws-k8s" {
 #   # config_map_name = module.eks_auth
 # }
 
-module "kubernetes-controller" {
-  source     = "spotinst/kubernetes-controller/ocean"
-  version    = "0.0.2"
-  depends_on = [module.ocean-aws-k8s]
 
-  # Credentials
-  spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account = var.spotinst_account
-
-  # Configuration
-  cluster_identifier = var.cluster_name
-}
