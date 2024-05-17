@@ -16,8 +16,9 @@ resource "kubernetes_namespace" "airflow" {
   }
 }
 
-data "external" "python_script" {
-  program = ["python3", "-c", "import secrets; print(secrets.token_hex(16))"]
+resource "random_string" "secret_key" {
+  length  = 16
+  special = false
 }
 
 resource "kubernetes_secret" "airflow_webserver_secret" {
@@ -27,7 +28,7 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
   }
 
   data = {
-    "webserver-secret-key" = data.external.python_script.result["stdout"]
+    "webserver-secret-key" = random_string.secret_key.result
   }
 
   depends_on = [kubernetes_namespace.airflow]
