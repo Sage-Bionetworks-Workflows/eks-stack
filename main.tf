@@ -126,31 +126,31 @@ module "eks" {
   #   instance_types = ["m6i.large", "m5.large", "m5n.large", "m5zn.large"]
   # }
 
-  # eks_managed_node_groups = {
-  #   one = {
-  #     name         = var.eks_nodeGroup
-  #     desired_size = 1
-  #     min_size     = 0
-  #     max_size     = 10
+  eks_managed_node_groups = {
+    one = {
+      name         = var.eks_nodeGroup
+      desired_size = 1
+      min_size     = 0
+      max_size     = 10
 
-  #     instance_types = ["t3.large"]
-  #     capacity_type  = "SPOT"
-  #     iam_role_additional_policies = {
-  #       AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-  #       SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
-  #     }
-  #   }
-  #   # ,
-  #   # two = {
-  #   #   name         = "seqera"
-  #   #   desired_size = 1
-  #   #   min_size     = 0
-  #   #   max_size     = 10
+      instance_types = ["t3.large"]
+      capacity_type  = "SPOT"
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+        SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+      }
+    }
+    # ,
+    # two = {
+    #   name         = "seqera"
+    #   desired_size = 1
+    #   min_size     = 0
+    #   max_size     = 10
 
-  #   #   instance_types = ["t3.large"]
-  #   #   capacity_type  = "SPOT"
-  #   # }
-  # }
+    #   instance_types = ["t3.large"]
+    #   capacity_type  = "SPOT"
+    # }
+  }
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
     SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
