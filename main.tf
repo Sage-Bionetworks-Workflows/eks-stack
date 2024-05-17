@@ -189,32 +189,6 @@ module "eks" {
         }
       }
     }
-    dpe_admin = {
-      kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:Administrator/bryan.fauble@sagebase.org"
-
-      policy_associations = {
-        dpe_admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-    dpe_developer = {
-      kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:Administrator/bryan.fauble@sagebase.org"
-
-      policy_associations = {
-        dpe_developer = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
   }
   tags = var.tags
 }
