@@ -43,6 +43,9 @@ resource "helm_release" "airflow" {
   version    = "1.11.0"
   depends_on = [kubernetes_namespace.airflow]
 
+  # https://github.com/hashicorp/terraform-provider-helm/issues/683#issuecomment-830872443
+  wait = false
+
   set {
     name  = "config.webserver.expose_config"
     value = "true"

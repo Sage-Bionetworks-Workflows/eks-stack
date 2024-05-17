@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-namespace: airflow
-
-resources:
-  # spacelift-worker-pool.yaml will be generated in a pre-plan hook
-  - airflow-config.yaml
