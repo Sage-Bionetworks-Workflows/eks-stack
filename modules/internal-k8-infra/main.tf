@@ -10,12 +10,19 @@ module "kubernetes-controller" {
   cluster_identifier = var.cluster_name
 }
 
+resource "kubernetes_namespace" "airflow" {
+  metadata {
+    name = "airflow"
+  }
+}
+
 resource "helm_release" "airflow" {
   name       = "apache-airflow"
   repository = "https://airflow.apache.org"
   chart      = "airflow"
   namespace  = "airflow"
   version    = "1.13.1"
+  depends_on = [kubernetes_namespace.airflow]
 
   set {
     name  = "config.webserver.expose_config"
