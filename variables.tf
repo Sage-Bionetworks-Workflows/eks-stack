@@ -26,7 +26,12 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   description = "Private Subnet CIDR values"
   default     = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
+}
 
+variable "create_igw" {
+  description = "Controls if an Internet Gateway is created for public subnets and the related routes that connect them"
+  type        = string
+  default     = "false"
 }
 
 variable "azs" {
