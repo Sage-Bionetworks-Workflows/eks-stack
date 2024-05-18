@@ -109,3 +109,76 @@ resource "helm_release" "airflow" {
 
   values = [templatefile("${path.module}/templates/airflow-values.yaml", {})]
 }
+
+# Kubernetes Deployment
+resource "kubernetes_deployment" "shinyproxy" {
+  metadata {
+    name      = "shinyproxy"
+    namespace = "shiny"
+    labels = {
+      app = "shinyproxy"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        run = "shinyproxy"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          run = "shinyproxy"
+        }
+      }
+
+      spec {
+        container {
+          name  = "shinyproxy"
+          image = "thomasvyu/shinyproxy-application:latest"
+          ports {
+            container_port = 8080
+          }
+          image_pull_policy = "Always"
+        }
+
+        container {
+          name  = "kube-proxy-sidecar"
+          image = "thomasvyu/kube-proxy-sidecar:0.1.0"
+          ports {
+            container_port = 8001
+          }
+          image_pull_policy = "Always"
+        }
+
+        # Uncomment and modify if you have imagePullSecrets
+        # image_pull_secrets {
+        #   name = var.secret_for_docker_registry
+        # }
+      }
+    }
+  }
+}
+
+# Kubernetes ClusterRoleBinding
+resource "kubernetes_cluster_role_binding" "shinyproxy_auth" {
+  metadata {
+    name = "shinyproxy-auth"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "default"
+    namespace = "shiny"
+  }
+
+  role_ref {
+    kind     = "ClusterRole"
+    name     = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
