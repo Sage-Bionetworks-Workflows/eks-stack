@@ -10,6 +10,12 @@ variable "cluster_version" {
   default     = "1.29"
 }
 
+variable "kube_config_path" {
+  description = "Kube config path"
+  type        = string
+  default     = "~/.kube/config"
+}
+
 variable "cidr" {
   description = "CIDR block for the VPC"
   type        = string

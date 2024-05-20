@@ -4,6 +4,12 @@ variable "cluster_name" {
   default     = "dpe-k8"
 }
 
+variable "kube_config_path" {
+  description = "Kube config path"
+  type        = string
+  default     = "~/.kube/config"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
