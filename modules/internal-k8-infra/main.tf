@@ -10,6 +10,22 @@ module "kubernetes-controller" {
   cluster_identifier = var.cluster_name
 }
 
+
+module "ocean-aws-k8s" {
+  source  = "spotinst/ocean-aws-k8s/spotinst"
+  version = "1.2.0"
+
+  # Configuration
+  cluster_name                     = var.cluster_name
+  region                           = var.region
+  subnet_ids                       = data.aws_subnets.node_subnets.ids
+  worker_instance_profile_arn      = data.aws_eks_node_group.profile.node_role_arn
+  security_groups                  = [data.aws_security_group.eks_cluster_security_group.id]
+  is_aggressive_scale_down_enabled = true
+  max_scale_down_percentage        = 33
+  tags                             = var.tags
+}
+
 resource "kubernetes_namespace" "airflow" {
   metadata {
     name = "airflow"

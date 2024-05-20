@@ -1,15 +1,27 @@
 # EKS-stack
 
-Leveraging spot.io, we spin up an EKS stack behind an existing private VPC that has scale-to-zero capabilities. To deploy this stack
+Leveraging spot.io, we spin up an EKS stack behind an existing private VPC that has scale-to-zero capabilities. To deploy this stack:
 
-1. log into dpe-prod via jumpcloud and export the credentials (you must have admin)
+TODO: Instructions need to be re-writen. Deployment is occuring through spacelift.io
+
+<!-- 1. log into dpe-prod via jumpcloud and export the credentials (you must have admin)
 2. run `terraform apply`
 3. This will deploy the terraform stack.  The terraform backend state is stored in an S3 bucket.  The terraform state is stored in the S3 bucket `s3://dpe-terraform-bucket`
 4. The spot.io account token is stored in AWS secrets manager: `spotinst_token`
-5. Add `AmazonEBSCSIDriverPolicy` and `SecretsManagerReadWrite` to the IAM policy
+5. Add `AmazonEBSCSIDriverPolicy` and `SecretsManagerReadWrite` to the IAM policy -->
 
+To connect to the EKS stack running in AWS you'll need to make sure that you have
+SSO setup for the account you'll be using. Once setup run the commands below:
 ```
-aws eks update-kubeconfig --name tyu-spot-ocean
+# Login with the profile you're using to authenticate. For example mine is called 
+# `dpe-prod-admin`
+aws sso login --profile dpe-prod-admin
+
+# Update your kubeconfig with the proper values. This is saying "Authenticate with 
+# AWS using my SSO session for the profile `dpe-prod-admin`. After authenticated 
+# assuming that we want to use the `role/eks_admin_role` to connect to the k8s 
+# cluster". This will update your kubeconfig with permissions to access the cluster.
+aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:iam::766808016710:role/eks_admin_role --profile dpe-prod-admin
 ```
 
 ## Future work

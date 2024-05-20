@@ -10,6 +10,12 @@ variable "cluster_version" {
   default     = "1.29"
 }
 
+variable "kube_config_path" {
+  description = "Kube config path"
+  type        = string
+  default     = "~/.kube/config"
+}
+
 variable "cidr" {
   description = "CIDR block for the VPC"
   type        = string
@@ -65,8 +71,5 @@ variable "tags" {
   type        = map(string)
   default = {
     "CostCenter" = "No Program / 000000"
-    # "kubernetes.io/cluster/tyu-spot-ocean" = "owned",
-    # "key"   = "kubernetes.io/cluster/tyu-spot-ocean",
-    # "value" = "owned"
   }
 }

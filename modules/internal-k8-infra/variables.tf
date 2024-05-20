@@ -4,6 +4,12 @@ variable "cluster_name" {
   default     = "dpe-k8"
 }
 
+variable "kube_config_path" {
+  description = "Kube config path"
+  type        = string
+  default     = "~/.kube/config"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
@@ -21,8 +27,5 @@ variable "tags" {
   type        = map(string)
   default = {
     "CostCenter" = "No Program / 000000"
-    # "kubernetes.io/cluster/tyu-spot-ocean" = "owned",
-    # "key"   = "kubernetes.io/cluster/tyu-spot-ocean",
-    # "value" = "owned"
   }
 }
