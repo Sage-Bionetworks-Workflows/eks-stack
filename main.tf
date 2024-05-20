@@ -19,7 +19,7 @@ resource "aws_iam_role" "admin_role" {
 
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.admin_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
 
@@ -132,13 +132,19 @@ module "eks" {
 
       policy_associations = {
         eks_admin_role = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
             type = "cluster"
           }
         }
       }
     }
+    # https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html#access-policy-permissions
+    # TODO: Additional roles that need to be created:
+    # AmazonEKSAdminViewPolicy?
+    # AmazonEKSEditPolicy
+    # AmazonEKSViewPolicy
+
   }
   tags = var.tags
 }
