@@ -18,7 +18,7 @@ module "ocean-aws-k8s" {
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = data.aws_vpc.selected.private_subnets
+  subnet_ids                       = data.aws_subnets.node_subnets.ids
   worker_instance_profile_arn      = data.aws_eks_node_group.profile.node_role_arn
   security_groups                  = [data.aws_security_group.eks_cluster_security_group.id]
   is_aggressive_scale_down_enabled = true

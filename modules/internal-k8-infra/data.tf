@@ -16,8 +16,16 @@ data "aws_secretsmanager_secret_version" "secret_credentials" {
 
 # TODO: This should search for the VPC using some other value as ID would change
 # on first startup and teardown/restart
-data "aws_vpc" "selected" {
-  id = "spacelift-created-vpc	vpc-0f30cfca319ebc521"
+data "aws_subnets" "node_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-0f30cfca319ebc521"]
+  }
+}
+
+data "aws_eks_node_group" "profile" {
+  cluster_name    = var.cluster_name
+  node_group_name = "one"
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
