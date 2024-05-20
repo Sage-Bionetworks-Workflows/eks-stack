@@ -25,7 +25,7 @@ data "aws_subnets" "node_subnets" {
 
 data "aws_eks_node_group" "profile" {
   cluster_name    = var.cluster_name
-  node_group_name = "one"
+  node_group_name = "airflow-node-group"
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
