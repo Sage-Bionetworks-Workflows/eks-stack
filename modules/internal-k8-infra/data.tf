@@ -23,9 +23,10 @@ data "aws_subnets" "node_subnets" {
   }
 }
 
+# TODO: This should dynamically search for the node group
 data "aws_eks_node_group" "profile" {
   cluster_name    = var.cluster_name
-  node_group_name = "airflow-node-group"
+  node_group_name = "airflow-node-group-20240517054615841200000009"
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
