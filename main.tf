@@ -38,7 +38,7 @@ module "vpc" {
     Name = "private"
   }
 
-  enable_nat_gateway = true
+  enable_nat_gateway = false
   enable_vpn_gateway = false
   single_nat_gateway = true
 
