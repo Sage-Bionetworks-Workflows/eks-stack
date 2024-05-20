@@ -38,7 +38,10 @@ module "vpc" {
     Name = "private"
   }
 
-  enable_nat_gateway = false
+  # When removing the Internet gateway it might have allocated from elastic IP addresses
+  # Turn off the nat_gateway to force the IP addresses to be removed
+  # > "Network vpc-0f30cfca319ebc521 has some mapped public address(es). Please unmap those public address(es) before detaching the gateway.""
+  enable_nat_gateway = true
   enable_vpn_gateway = false
   single_nat_gateway = true
 
