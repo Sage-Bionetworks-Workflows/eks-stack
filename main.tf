@@ -41,9 +41,30 @@ module "vpc" {
   # When removing the Internet gateway it might have allocated from elastic IP addresses
   # Turn off the nat_gateway to force the IP addresses to be removed
   # > "Network vpc-0f30cfca319ebc521 has some mapped public address(es). Please unmap those public address(es) before detaching the gateway.""
+  create_igw         = true
   enable_nat_gateway = true
   enable_vpn_gateway = false
   single_nat_gateway = true
+
+  # Disable inbound rules for the default network ACL
+  default_network_acl_ingress = [
+    {
+      "action" : "deny",
+      "cidr_block" : "0.0.0.0/0",
+      "from_port" : 0,
+      "protocol" : "-1",
+      "rule_no" : 100,
+      "to_port" : 0
+    },
+    {
+      "action" : "deny",
+      "from_port" : 0,
+      "ipv6_cidr_block" : "::/0",
+      "protocol" : "-1",
+      "rule_no" : 101,
+      "to_port" : 0
+    }
+  ]
 
   tags = merge(
     var.tags,
