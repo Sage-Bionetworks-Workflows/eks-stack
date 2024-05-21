@@ -7,7 +7,7 @@ variable "cluster_name" {
 variable "node_group_name" {
   description = "Node group name for the cluster"
   type        = string
-  default     = "one"
+  default     = "airflow-node-group"
 }
 
 variable "kube_config_path" {
