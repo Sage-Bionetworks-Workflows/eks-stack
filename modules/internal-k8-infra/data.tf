@@ -35,7 +35,7 @@ data "aws_eks_node_group" "node_group" {
 }
 
 data "aws_iam_instance_profiles" "profile" {
-  role_name = data.aws_eks_node_group.node_group.node_role_arn
+  role_name = split("/", data.aws_eks_node_group.node_group.node_role_arn)[1]
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
