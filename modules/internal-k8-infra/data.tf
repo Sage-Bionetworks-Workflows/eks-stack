@@ -23,9 +23,15 @@ data "aws_subnets" "node_subnets" {
   }
 }
 
-data "aws_eks_node_group" "profile" {
+data "aws_iam_roles" "all_roles" {}
+
+data "aws_eks_node_groups" "node_groups" {
+  cluster_name = var.cluster_name
+}
+
+data "aws_eks_node_group" "node_group" {
   cluster_name    = var.cluster_name
-  node_group_name = var.node_group_name
+  node_group_name = data.aws_eks_node_groups.node_groups[0].id
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
