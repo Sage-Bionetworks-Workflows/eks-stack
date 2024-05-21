@@ -31,7 +31,7 @@ data "aws_eks_node_groups" "node_groups" {
 
 data "aws_eks_node_group" "node_group" {
   cluster_name    = var.cluster_name
-  node_group_name = data.aws_eks_node_groups.node_groups[0].id
+  node_group_name = tolist(data.aws_eks_node_groups.node_groups)[0].id
 }
 
 data "aws_security_group" "eks_cluster_security_group" {
