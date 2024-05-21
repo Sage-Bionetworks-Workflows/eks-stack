@@ -4,6 +4,12 @@ variable "cluster_name" {
   default     = "dpe-k8"
 }
 
+variable "node_group_name" {
+  description = "Node group name for the cluster"
+  type        = string
+  default     = "one"
+}
+
 variable "kube_config_path" {
   description = "Kube config path"
   type        = string

@@ -51,6 +51,8 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
   depends_on = [kubernetes_namespace.airflow]
 }
 
+# TODO: Should a long-term deployment use a managed RDS instance?
+# https://github.com/apache/airflow/blob/main/chart/values.yaml#L2321-L2329
 resource "helm_release" "airflow" {
   name       = "apache-airflow"
   repository = "https://airflow.apache.org"
