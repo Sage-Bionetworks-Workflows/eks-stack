@@ -20,7 +20,7 @@ module "ocean-aws-k8s" {
   cluster_name                     = var.cluster_name
   region                           = var.region
   subnet_ids                       = data.aws_subnets.node_subnets.ids
-  worker_instance_profile_arn      = tolist(data.aws_iam_instance_profiles.profile.arns)[0]
+  worker_instance_profile_arn      = split("/", tolist(data.aws_iam_instance_profiles.profile.arns)[0])[1]
   security_groups                  = [data.aws_security_group.eks_cluster_security_group.id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
