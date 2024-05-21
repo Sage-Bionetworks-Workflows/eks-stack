@@ -34,6 +34,10 @@ data "aws_eks_node_group" "node_group" {
   node_group_name = tolist(data.aws_eks_node_groups.node_groups.names)[0]
 }
 
+data "aws_iam_instance_profiles" "profile" {
+  role_name = data.aws_eks_node_group.node_group.node_role_arn
+}
+
 data "aws_security_group" "eks_cluster_security_group" {
   tags = {
     Name = "${var.cluster_name}-node"
