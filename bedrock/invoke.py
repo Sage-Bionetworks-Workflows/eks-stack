@@ -42,16 +42,15 @@ def invoke_agent(agents_runtime_client, agent_id, agent_alias_id, session_id, pr
     return completion
 
 
-runtime_client=boto3.client(
-    service_name="bedrock-agent-runtime", region_name="us-east-1"
-)
-
-
-response = invoke_agent(
-    agents_runtime_client=runtime_client,
-    agent_id="7O1Q74HUYJ",
-    agent_alias_id="EGWXPZWTLS",
-    session_id=str(uuid.uuid1()),
-    prompt="give me some observations about NF1fl/fl;Dhh-Cre"
-)
-json.loads(response)
+if __name__ == "__main__":
+    runtime_client = boto3.client(
+        service_name="bedrock-agent-runtime", region_name="us-east-1"
+    )
+    response = invoke_agent(
+        agents_runtime_client=runtime_client,
+        agent_id="7O1Q74HUYJ",
+        agent_alias_id="EGWXPZWTLS",
+        session_id=str(uuid.uuid1()),
+        prompt="give me some observations about NF1fl/fl;Dhh-Cre"
+    )
+    print(json.loads(response))
