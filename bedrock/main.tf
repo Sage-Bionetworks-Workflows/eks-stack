@@ -51,12 +51,27 @@ resource "aws_iam_role_policy" "nftc_kb_policy" {
 }
 
 resource "aws_bedrock_knowledge_base" "nftc_kb" {
-  knowledge_base_name = "nftc-kb"
-  s3_bucket           = aws_s3_bucket.nftc_kb_bucket.bucket
-  service_role        = aws_iam_role.nftc_kb_role.arn
-
+  name = "nftc-kb"
+  role_arn        = aws_iam_role.nftc_kb_role.arn
+  knowledge_base_configuration {
+    vector_knowledge_base_configuration {
+      embedding_model_arn = "arn:aws:bedrock:us-west-2::foundation-model/amazon.titan-embed-text-v1"
+    }
+    type = "VECTOR"
+  }
   tags = {
     Name = "nftc-kb"
+  }
+}
+
+resource "aws_bedrockagent_data_source" "example" {
+  knowledge_base_id = aws_bedrock_knowledge_base.nftc_kb.id
+  name              = "nftc-kb-datasource"
+  data_source_configuration {
+    type = "S3"
+    s3_configuration {
+      bucket_arn = aws_s3_bucket.nftc_kb_bucket.arn
+    }
   }
 }
 
@@ -81,26 +96,53 @@ resource "aws_iam_role" "nftc_agent_role" {
   }
 }
 
-resource "aws_iam_role_policy" "nftc_agent_policy" {
-  name   = "nftc-agent-policy"
-  role   = aws_iam_role.nftc_agent_role.id
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "bedrock:DescribeKnowledgeBase",
-          "bedrock:QueryKnowledgeBase"
-        ],
-        Resource = [
-          awscc_bedrock_knowledge_base.nftc_kb.arn
-        ]
-      }
-    ]
-  })
+
+data "aws_caller_identity" "current" {}
+
+data "aws_partition" "current" {}
+
+data "aws_region" "current" {}
+
+data "aws_iam_policy_document" "example_agent_trust" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      identifiers = ["bedrock.amazonaws.com"]
+      type        = "Service"
+    }
+    condition {
+      test     = "StringEquals"
+      values   = [data.aws_caller_identity.current.account_id]
+      variable = "aws:SourceAccount"
+    }
+    condition {
+      test     = "ArnLike"
+      values   = ["arn:${data.aws_partition.current.partition}:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent/*"]
+      variable = "AWS:SourceArn"
+    }
+  }
 }
+
+data "aws_iam_policy_document" "example_agent_permissions" {
+  statement {
+    actions = ["bedrock:InvokeModel"]
+    resources = [
+      "arn:${data.aws_partition.current.partition}:bedrock:${data.aws_region.current.name}::foundation-model/anthropic.claude-v2",
+    ]
+  }
+}
+
+resource "aws_iam_role" "example" {
+  assume_role_policy = data.aws_iam_policy_document.example_agent_trust.json
+  name_prefix        = "AmazonBedrockExecutionRoleForAgents_"
+}
+
+resource "aws_iam_role_policy" "example" {
+  policy = data.aws_iam_policy_document.example_agent_permissions.json
+  role   = aws_iam_role.example.id
+}
+
 
 resource "aws_bedrockagent_agent_knowledge_base_association" "nftc_kb_association" {
   agent_id             = aws_bedrockagent_agent.nftc_agent.id
@@ -111,8 +153,7 @@ resource "aws_bedrockagent_agent_knowledge_base_association" "nftc_kb_associatio
 
 resource "aws_bedrockagent_agent" "nftc_agent" {
     agent_name    = "nftc-agent"
-    service_role  = aws_iam_role.nftc_agent_role.arn
-    knowledge_base_id = awscc_bedrock_knowledge_base.nftc_kb.id
+    agent_resource_role_arn     = aws_iam_role.example.arn
     foundation_model            = "anthropic.claude-v3-sonnet"
     instruction = """
     Your task is to extract data about research tools, such as animal models and cell lines biobanks from scientific publications. When provided with a name or synonym for a research tool, you will generate a comprehensive list of temporal "observations" about the research tool that describe the natural history of the model as they relate to development or age. For example, an observation could be "The pigs developed tumor type X at Y months of age." Do not include observations about humans with NF1. Your response must be formatted to be compliant with the following JSON:
