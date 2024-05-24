@@ -50,7 +50,7 @@ resource "aws_iam_role_policy" "nftc_kb_policy" {
   })
 }
 
-resource "awscc_bedrock_knowledge_base" "nftc_kb" {
+resource "aws_bedrock_knowledge_base" "nftc_kb" {
   knowledge_base_name = "nftc-kb"
   s3_bucket           = aws_s3_bucket.nftc_kb_bucket.bucket
   service_role        = aws_iam_role.nftc_kb_role.arn
@@ -102,12 +102,32 @@ resource "aws_iam_role_policy" "nftc_agent_policy" {
   })
 }
 
-resource "awscc_bedrock_agent" "nftc_agent" {
-  agent_name    = "nftc-agent"
-  service_role  = aws_iam_role.nftc_agent_role.arn
-  knowledge_base_id = awscc_bedrock_knowledge_base.nftc_kb.id
+resource "aws_bedrockagent_agent_knowledge_base_association" "nftc_kb_association" {
+  agent_id             = aws_bedrockagent_agent.nftc_agent.id
+  description          = "Example Knowledge base"
+  knowledge_base_id    = awscc_bedrock_knowledge_base.nftc_kb.id
+  knowledge_base_state = "ENABLED"
+}
 
-  tags = {
-    Name = "nftc-agent"
-  }
+resource "aws_bedrockagent_agent" "nftc_agent" {
+    agent_name    = "nftc-agent"
+    service_role  = aws_iam_role.nftc_agent_role.arn
+    knowledge_base_id = awscc_bedrock_knowledge_base.nftc_kb.id
+    foundation_model            = "anthropic.claude-v3-sonnet"
+    instruction = """
+    Your task is to extract data about research tools, such as animal models and cell lines biobanks from scientific publications. When provided with a name or synonym for a research tool, you will generate a comprehensive list of temporal "observations" about the research tool that describe the natural history of the model as they relate to development or age. For example, an observation could be "The pigs developed tumor type X at Y months of age." Do not include observations about humans with NF1. Your response must be formatted to be compliant with the following JSON:
+    [
+        {
+            resourceType: [Animal Model, Cell Line],
+            observationText: This is an example sentence.,
+            observationType: [Body Length, Body weight, Coat Color, Disease Susceptibility, Feed Intake, Feeding Behavior, Growth rate, Motor Activity, Organ Development, Reflex Development, Reproductive Behavior, Social Behavior, Swimming Behavior, Tumor Growth, Issue, Depositor Comment, Usage Instructions, General Comment or Review, Other],
+            observationPhase: [prenatal, postnatal, null],
+            observationTime: a double; the time during the development of the organism which the observation occurred,
+            observationTimeUnits: [days, weeks, months, years]
+        }
+    ]
+    """
+    tags = {
+        Name = "nftc-agent"
+    }
 }
