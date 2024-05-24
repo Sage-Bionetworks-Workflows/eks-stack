@@ -1,3 +1,7 @@
+"""Invokes the NF bedrock agent"""
+import json
+import uuid
+
 import boto3
 from botocore.exceptions import ClientError
 
@@ -6,12 +10,15 @@ def invoke_agent(agents_runtime_client, agent_id, agent_alias_id, session_id, pr
     """
     Sends a prompt for the agent to process and respond to.
 
-    :param agent_id: The unique identifier of the agent to use.
-    :param agent_alias_id: The alias of the agent to use.
-    :param session_id: The unique identifier of the session. Use the same value across requests
-                        to continue the same conversation.
-    :param prompt: The prompt that you want Claude to complete.
-    :return: Inference response from the model.
+    Args:
+        agent_id: The unique identifier of the agent to use.
+        agent_alias_id: The alias of the agent to use.
+        session_id: The unique identifier of the session. Use the same value across requests
+                    to continue the same conversation.
+        prompt: The prompt that you want Claude to complete.
+
+    Returns:
+        Inference response from the model.
     """
 
     try:
@@ -39,10 +46,12 @@ runtime_client=boto3.client(
     service_name="bedrock-agent-runtime", region_name="us-east-1"
 )
 
-invoke_agent(
+
+response = invoke_agent(
     agents_runtime_client=runtime_client,
     agent_id="7O1Q74HUYJ",
-    agent_alias_id="YQ6O9PQNP8",
-    session_id="my_session",
+    agent_alias_id="EGWXPZWTLS",
+    session_id=str(uuid.uuid1()),
     prompt="give me some observations about NF1fl/fl;Dhh-Cre"
 )
+json.loads(response)
