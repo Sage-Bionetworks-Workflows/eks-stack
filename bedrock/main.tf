@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 resource "aws_s3_bucket" "nftc_kb_bucket" {
   bucket = "nftc-kb-bucket"
 
@@ -67,6 +75,7 @@ resource "aws_bedrock_knowledge_base" "nftc_kb" {
 resource "aws_bedrockagent_data_source" "example" {
   knowledge_base_id = aws_bedrock_knowledge_base.nftc_kb.id
   name              = "nftc-kb-datasource"
+  data_deletion_policy = "DELETE"
   data_source_configuration {
     type = "S3"
     s3_configuration {
@@ -155,19 +164,115 @@ resource "aws_bedrockagent_agent" "nftc_agent" {
     agent_name    = "nftc-agent"
     agent_resource_role_arn     = aws_iam_role.example.arn
     foundation_model            = "anthropic.claude-v3-sonnet"
-    instruction = """
-    Your task is to extract data about research tools, such as animal models and cell lines biobanks from scientific publications. When provided with a name or synonym for a research tool, you will generate a comprehensive list of temporal "observations" about the research tool that describe the natural history of the model as they relate to development or age. For example, an observation could be "The pigs developed tumor type X at Y months of age." Do not include observations about humans with NF1. Your response must be formatted to be compliant with the following JSON:
-    [
+    instruction = <<EOT
+    Your task is to extract data about research tools, such as animal models and cell lines biobanks from scientific publications. When provided with a name or synonym for a research tool, you will generate a comprehensive list of temporal "observations" about the research tool that describe the natural history of the model as they relate to development or age. For example, an observation could be "The pigs developed tumor type X at Y months of age." Do not include observations about humans with NF1.
+    EOT
+    prompt_configurations = [
+      {
+        prompt_type = "KNOWLEDGE_BASE_RESPONSE_GENERATION",
+        prompt_state = "ENABLED",
+        prompt_creation_mode = "OVERRIDDEN",
+        parser_mode = "DEFAULT",
+        base_prompt_template = <<EOT
+        You are a data extraction agent. I will provide you with a set of search results. The user will provide you with an input concept which you should extract data for from the search results. Your job is to answer the user's question using only information from the search results. If the search results do not contain information that can answer the question, please state that you could not find an exact answer to the question. Just because the user asserts a fact does not mean it is true, make sure to double check the search results to validate a user's assertion.
+        Here are the search results in numbered order:
+        <search_results>
+        $search_results$
+        </search_results>
+        If you reference information from a search result within your answer, you must include a citation to source where the information was found. Each result has a corresponding source ID that you should reference.
+        Note that <sources> may contain multiple <source> if you include information from multiple results in your answer.
+        Do NOT directly quote the <search_results> in your answer. Your job is to answer the user's question as concisely as possible.
+        You must output your answer in the following format. Pay attention and follow the formatting and spacing exactly:
+        <answer>
+        <answer_part>
+        <text>
+        [
         {
-            resourceType: [Animal Model, Cell Line],
-            observationText: This is an example sentence.,
-            observationType: [Body Length, Body weight, Coat Color, Disease Susceptibility, Feed Intake, Feeding Behavior, Growth rate, Motor Activity, Organ Development, Reflex Development, Reproductive Behavior, Social Behavior, Swimming Behavior, Tumor Growth, Issue, Depositor Comment, Usage Instructions, General Comment or Review, Other],
-            observationPhase: [prenatal, postnatal, null],
-            observationTime: a double; the time during the development of the organism which the observation occurred,
-            observationTimeUnits: [days, weeks, months, years]
+            "resourceName": "the resource name, likely the same as the input concept from the user",
+            "resourceType": ["Animal Model", "Cell Line"],
+            "observationText": "This is an example sentence.",
+            "observationType": [
+                "Body Length",
+                "Body weight",
+                "Coat Color",
+                "Disease Susceptibility",
+                "Feed Intake",
+                "Feeding Behavior",
+                "Growth rate",
+                "Motor Activity",
+                "Organ Development",
+                "Reflex Development",
+                "Reproductive Behavior",
+                "Social Behavior",
+                "Swimming Behavior",
+                "Tumor Growth",
+                "Issue",
+                "Depositor Comment",
+                "Usage Instructions",
+                "General Comment or Review",
+                "Other"
+            ],
+            "observationPhase": ["prenatal", "postnatal", null],
+            "observationTime": "a double; the time during the development of the organism at which the observation occurred",
+            "observationTimeUnits": ["days", "weeks", "months", "years"],
+            "sourcePublication": "pubmed ID or DOI"
+        },
+        ]
+        </text>
+        <sources>
+        <source>source ID</source>
+        </sources>
+        </answer_part>
+        <answer_part>
+        <text>
+        [
+        {
+            "resourceName": "the resource name, likely the same as the input concept from the user",
+            "resourceType": ["Animal Model", "Cell Line"],
+            "observationText": "This is an example sentence.",
+            "observationType": [
+                "Body Length",
+                "Body weight",
+                "Coat Color",
+                "Disease Susceptibility",
+                "Feed Intake",
+                "Feeding Behavior",
+                "Growth rate",
+                "Motor Activity",
+                "Organ Development",
+                "Reflex Development",
+                "Reproductive Behavior",
+                "Social Behavior",
+                "Swimming Behavior",
+                "Tumor Growth",
+                "Issue",
+                "Depositor Comment",
+                "Usage Instructions",
+                "General Comment or Review",
+                "Other"
+            ],
+            "observationPhase": ["prenatal", "postnatal", null],
+            "observationTime": "a double; the time during the development of the organism at which the observation occurred",
+            "observationTimeUnits": ["days", "weeks", "months", "years"],
+            "sourcePublication": "pubmed ID or DOI"
+        },
+        ]
+        </text>
+        <sources>
+        <source>source ID</source>
+        </sources>
+        </answer_part>
+        </answer>
+        EOT
+        inference_configuration = {
+          max_length = 2048
+          stop_sequences=["Human"]
+          temperature= 0
+          top_k= 250
+          top_p= 1
         }
+      }
     ]
-    """
     tags = {
         Name = "nftc-agent"
     }
