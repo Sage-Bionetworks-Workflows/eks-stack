@@ -45,25 +45,9 @@ module "vpc" {
   enable_vpn_gateway = false
   single_nat_gateway = true
 
-  # Disable inbound rules for the default network ACL
-  default_network_acl_ingress = [
-    {
-      "action" : "deny",
-      "cidr_block" : "0.0.0.0/0",
-      "from_port" : 0,
-      "protocol" : "-1",
-      "rule_no" : 100,
-      "to_port" : 0
-    },
-    {
-      "action" : "deny",
-      "from_port" : 0,
-      "ipv6_cidr_block" : "::/0",
-      "protocol" : "-1",
-      "rule_no" : 101,
-      "to_port" : 0
-    }
-  ]
+  manage_default_security_group = true
+  # default_security_group_egress = []
+  default_security_group_ingress = []
 
   tags = merge(
     var.tags,
@@ -103,6 +87,7 @@ module "eks" {
 
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
+  control_plane_subnet_ids  = module.vpc.intra_subnets
   cluster_security_group_id = module.vpc.default_security_group_id
 
 
