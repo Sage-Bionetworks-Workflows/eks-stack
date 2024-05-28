@@ -114,7 +114,7 @@ module "eks" {
   eks_managed_node_groups = {
     one = {
       name         = var.eks_nodeGroup
-      desired_size = 0
+      desired_size = 1
       min_size     = 0
       max_size     = 2
 
