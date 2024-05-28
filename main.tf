@@ -116,7 +116,7 @@ module "eks" {
       name         = var.eks_nodeGroup
       desired_size = 0
       min_size     = 0
-      max_size     = 1
+      max_size     = 2
 
       instance_types = ["t3.large"]
       capacity_type  = "SPOT"
