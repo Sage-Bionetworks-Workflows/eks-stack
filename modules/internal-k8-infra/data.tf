@@ -19,7 +19,7 @@ data "aws_secretsmanager_secret_version" "secret_credentials" {
 data "aws_subnets" "node_subnets" {
   filter {
     name   = "vpc-id"
-    values = ["vpc-0f30cfca319ebc521"]
+    values = ["vpc-099c17a4a0215942c"]
   }
 }
 
