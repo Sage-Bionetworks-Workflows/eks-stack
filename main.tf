@@ -60,7 +60,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.10"
+  version = "~> 20.12"
   # version = "~> 20.9"
 
   depends_on = [module.vpc]
