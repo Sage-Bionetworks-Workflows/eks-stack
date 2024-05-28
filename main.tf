@@ -155,7 +155,7 @@ module "eks" {
     # One access entry with a policy associated
     eks_admin_role = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:role/eks_admin_role"
+      principal_arn     = aws_iam_role.admin_role.arn
 
       policy_associations = {
         eks_admin_role = {
