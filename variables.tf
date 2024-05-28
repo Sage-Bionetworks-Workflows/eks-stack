@@ -7,7 +7,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "Version of K8 cluster"
   type        = string
-  default     = "1.29"
+  default     = "1.30"
 }
 
 variable "kube_config_path" {
