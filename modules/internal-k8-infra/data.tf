@@ -26,6 +26,11 @@ data "aws_subnets" "node_subnets" {
     name   = "vpc-id"
     values = [data.aws_vpc.selected.id]
   }
+
+  filter {
+    name   = "tag:Name"
+    values = ["private"]
+  }
 }
 
 data "aws_iam_roles" "all_roles" {}
