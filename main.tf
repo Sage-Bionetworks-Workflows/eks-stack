@@ -45,25 +45,29 @@ module "vpc" {
   enable_vpn_gateway = false
   single_nat_gateway = true
 
+  manage_default_security_group = true
+  # default_security_group_egress = []
+  # default_security_group_ingress = []
   # Disable inbound rules for the default network ACL
-  default_network_acl_ingress = [
-    {
-      "action" : "deny",
-      "cidr_block" : "0.0.0.0/0",
-      "from_port" : 0,
-      "protocol" : "-1",
-      "rule_no" : 100,
-      "to_port" : 0
-    },
-    {
-      "action" : "deny",
-      "from_port" : 0,
-      "ipv6_cidr_block" : "::/0",
-      "protocol" : "-1",
-      "rule_no" : 101,
-      "to_port" : 0
-    }
-  ]
+  # TODO: Another mechanism is required. Having these rules prevents nodes from joining the cluster
+  # default_network_acl_ingress = [
+  #   {
+  #     "action" : "deny",
+  #     "cidr_block" : "0.0.0.0/0",
+  #     "from_port" : 0,
+  #     "protocol" : "-1",
+  #     "rule_no" : 98,
+  #     "to_port" : 0
+  #   },
+  #   {
+  #     "action" : "deny",
+  #     "from_port" : 0,
+  #     "ipv6_cidr_block" : "::/0",
+  #     "protocol" : "-1",
+  #     "rule_no" : 99,
+  #     "to_port" : 0
+  #   }
+  # ]
 
   tags = merge(
     var.tags,
@@ -76,7 +80,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.10"
+  version = "~> 20.12"
   # version = "~> 20.9"
 
   depends_on = [module.vpc]
@@ -103,6 +107,7 @@ module "eks" {
 
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
+  control_plane_subnet_ids  = module.vpc.intra_subnets
   cluster_security_group_id = module.vpc.default_security_group_id
 
 
@@ -114,15 +119,16 @@ module "eks" {
   eks_managed_node_groups = {
     one = {
       name         = var.eks_nodeGroup
-      desired_size = 0
+      desired_size = 1
       min_size     = 0
-      max_size     = 1
+      max_size     = 2
 
       instance_types = ["t3.large"]
       capacity_type  = "SPOT"
       iam_role_additional_policies = {
         AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
         SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+        WorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
       }
     }
     # ,
@@ -139,6 +145,7 @@ module "eks" {
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
     SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+    WorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   }
 
   # Cluster access entry
@@ -151,7 +158,7 @@ module "eks" {
     # One access entry with a policy associated
     eks_admin_role = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::766808016710:role/eks_admin_role"
+      principal_arn     = aws_iam_role.admin_role.arn
 
       policy_associations = {
         eks_admin_role = {
