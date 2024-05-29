@@ -59,7 +59,7 @@ resource "helm_release" "airflow" {
   chart      = "airflow"
   namespace  = "airflow"
   version    = "1.11.0"
-  depends_on = [kubernetes_namespace.airflow]
+  depends_on = [kubernetes_namespace.airflow, module.ocean-controller, module.ocean-aws-k8s]
 
   # https://github.com/hashicorp/terraform-provider-helm/issues/683#issuecomment-830872443
   wait = false
