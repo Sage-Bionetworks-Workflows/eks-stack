@@ -49,24 +49,25 @@ module "vpc" {
   # default_security_group_egress = []
   # default_security_group_ingress = []
   # Disable inbound rules for the default network ACL
-  default_network_acl_ingress = [
-    {
-      "action" : "deny",
-      "cidr_block" : "0.0.0.0/0",
-      "from_port" : 0,
-      "protocol" : "-1",
-      "rule_no" : 98,
-      "to_port" : 0
-    },
-    {
-      "action" : "deny",
-      "from_port" : 0,
-      "ipv6_cidr_block" : "::/0",
-      "protocol" : "-1",
-      "rule_no" : 99,
-      "to_port" : 0
-    }
-  ]
+  # TODO: Another mechanism is required. Having these rules prevents nodes from joining the cluster
+  # default_network_acl_ingress = [
+  #   {
+  #     "action" : "deny",
+  #     "cidr_block" : "0.0.0.0/0",
+  #     "from_port" : 0,
+  #     "protocol" : "-1",
+  #     "rule_no" : 98,
+  #     "to_port" : 0
+  #   },
+  #   {
+  #     "action" : "deny",
+  #     "from_port" : 0,
+  #     "ipv6_cidr_block" : "::/0",
+  #     "protocol" : "-1",
+  #     "rule_no" : 99,
+  #     "to_port" : 0
+  #   }
+  # ]
 
   tags = merge(
     var.tags,
