@@ -14,12 +14,17 @@ data "aws_secretsmanager_secret_version" "secret_credentials" {
   secret_id = data.aws_secretsmanager_secret.spotinst_token.id
 }
 
-# TODO: This should search for the VPC using some other value as ID would change
-# on first startup and teardown/restart
+data "aws_vpc" "selected" {
+  filter {
+    name   = "tag:Name"
+    values = ["spacelift-created-vpc"]
+  }
+}
+
 data "aws_subnets" "node_subnets" {
   filter {
     name   = "vpc-id"
-    values = ["vpc-099c17a4a0215942c"]
+    values = [data.aws_vpc.selected.id]
   }
 }
 
