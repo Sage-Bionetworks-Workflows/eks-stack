@@ -61,6 +61,13 @@ resource "aws_iam_instance_profile" "profile" {
   role = aws_iam_role.work_profile_iam_role.name
 }
 
+resource "aws_eks_access_entry" "example" {
+  cluster_name      = var.cluster_name
+  principal_arn     = aws_iam_instance_profile.profile.arn
+  kubernetes_groups = ["system:nodes"]
+  type              = "EC2_LINUX"
+}
+
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.2.0"
