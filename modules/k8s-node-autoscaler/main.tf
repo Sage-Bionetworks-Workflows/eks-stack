@@ -19,10 +19,10 @@ resource "aws_iam_role" "work_profile_iam_role" {
 }
 
 
-# resource "aws_iam_role_policy_attachment" "a1" {
-#   role       = aws_iam_role.work_profile_iam_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
-# }
+resource "aws_iam_role_policy_attachment" "a1" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
 
 resource "aws_iam_role_policy_attachment" "a2" {
   role       = aws_iam_role.work_profile_iam_role.name
@@ -53,7 +53,6 @@ resource "aws_iam_instance_profile" "profile" {
 resource "aws_eks_access_entry" "example" {
   cluster_name      = var.cluster_name
   principal_arn     = aws_iam_role.work_profile_iam_role.arn
-  # kubernetes_groups = ["system:nodes"]
   type              = "EC2_LINUX"
   tags = var.tags
 }
@@ -84,4 +83,24 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = var.cluster_name
+  addon_name   = "coredns"
+
+  depends_on = [
+    module.ocean-controller,
+    module.ocean-aws-k8s,
+  ]
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = var.cluster_name
+  addon_name   = "aws-ebs-csi-driver"
+  
+  depends_on = [
+    module.ocean-controller,
+    module.ocean-aws-k8s,
+  ]
 }
