@@ -31,27 +31,27 @@ resource "aws_iam_role" "work_profile_iam_role" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "1" {
+resource "aws_iam_role_policy_attachment" "a1" {
   role       = aws_iam_role.work_profile_iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "2" {
+resource "aws_iam_role_policy_attachment" "a2" {
   role       = aws_iam_role.work_profile_iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-resource "aws_iam_role_policy_attachment" "3" {
+resource "aws_iam_role_policy_attachment" "a3" {
   role       = aws_iam_role.work_profile_iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
-resource "aws_iam_role_policy_attachment" "4" {
+resource "aws_iam_role_policy_attachment" "a4" {
   role       = aws_iam_role.work_profile_iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "5" {
+resource "aws_iam_role_policy_attachment" "a5" {
   role       = aws_iam_role.work_profile_iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
