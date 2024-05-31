@@ -14,8 +14,8 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = var.kube_config_path
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     config_path = var.kube_config_path
+#   }
+# }
