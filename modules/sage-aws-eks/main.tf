@@ -17,6 +17,25 @@ resource "aws_iam_role" "admin_role" {
   tags = var.tags
 }
 
+resource "aws_iam_role" "viewer_role" {
+  name = "eks_viewer_role_${var.cluster_name}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:sts::766808016710:assumed-role/AWSReservedSSO_Developer_92af2c086e7e7f38/bryan.fauble@sagebase.org"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+
+  tags = var.tags
+}
+
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.admin_role.name
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
@@ -76,6 +95,19 @@ module "eks" {
       policy_associations = {
         eks_admin_role = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+    eks_viewer_role = {
+      kubernetes_groups = []
+      principal_arn     = aws_iam_role.viewer_role.arn
+
+      policy_associations = {
+        eks_admin_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
           access_scope = {
             type = "cluster"
           }
