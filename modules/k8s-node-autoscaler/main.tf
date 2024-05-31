@@ -31,10 +31,10 @@ resource "aws_iam_role" "work_profile_iam_role" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "a1" {
-  role       = aws_iam_role.work_profile_iam_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
-}
+# resource "aws_iam_role_policy_attachment" "a1" {
+#   role       = aws_iam_role.work_profile_iam_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
+# }
 
 resource "aws_iam_role_policy_attachment" "a2" {
   role       = aws_iam_role.work_profile_iam_role.name
@@ -56,6 +56,10 @@ resource "aws_iam_role_policy_attachment" "a5" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
 
+resource "aws_iam_instance_profile" "profile" {
+  name = "aws_eks_profile_${var.cluster_name}"
+  role = aws_iam_role.work_profile_iam_role.name
+}
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
@@ -66,7 +70,7 @@ module "ocean-aws-k8s" {
   cluster_name                     = var.cluster_name
   region                           = var.region
   subnet_ids                       = data.aws_subnets.private.ids
-  worker_instance_profile_arn      = aws_iam_role.work_profile_iam_role.arn
+  worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
   security_groups                  = [data.aws_security_group.eks_node_security_group.id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
