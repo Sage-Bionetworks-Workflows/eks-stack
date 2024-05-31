@@ -49,7 +49,7 @@ module "eks" {
     # }
   }
 # TODO: The AWS EBS CSI driver is not working right for some reason. PVC are made, but storage is not being allocated. Determine why
-  vpc_id                    = data.vpc.id
+  vpc_id                    = data.aws_vpc.selected.id
   subnet_ids                = data.aws_subnets.private.ids
   # TODO
   # control_plane_subnet_ids  = data.vpc.intra_subnets module.vpc.intra_subnets
