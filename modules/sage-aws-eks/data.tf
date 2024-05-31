@@ -29,4 +29,10 @@ data "aws_subnets" "private" {
 
 data "aws_security_group" "vpc" {
   vpc_id = data.aws_vpc.selected.id
+
+  filter {
+    name   = "tag:Name"
+    values = ["spacelift-created-vpc-default"]
+  }
+
 }
