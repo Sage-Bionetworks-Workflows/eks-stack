@@ -1,15 +1,3 @@
-# module "ocean-controller" {
-#   source = "spotinst/ocean-controller/spotinst"
-#   version = "0.54.0"
-
-#   # Credentials.
-#   spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-#   spotinst_account = var.spotinst_account
-
-#   # Configuration.
-#   cluster_identifier = var.cluster_name
-# }
-
 resource "aws_iam_role" "work_profile_iam_role" {
   name = "work_profile_iam_role_${var.cluster_name}"
 
@@ -57,7 +45,7 @@ resource "aws_iam_role_policy_attachment" "a5" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "aws_eks_profile_${var.cluster_name}"
+  name = "eks_profile_${var.cluster_name}"
   role = aws_iam_role.work_profile_iam_role.name
 }
 
@@ -67,6 +55,18 @@ resource "aws_eks_access_entry" "example" {
   kubernetes_groups = ["system:nodes"]
   type              = "EC2_LINUX"
 }
+
+# module "ocean-controller" {
+#   source = "spotinst/ocean-controller/spotinst"
+#   version = "0.54.0"
+
+#   # Credentials.
+#   spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+#   spotinst_account = var.spotinst_account
+
+#   # Configuration.
+#   cluster_identifier = var.cluster_name
+# }
 
 # module "ocean-aws-k8s" {
 #   source  = "spotinst/ocean-aws-k8s/spotinst"
