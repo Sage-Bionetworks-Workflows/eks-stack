@@ -95,10 +95,10 @@ resource "aws_eks_addon" "coredns" {
   ]
 }
 
-resource "aws_eks_addon" "coredns" {
+resource "aws_eks_addon" "ebs-csi-driver" {
   cluster_name = var.cluster_name
   addon_name   = "aws-ebs-csi-driver"
-  
+
   depends_on = [
     module.ocean-controller,
     module.ocean-aws-k8s,
