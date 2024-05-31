@@ -33,15 +33,6 @@ data "aws_subnets" "private" {
   }
 }
 
-data "aws_eks_node_groups" "node_groups" {
-  cluster_name = var.cluster_name
-}
-
-data "aws_eks_node_group" "node_group" {
-  cluster_name    = var.cluster_name
-  node_group_name = data.aws_eks_node_groups.node_groups[0].id
-}
-
 data "aws_security_group" "eks_node_security_group" {
   tags = {
     Name = "${var.cluster_name}-node"
