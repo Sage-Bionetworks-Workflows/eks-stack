@@ -53,7 +53,7 @@ resource "aws_iam_instance_profile" "profile" {
 resource "aws_eks_access_entry" "example" {
   cluster_name      = var.cluster_name
   principal_arn     = aws_iam_role.work_profile_iam_role.arn
-  kubernetes_groups = ["system:nodes"]
+  # kubernetes_groups = ["system:nodes"]
   type              = "EC2_LINUX"
   tags = var.tags
 }
