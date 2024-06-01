@@ -104,3 +104,24 @@ resource "aws_eks_addon" "ebs-csi-driver" {
     module.ocean-aws-k8s,
   ]
 }
+
+data "kubernetes_storage_class" "existing" {
+  metadata {
+    name = "gp2"
+  }
+}
+
+resource "kubernetes_storage_class" "default" {
+  depends_on = [aws_eks_addon.ebs-csi-driver]
+
+  metadata {
+    name = data.kubernetes_storage_class.existing.metadata.0.name
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+  storage_provisioner = data.kubernetes_storage_class.existing.storage_provisioner
+  reclaim_policy      = data.kubernetes_storage_class.existing.reclaim_policy
+  parameters          = data.kubernetes_storage_class.existing.parameters
+  volume_binding_mode = data.kubernetes_storage_class.existing.volume_binding_mode
+}
