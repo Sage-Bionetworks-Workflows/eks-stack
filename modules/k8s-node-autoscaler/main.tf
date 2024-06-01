@@ -121,5 +121,4 @@ resource "kubernetes_storage_class" "default" {
   volume_binding_mode     = data.kubernetes_storage_class.existing.volume_binding_mode
   allow_volume_expansion  = data.kubernetes_storage_class.existing.allow_volume_expansion
   mount_options           = data.kubernetes_storage_class.existing.mount_options
-  allowed_topologies      = data.kubernetes_storage_class.existing.allowed_topologies
 }
