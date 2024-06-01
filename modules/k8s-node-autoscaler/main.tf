@@ -113,6 +113,6 @@ resource "null_resource" "patch_storage_class" {
   }
 
   triggers = {
-    ebs_csi_driver_version = aws_eks_addon.ebs-csi-driver.version
+    status = aws_eks_addon.ebs-csi-driver.status
   }
 }
