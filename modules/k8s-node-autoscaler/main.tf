@@ -105,14 +105,21 @@ resource "aws_eks_addon" "ebs-csi-driver" {
   ]
 }
 
-resource "null_resource" "patch_storage_class" {
+resource "kubernetes_storage_class" "default" {
   depends_on = [aws_eks_addon.ebs-csi-driver]
 
-  provisioner "local-exec" {
-    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
+  metadata {
+    name = "gp2_default"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
   }
 
-  triggers = {
-    addon_version = aws_eks_addon.ebs-csi-driver.addon_version
-  }
+  storage_provisioner     = data.kubernetes_storage_class.existing.storage_provisioner
+  reclaim_policy          = data.kubernetes_storage_class.existing.reclaim_policy
+  parameters              = data.kubernetes_storage_class.existing.parameters
+  volume_binding_mode     = data.kubernetes_storage_class.existing.volume_binding_mode
+  allow_volume_expansion  = data.kubernetes_storage_class.existing.allow_volume_expansion
+  mount_options           = data.kubernetes_storage_class.existing.mount_options
+  allowed_topologies      = data.kubernetes_storage_class.existing.allowed_topologies
 }
