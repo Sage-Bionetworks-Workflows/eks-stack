@@ -109,7 +109,7 @@ resource "kubernetes_storage_class" "default" {
   depends_on = [aws_eks_addon.ebs-csi-driver]
 
   metadata {
-    name = "gp2_default"
+    name = "gp2-default"
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
