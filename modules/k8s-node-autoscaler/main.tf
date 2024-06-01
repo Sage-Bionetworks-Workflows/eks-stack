@@ -88,6 +88,7 @@ module "ocean-aws-k8s" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = var.cluster_name
   addon_name   = "coredns"
+  tags         = var.tags
 
   depends_on = [
     module.ocean-controller,
@@ -98,6 +99,7 @@ resource "aws_eks_addon" "coredns" {
 resource "aws_eks_addon" "ebs-csi-driver" {
   cluster_name = var.cluster_name
   addon_name   = "aws-ebs-csi-driver"
+  tags         = var.tags
 
   depends_on = [
     module.ocean-controller,
