@@ -1,3 +1,62 @@
+resource "aws_iam_role" "work_profile_iam_role" {
+  name = "work_profile_iam_role_${var.cluster_name}"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EKSNodeAssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+  })
+
+  tags = var.tags
+}
+
+
+resource "aws_iam_role_policy_attachment" "a1" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "a2" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "a3" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "a4" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "a5" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+}
+
+resource "aws_iam_instance_profile" "profile" {
+  name = "eks_profile_${var.cluster_name}"
+  role = aws_iam_role.work_profile_iam_role.name
+  tags = var.tags
+}
+
+resource "aws_eks_access_entry" "example" {
+  cluster_name      = var.cluster_name
+  principal_arn     = aws_iam_role.work_profile_iam_role.arn
+  type              = "EC2_LINUX"
+  tags = var.tags
+}
+
 module "ocean-controller" {
   source = "spotinst/ocean-controller/spotinst"
   version = "0.54.0"
@@ -18,10 +77,50 @@ module "ocean-aws-k8s" {
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = data.aws_subnets.node_subnets.ids
-  worker_instance_profile_arn      = tolist(data.aws_eks_node_group.node_group.node_role_arn)[0]
-  security_groups                  = [data.aws_security_group.eks_cluster_security_group.id]
+  subnet_ids                       = data.aws_subnets.private.ids
+  worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
+  security_groups                  = [data.aws_security_group.eks_node_security_group.id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = var.cluster_name
+  addon_name   = "coredns"
+  tags         = var.tags
+
+  depends_on = [
+    module.ocean-controller,
+    module.ocean-aws-k8s,
+  ]
+}
+
+resource "aws_eks_addon" "ebs-csi-driver" {
+  cluster_name = var.cluster_name
+  addon_name   = "aws-ebs-csi-driver"
+  tags         = var.tags
+
+  depends_on = [
+    module.ocean-controller,
+    module.ocean-aws-k8s,
+  ]
+}
+
+resource "kubernetes_storage_class" "default" {
+  depends_on = [aws_eks_addon.ebs-csi-driver]
+
+  metadata {
+    name = "gp2-default"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+
+  storage_provisioner     = data.kubernetes_storage_class.existing.storage_provisioner
+  reclaim_policy          = data.kubernetes_storage_class.existing.reclaim_policy
+  parameters              = data.kubernetes_storage_class.existing.parameters
+  volume_binding_mode     = data.kubernetes_storage_class.existing.volume_binding_mode
+  allow_volume_expansion  = data.kubernetes_storage_class.existing.allow_volume_expansion
+  mount_options           = data.kubernetes_storage_class.existing.mount_options
 }

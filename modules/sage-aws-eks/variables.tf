@@ -4,22 +4,16 @@ variable "cluster_name" {
   default     = "dpe-k8-dev"
 }
 
+variable "cluster_version" {
+  description = "Version of K8 cluster"
+  type        = string
+  default     = "1.30"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
-}
-
-variable "kube_config_path" {
-  description = "Kube config path"
-  type        = string
-  default     = "~/.kube/config"
-}
-
-variable "spotinst_account" {
-  description = "Spot.io account"
-  type        = string
-  default     = "act-ac6522b4"
 }
 
 variable "tags" {
