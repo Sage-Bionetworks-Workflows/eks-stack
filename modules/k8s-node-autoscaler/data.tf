@@ -41,6 +41,6 @@ data "aws_security_group" "eks_node_security_group" {
 
 data "kubernetes_storage_class" "existing" {
   metadata {
-    name = "gp2"
+    name = "gp3"
   }
 }

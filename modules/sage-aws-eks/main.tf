@@ -51,23 +51,14 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   cluster_addons = {
-    # coredns = {
-    #   most_recent = true
-    # }
     kube-proxy = {
       most_recent = true
     }
     vpc-cni = {
       most_recent = true
     }
-    # TODO When the cluster is created we need to set the gp2 storageclass as default:
-    # kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-    # This way any PVC that is created will use gp2 as the default storage class
-    # aws-ebs-csi-driver = {
-    #   most_recent = true
-    # }
   }
-# TODO: The AWS EBS CSI driver is not working right for some reason. PVC are made, but storage is not being allocated. Determine why
+
   vpc_id                    = data.aws_vpc.selected.id
   subnet_ids                = data.aws_subnets.private.ids
   # TODO
@@ -114,12 +105,6 @@ module "eks" {
         }
       }
     }
-    # https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html#access-policy-permissions
-    # TODO: Additional roles that need to be created:
-    # AmazonEKSAdminViewPolicy?
-    # AmazonEKSEditPolicy
-    # AmazonEKSViewPolicy
-
   }
   tags = var.tags
 }
