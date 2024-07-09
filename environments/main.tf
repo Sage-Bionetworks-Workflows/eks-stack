@@ -22,9 +22,10 @@ resource "spacelift_stack" "root_administrative_stack" {
 }
 
 resource "spacelift_space" "environment" {
-  name            = "environment"
-  parent_space_id = "root"
-  description     = "Contains all the resources to deploy out to each enviornment."
+  name             = "environment"
+  parent_space_id  = "root"
+  description      = "Contains all the resources to deploy out to each enviornment."
+  inherit_entities = true
 }
 
 module "terraform-registry" {

@@ -1,7 +1,8 @@
 resource "spacelift_space" "dpe-sandbox" {
-  name            = "dpe-sandbox"
-  parent_space_id = var.parent_space_id
-  description     = "Contains resources for the DPE team for sandbox testing."
+  name             = "dpe-sandbox"
+  parent_space_id  = var.parent_space_id
+  description      = "Contains resources for the DPE team for sandbox testing."
+  inherit_entities = true
 }
 
 resource "spacelift_stack" "k8s-stack" {
