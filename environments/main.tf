@@ -19,6 +19,9 @@ resource "spacelift_stack" "root_administrative_stack" {
   terraform_workflow_tool = "OPEN_TOFU"
   repository              = "eks-stack"
   space_id                = "root"
+  additional_project_globs = [
+    "modules/*",
+  ]
 }
 
 resource "spacelift_space" "environment" {
