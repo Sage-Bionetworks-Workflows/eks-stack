@@ -69,6 +69,18 @@ resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
   input_name          = "TF_VAR_security_group_id"
 }
 
+resource "spacelift_stack_dependency_reference" "region-name" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "region"
+  input_name          = "REGION"
+}
+
+resource "spacelift_stack_dependency_reference" "cluster-name" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "cluster_name"
+  input_name          = "CLUSTER_NAME"
+}
+
 # resource "spacelift_policy_attachment" "policy-attachment" {
 #   policy_id = each.value.policy_id
 #   stack_id  = spacelift_stack.k8s-stack.id

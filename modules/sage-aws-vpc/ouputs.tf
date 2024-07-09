@@ -9,3 +9,7 @@ output "private_subnet_ids" {
 output "security_group_id" {
   value = module.vpc.default_security_group_id
 }
+
+output "region" {
+  value = var.region
+}
