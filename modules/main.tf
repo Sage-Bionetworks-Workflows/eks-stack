@@ -52,7 +52,7 @@ resource "spacelift_context" "k8s-kubeconfig" {
   name        = "Kubernetes Deployments Kubeconfig"
 
   before_init = [
-    "aws eks update-kubeconfig --region ${var.region} --name ${var.cluster_name}"
+    "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
   ]
 }
 
