@@ -9,7 +9,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   branch            = "ibcdpe-935-vpc-updates"
   description       = "Manages other spacelift resources"
   name              = "Root Spacelift Administrative Stack"
-  project_root      = "spacelift"
+  project_root      = "environments"
   repository        = "eks-stack"
   terraform_version = "1.5.7"
   space_id          = "root"
