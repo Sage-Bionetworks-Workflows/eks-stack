@@ -1,3 +1,7 @@
+import {
+  to = spacelift_stack.root_administrative_stack
+  id = "root-spacelift-administrative-stack"
+}
 resource "spacelift_stack" "root_administrative_stack" {
   github_enterprise {
     namespace = "Sage-Bionetworks-Workflows"
