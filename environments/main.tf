@@ -33,15 +33,22 @@ resource "spacelift_space" "environment" {
 
 module "terraform-registry" {
   source = "../modules"
+  depends_on = [
+    spacelift_stack.root_administrative_stack,
+  ]
 }
 
 module "common" {
   source = "./common"
+  depends_on = [
+    spacelift_stack.root_administrative_stack,
+  ]
 }
 
 module "dev-resources" {
   source = "./dev"
   depends_on = [
+    spacelift_stack.root_administrative_stack,
     module.common,
     module.terraform-registry,
   ]
