@@ -7,7 +7,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:root" # Replace YOUR_AWS_ACCOUNT_ID with your actual AWS account ID
+          AWS = "arn:aws:iam::766808016710:root"
         }
         Action = "sts:AssumeRole"
       },
@@ -17,24 +17,24 @@ resource "aws_iam_role" "admin_role" {
   tags = var.tags
 }
 
-resource "aws_iam_role" "viewer_role" {
-  name = "eks_viewer_role_${var.cluster_name}"
+# resource "aws_iam_role" "viewer_role" {
+#   name = "eks_viewer_role_${var.cluster_name}"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:sts::766808016710:assumed-role/AWSReservedSSO_Developer_92af2c086e7e7f38/bryan.fauble@sagebase.org"
-        }
-        Action = "sts:AssumeRole"
-      },
-    ]
-  })
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Principal = {
+#           AWS = "arn:aws:sts::766808016710:assumed-role/AWSReservedSSO_Developer_92af2c086e7e7f38/bryan.fauble@sagebase.org"
+#         }
+#         Action = "sts:AssumeRole"
+#       },
+#     ]
+#   })
 
-  tags = var.tags
-}
+#   tags = var.tags
+# }
 
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.admin_role.name
@@ -48,7 +48,7 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
-  cluster_endpoint_public_access = true
+  cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
   cluster_addons = {
@@ -106,19 +106,19 @@ module "eks" {
         }
       }
     }
-    eks_viewer_role = {
-      kubernetes_groups = []
-      principal_arn     = aws_iam_role.viewer_role.arn
+    # eks_viewer_role = {
+    #   kubernetes_groups = []
+    #   principal_arn     = aws_iam_role.viewer_role.arn
 
-      policy_associations = {
-        eks_admin_role = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
+    #   policy_associations = {
+    #     eks_admin_role = {
+    #       policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+    #       access_scope = {
+    #         type = "cluster"
+    #       }
+    #     }
+    #   }
+    # }
   }
   tags = var.tags
 }
@@ -173,142 +173,142 @@ module "eks" {
 # Restrict traffic flow using Network Policies
 ################################################################################
 
-# Block all ingress and egress traffic within the stars namespace
-resource "kubernetes_network_policy" "default_deny_stars" {
-  metadata {
-    name      = "default-deny"
-    namespace = "stars"
-  }
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {}
-    }
-  }
-  depends_on = [module.addons]
-}
+# # Block all ingress and egress traffic within the stars namespace
+# resource "kubernetes_network_policy" "default_deny_stars" {
+#   metadata {
+#     name      = "default-deny"
+#     namespace = "stars"
+#   }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {}
+#     }
+#   }
+#   depends_on = [module.addons]
+# }
 
-# Block all ingress and egress traffic within the client namespace
-resource "kubernetes_network_policy" "default_deny_client" {
-  metadata {
-    name      = "default-deny"
-    namespace = "client"
-  }
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {}
-    }
-  }
-  depends_on = [module.addons]
-}
+# # Block all ingress and egress traffic within the client namespace
+# resource "kubernetes_network_policy" "default_deny_client" {
+#   metadata {
+#     name      = "default-deny"
+#     namespace = "client"
+#   }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {}
+#     }
+#   }
+#   depends_on = [module.addons]
+# }
 
-# Allow the management-ui to access the star application pods
-resource "kubernetes_network_policy" "allow_ui_to_stars" {
-  metadata {
-    name      = "allow-ui"
-    namespace = "stars"
-  }
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {}
-    }
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            role = "management-ui"
-          }
-        }
-      }
-    }
-  }
-  depends_on = [module.addons]
-}
+# # Allow the management-ui to access the star application pods
+# resource "kubernetes_network_policy" "allow_ui_to_stars" {
+#   metadata {
+#     name      = "allow-ui"
+#     namespace = "stars"
+#   }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {}
+#     }
+#     ingress {
+#       from {
+#         namespace_selector {
+#           match_labels = {
+#             role = "management-ui"
+#           }
+#         }
+#       }
+#     }
+#   }
+#   depends_on = [module.addons]
+# }
 
-# Allow the management-ui to access the client application pods
-resource "kubernetes_network_policy" "allow_ui_to_client" {
-  metadata {
-    name      = "allow-ui"
-    namespace = "client"
-  }
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {}
-    }
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            role = "management-ui"
-          }
-        }
-      }
-    }
-  }
-  depends_on = [module.addons]
-}
+# # Allow the management-ui to access the client application pods
+# resource "kubernetes_network_policy" "allow_ui_to_client" {
+#   metadata {
+#     name      = "allow-ui"
+#     namespace = "client"
+#   }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {}
+#     }
+#     ingress {
+#       from {
+#         namespace_selector {
+#           match_labels = {
+#             role = "management-ui"
+#           }
+#         }
+#       }
+#     }
+#   }
+#   depends_on = [module.addons]
+# }
 
-# Allow the frontend pod to access the backend pod within the stars namespace
-resource "kubernetes_network_policy" "allow_frontend_to_backend" {
-  metadata {
-    name      = "backend-policy"
-    namespace = "stars"
-  }
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {
-        role = "backend"
-      }
-    }
-    ingress {
-      from {
-        pod_selector {
-          match_labels = {
-            role = "frontend"
-          }
-        }
-      }
-      ports {
-        protocol = "TCP"
-        port     = "6379"
-      }
-    }
-  }
-  depends_on = [module.addons]
-}
+# # Allow the frontend pod to access the backend pod within the stars namespace
+# resource "kubernetes_network_policy" "allow_frontend_to_backend" {
+#   metadata {
+#     name      = "backend-policy"
+#     namespace = "stars"
+#   }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {
+#         role = "backend"
+#       }
+#     }
+#     ingress {
+#       from {
+#         pod_selector {
+#           match_labels = {
+#             role = "frontend"
+#           }
+#         }
+#       }
+#       ports {
+#         protocol = "TCP"
+#         port     = "6379"
+#       }
+#     }
+#   }
+#   depends_on = [module.addons]
+# }
 
-# Allow the client pod to access the frontend pod within the stars namespace
-resource "kubernetes_network_policy" "allow_client_to_backend" {
-  metadata {
-    name      = "frontend-policy"
-    namespace = "stars"
-  }
+# # Allow the client pod to access the frontend pod within the stars namespace
+# resource "kubernetes_network_policy" "allow_client_to_backend" {
+#   metadata {
+#     name      = "frontend-policy"
+#     namespace = "stars"
+#   }
 
-  spec {
-    policy_types = ["Ingress"]
-    pod_selector {
-      match_labels = {
-        role = "frontend"
-      }
-    }
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            role = "client"
-          }
-        }
-      }
-      ports {
-        protocol = "TCP"
-        port     = "80"
-      }
-    }
-  }
+#   spec {
+#     policy_types = ["Ingress"]
+#     pod_selector {
+#       match_labels = {
+#         role = "frontend"
+#       }
+#     }
+#     ingress {
+#       from {
+#         namespace_selector {
+#           match_labels = {
+#             role = "client"
+#           }
+#         }
+#       }
+#       ports {
+#         protocol = "TCP"
+#         port     = "80"
+#       }
+#     }
+#   }
 
-  depends_on = [module.addons]
-}
+#   depends_on = [module.addons]
+# }

@@ -11,7 +11,7 @@ data "aws_eks_cluster_auth" "cluster" {
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Name"
-    values = ["spacelift-created-vpc"]
+    values = [var.vpc_name]
   }
 }
 
@@ -32,7 +32,7 @@ data "aws_security_group" "vpc" {
 
   filter {
     name   = "tag:Name"
-    values = ["spacelift-created-vpc-default"]
+    values = ["${var.vpc_name}-default"]
   }
 
 }

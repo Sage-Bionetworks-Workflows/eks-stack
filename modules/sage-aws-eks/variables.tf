@@ -23,3 +23,8 @@ variable "tags" {
     "CostCenter" = "No Program / 000000"
   }
 }
+
+variable "vpc_name" {
+  description = "Name of the VPC to deploy the cluster to"
+  type        = string
+}
