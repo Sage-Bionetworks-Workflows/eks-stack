@@ -74,10 +74,10 @@ module "eks" {
     }
   }
 
-  vpc_id                    = data.aws_vpc.selected.id
-  subnet_ids                = data.aws_subnets.private.ids
-  control_plane_subnet_ids  = data.aws_subnets.private.ids
-  cluster_security_group_id = data.aws_security_group.vpc.id
+  vpc_id                    = var.vpc_id
+  subnet_ids                = var.private_vpc_subnet_ids
+  control_plane_subnet_ids  = var.private_vpc_subnet_ids
+  cluster_security_group_id = var.vpc_security_group_id
 
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",

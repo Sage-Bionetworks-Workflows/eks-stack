@@ -24,7 +24,17 @@ variable "tags" {
   }
 }
 
-variable "vpc_name" {
-  description = "Name of the VPC to deploy the cluster to"
+variable "vpc_id" {
+  description = "ID of the VPC to deploy the cluster to"
+  type        = string
+}
+
+variable "private_vpc_subnet_ids" {
+  description = "List of private subnets to deploy the cluster to"
+  type        = list(string)
+}
+
+variable "vpc_security_group_id" {
+  description = "Security group ID to attach to the EKS cluster"
   type        = string
 }
