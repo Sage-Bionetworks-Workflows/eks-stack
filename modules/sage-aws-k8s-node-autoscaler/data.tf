@@ -14,8 +14,3 @@ data "aws_secretsmanager_secret_version" "secret_credentials" {
   secret_id = data.aws_secretsmanager_secret.spotinst_token.id
 }
 
-data "kubernetes_storage_class" "existing" {
-  metadata {
-    name = "gp3"
-  }
-}

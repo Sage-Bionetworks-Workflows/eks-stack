@@ -110,16 +110,18 @@ resource "kubernetes_storage_class" "default" {
   depends_on = [aws_eks_addon.ebs-csi-driver]
 
   metadata {
-    name = "gp3-default"
+    name = "gp3"
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
 
-  storage_provisioner    = data.kubernetes_storage_class.existing.storage_provisioner
-  reclaim_policy         = data.kubernetes_storage_class.existing.reclaim_policy
-  parameters             = data.kubernetes_storage_class.existing.parameters
-  volume_binding_mode    = data.kubernetes_storage_class.existing.volume_binding_mode
-  allow_volume_expansion = data.kubernetes_storage_class.existing.allow_volume_expansion
-  mount_options          = data.kubernetes_storage_class.existing.mount_options
+  storage_provisioner = "kubernetes.io/aws-ebs"
+  reclaim_policy      = "Delete"
+  parameters = {
+    "fsType" = "ext4"
+    "type"   = "gp3"
+  }
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = true
 }
