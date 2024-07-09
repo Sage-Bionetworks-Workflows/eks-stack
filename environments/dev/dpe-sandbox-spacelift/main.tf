@@ -41,6 +41,28 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   space_id                = spacelift_space.dpe-sandbox.id
 }
 
+resource "spacelift_stack_dependency" "k8s-stack-to-deployments" {
+  stack_id            = spacelift_stack.k8s-stack-deployments.id
+  depends_on_stack_id = spacelift_stack.k8s-stack.id
+}
+
+resource "spacelift_stack_dependency_reference" "vpc-id-reference" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "vpc_id"
+  input_name          = "TF_VAR_vpc_id"
+}
+
+resource "spacelift_stack_dependency_reference" "private-subnet-ids-reference" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "private_subnet_ids"
+  input_name          = "TF_VAR_private_subnet_ids"
+}
+
+resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "security_group_id"
+  input_name          = "TF_VAR_security_group_id"
+}
 
 # resource "spacelift_policy_attachment" "policy-attachment" {
 #   policy_id = each.value.policy_id
