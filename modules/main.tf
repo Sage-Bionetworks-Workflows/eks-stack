@@ -59,5 +59,5 @@ resource "spacelift_context" "k8s-kubeconfig" {
 
 resource "spacelift_context_attachment" "attachment" {
   context_id = spacelift_context.k8s-kubeconfig.id
-  module_id  = spacelift_module.sage-aws-eks.id
+  module_id  = spacelift_module.sage-aws-eks-autoscaler.id
 }
