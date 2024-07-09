@@ -11,6 +11,7 @@ resource "spacelift_module" "sage-aws-vpc" {
   description        = "Terraform module for creating a VPC in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-vpc"
+  space_id           = "root"
 }
 
 resource "spacelift_module" "sage-aws-eks" {
@@ -26,6 +27,7 @@ resource "spacelift_module" "sage-aws-eks" {
   description        = "Terraform module for creating an EKS cluster in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-eks"
+  space_id           = "root"
 }
 
 resource "spacelift_module" "sage-aws-eks-autoscaler" {
@@ -41,4 +43,5 @@ resource "spacelift_module" "sage-aws-eks-autoscaler" {
   description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-k8s-node-autoscaler"
+  space_id           = "root"
 }

@@ -1,4 +1,5 @@
 import {
+  # The initial administrative stack is created manually in the Spacelift UI, and imported
   to = spacelift_stack.root_administrative_stack
   id = "root-spacelift-administrative-stack"
 }
@@ -9,7 +10,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   }
 
   administrative          = true
-  autodeploy              = false
+  autodeploy              = true
   branch                  = "ibcdpe-935-vpc-updates"
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
