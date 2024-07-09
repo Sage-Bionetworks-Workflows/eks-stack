@@ -49,20 +49,34 @@ module "eks" {
   cluster_version = var.cluster_version
 
   cluster_endpoint_public_access = true
+  cluster_endpoint_private_access = true
 
   cluster_addons = {
     kube-proxy = {
       most_recent = true
     }
     vpc-cni = {
+      # TODO: ENABLE_POD_ENI=true
+      # https://aws.github.io/aws-eks-best-practices/networking/sgpp/
       most_recent = true
+      configuration_values = jsonencode({
+        enableNetworkPolicy = "true",
+        init = {
+          env = {
+            DISABLE_TCP_EARLY_DEMUX = "true"
+          }
+        }
+        env = {
+          ENABLE_POD_ENI                    = "true",
+          POD_SECURITY_GROUP_ENFORCING_MODE = "standard",
+          AWS_VPC_K8S_CNI_EXTERNALSNAT      = "true"
+      } })
     }
   }
 
   vpc_id                    = data.aws_vpc.selected.id
   subnet_ids                = data.aws_subnets.private.ids
-  # TODO
-  # control_plane_subnet_ids  = data.vpc.intra_subnets module.vpc.intra_subnets
+  control_plane_subnet_ids  = data.aws_subnets.private.ids
   cluster_security_group_id = data.aws_security_group.vpc.id
 
   iam_role_additional_policies = {
@@ -109,3 +123,192 @@ module "eks" {
   tags = var.tags
 }
 
+# resource "kubernetes_network_policy" "default_deny" {
+#   metadata {
+#     name      = "default-deny"
+#     namespace = "default"
+#   }
+
+#   spec {
+#     pod_selector {}
+
+#     policy_types = ["Ingress", "Egress"]
+#   }
+# }
+
+# resource "kubernetes_network_policy" "allow_dns_access" {
+#   metadata {
+#     name      = "allow-dns-access"
+#     namespace = "default"
+#   }
+
+#   spec {
+#     pod_selector {}
+
+#     policy_types = ["Egress"]
+
+#     egress {
+#       to {
+#         namespace_selector {
+#           match_labels = {
+#             "kubernetes.io/metadata.name" = "kube-system"
+#           }
+#         }
+#         pod_selector {
+#           match_labels = {
+#             "k8s-app" = "kube-dns"
+#           }
+#         }
+#       }
+
+#       ports {
+#         protocol = "UDP"
+#         port     = 53
+#       }
+#     }
+#   }
+# }
+
+################################################################################
+# Restrict traffic flow using Network Policies
+################################################################################
+
+# Block all ingress and egress traffic within the stars namespace
+resource "kubernetes_network_policy" "default_deny_stars" {
+  metadata {
+    name      = "default-deny"
+    namespace = "stars"
+  }
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {}
+    }
+  }
+  depends_on = [module.addons]
+}
+
+# Block all ingress and egress traffic within the client namespace
+resource "kubernetes_network_policy" "default_deny_client" {
+  metadata {
+    name      = "default-deny"
+    namespace = "client"
+  }
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {}
+    }
+  }
+  depends_on = [module.addons]
+}
+
+# Allow the management-ui to access the star application pods
+resource "kubernetes_network_policy" "allow_ui_to_stars" {
+  metadata {
+    name      = "allow-ui"
+    namespace = "stars"
+  }
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {}
+    }
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "management-ui"
+          }
+        }
+      }
+    }
+  }
+  depends_on = [module.addons]
+}
+
+# Allow the management-ui to access the client application pods
+resource "kubernetes_network_policy" "allow_ui_to_client" {
+  metadata {
+    name      = "allow-ui"
+    namespace = "client"
+  }
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {}
+    }
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "management-ui"
+          }
+        }
+      }
+    }
+  }
+  depends_on = [module.addons]
+}
+
+# Allow the frontend pod to access the backend pod within the stars namespace
+resource "kubernetes_network_policy" "allow_frontend_to_backend" {
+  metadata {
+    name      = "backend-policy"
+    namespace = "stars"
+  }
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {
+        role = "backend"
+      }
+    }
+    ingress {
+      from {
+        pod_selector {
+          match_labels = {
+            role = "frontend"
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = "6379"
+      }
+    }
+  }
+  depends_on = [module.addons]
+}
+
+# Allow the client pod to access the frontend pod within the stars namespace
+resource "kubernetes_network_policy" "allow_client_to_backend" {
+  metadata {
+    name      = "frontend-policy"
+    namespace = "stars"
+  }
+
+  spec {
+    policy_types = ["Ingress"]
+    pod_selector {
+      match_labels = {
+        role = "frontend"
+      }
+    }
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "client"
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = "80"
+      }
+    }
+  }
+
+  depends_on = [module.addons]
+}

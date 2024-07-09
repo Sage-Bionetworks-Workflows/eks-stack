@@ -1,3 +1,26 @@
+# Purpose
+
+This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spacelift.
+
+# Directory Structure
+```
+.
+├── environments: Contains all the "Things" that are going to be deployed
+│   ├── common: Resources that are environment independent
+│   │   └── policies: Rego policies that can be attached to 0..* spacelift stacks
+│   └── dev: Development/sandbox environment
+│       ├── dpe-sandbox-k8s: K8s + supporting AWS resources
+│       ├── dpe-sandbox-k8s-deployments: Resources deployed inside of a K8s cluster
+│       └── dpe-sandbox-spacelift: Spacelift specific resources to manage the CI/CD pipeline
+└── modules: Templatized collections of terraform resources that are used in a stack
+    ├── apache-airflow: K8s deployment for apache airflow
+    │   └── templates
+    ├── k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
+    ├── sage-aws-eks: Sage specific EKS cluster for AWS
+    └── sage-aws-vpc: Sage specific VPC for AWS
+```
+
+
 # EKS-stack
 
 Leveraging spot.io, we spin up an EKS stack behind an existing private VPC that has scale-to-zero capabilities. To deploy this stack:

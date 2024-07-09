@@ -33,10 +33,17 @@ module "vpc" {
   private_subnets = var.private_subnet_cidrs
   public_subnets  = var.public_subnet_cidrs
 
-  private_subnet_tags = {
-    Name = "private"
+
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = 1
+    Name = "public"
   }
 
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    Name = "private"
+  }
+  
   # When removing the Internet gateway it might have allocated from elastic IP addresses
   # Turn off the nat_gateway to force the IP addresses to be removed
   # > "Network vpc-0f30cfca319ebc521 has some mapped public address(es). Please unmap those public address(es) before detaching the gateway.""

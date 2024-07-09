@@ -3,10 +3,10 @@ resource "spacelift_stack" "root_administrative_stack" {
     namespace = "Sage-Bionetworks-Workflows"
     id        = "sage-bionetworks-workflows-gh"
   }
-  
+
   administrative    = true
   autodeploy        = false
-  branch            = "main"
+  branch            = "ibcdpe-935-vpc-updates"
   description       = "Manages other spacelift resources"
   name              = "Root Spacelift Administrative Stack"
   project_root      = "spacelift"
@@ -15,17 +15,25 @@ resource "spacelift_stack" "root_administrative_stack" {
   space_id          = "root"
 }
 
-module "policies" {
-  source = "./modules/policies"
+resource "spacelift_space" "environment" {
+  name            = "environment"
+  parent_space_id = "root"
+  description     = "Contains all the resources to deploy out to each enviornment."
 }
 
-module "policy-attachments" {
-  source = "./modules/policy-attachments"
+module "terraform-registry" {
+  source = "../modules"
+}
+
+module "common" {
+  source = "./common"
+}
+
+module "dev-resources" {
+  source = "./dev"
   depends_on = [
-    module.policies
+    module.common,
+    module.terraform-registry,
   ]
-}
-
-module "stacks" {
-  source = "./modules/stacks"
+  parent_space_id = spacelift_space.environment.id
 }
