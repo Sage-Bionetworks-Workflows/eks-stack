@@ -4,15 +4,16 @@ resource "spacelift_stack" "root_administrative_stack" {
     id        = "sage-bionetworks-workflows-gh"
   }
 
-  administrative    = true
-  autodeploy        = false
-  branch            = "ibcdpe-935-vpc-updates"
-  description       = "Manages other spacelift resources"
-  name              = "Root Spacelift Administrative Stack"
-  project_root      = "environments"
-  repository        = "eks-stack"
-  terraform_version = "1.5.7"
-  space_id          = "root"
+  administrative          = true
+  autodeploy              = false
+  branch                  = "ibcdpe-935-vpc-updates"
+  description             = "Manages other spacelift resources"
+  name                    = "Root Spacelift Administrative Stack"
+  project_root            = "environments"
+  terraform_version       = "1.7.3"
+  terraform_workflow_tool = "OPEN_TOFU"
+  repository              = "eks-stack"
+  space_id                = "root"
 }
 
 resource "spacelift_space" "environment" {
