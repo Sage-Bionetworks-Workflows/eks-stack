@@ -17,7 +17,7 @@ resource "spacelift_stack" "k8s-stack" {
   name                    = "DPE DEV Kubernetes Infrastructure"
   project_root            = "environments/dev/dpe-sandbox-k8s"
   repository              = "eks-stack"
-  terraform_version       = "1.7.3"
+  terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
 }
@@ -35,7 +35,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   name                    = "DPE DEV Kubernetes Deployments"
   project_root            = "environments/dev/dpe-sandbox-k8s-deployments"
   repository              = "eks-stack"
-  terraform_version       = "1.7.3"
+  terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
 }

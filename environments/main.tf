@@ -10,7 +10,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
   project_root            = "environments"
-  terraform_version       = "1.7.3"
+  terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   repository              = "eks-stack"
   space_id                = "root"
