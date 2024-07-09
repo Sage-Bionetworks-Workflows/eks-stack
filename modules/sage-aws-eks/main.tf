@@ -312,3 +312,18 @@ module "eks" {
 
 #   depends_on = [module.addons]
 # }
+
+
+resource "spacelift_context" "k8s-kubeconfig" {
+  description = "Hooks used to set up the kubeconfig for connecting to the K8s cluster"
+  name        = "Kubernetes Deployments Kubeconfig"
+
+  before_init = [
+    "aws eks update-kubeconfig --region ${var.region} --name ${var.cluster_name}"
+  ]
+}
+
+resource "spacelift_context_attachment" "attachment" {
+  context_id = spacelift_context.k8s-kubeconfig.id
+  module_id  = "terraform-aws-sage-aws-eks"
+}
