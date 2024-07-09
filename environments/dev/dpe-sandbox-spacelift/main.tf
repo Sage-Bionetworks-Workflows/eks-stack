@@ -43,7 +43,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 
 resource "spacelift_policy_attachment" "policy-attachment" {
   policy_id = each.value.policy_id
-  stack_id  = spacelift_stack.k8s_stack.id
+  stack_id  = spacelift_stack.k8s-stack.id
 }
 
 resource "spacelift_stack_destructor" "k8s-stack-deployments-destructor" {
