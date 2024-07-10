@@ -6,6 +6,6 @@ resource "spacelift_space" "development" {
 }
 
 module "dpe-sandbox-spacelift" {
-  source          = "./dpe-sandbox-spacelift"
+  source          = "./spacelift/dpe-sandbox"
   parent_space_id = spacelift_space.development.id
 }
