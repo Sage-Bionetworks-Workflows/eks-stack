@@ -68,6 +68,11 @@ resource "kubernetes_namespace" "testing" {
 # EOF
 # }
 
+resource "kubernetes_namespace" "client" {
+  metadata {
+    name = "client"
+  }
+}
 resource "kubernetes_deployment" "client-deployment" {
   metadata {
     name      = "client"
@@ -109,6 +114,7 @@ resource "kubernetes_deployment" "client-deployment" {
 }
 
 resource "kubernetes_service" "client-service" {
+  depends_on = [kubernetes_namespace.client]
   metadata {
     name      = "client"
     namespace = "client"
@@ -127,6 +133,7 @@ resource "kubernetes_service" "client-service" {
 }
 
 resource "kubernetes_service" "frontend-service" {
+  depends_on = [kubernetes_namespace.stars-namespace]
   metadata {
     name      = "frontend"
     namespace = "stars"
@@ -145,6 +152,7 @@ resource "kubernetes_service" "frontend-service" {
 }
 
 resource "kubernetes_deployment" "frontend-deployment" {
+  depends_on = [kubernetes_namespace.stars-namespace]
   metadata {
     name      = "frontend"
     namespace = "stars"
@@ -185,6 +193,7 @@ resource "kubernetes_deployment" "frontend-deployment" {
 
 
 resource "kubernetes_service" "backend-service" {
+  depends_on = [kubernetes_namespace.stars-namespace]
   metadata {
     name      = "backend"
     namespace = "stars"
@@ -203,6 +212,7 @@ resource "kubernetes_service" "backend-service" {
 }
 
 resource "kubernetes_deployment" "backend-deployment" {
+  depends_on = [kubernetes_namespace.stars-namespace]
   metadata {
     name      = "backend"
     namespace = "stars"
@@ -252,6 +262,7 @@ resource "kubernetes_namespace" "management-ui" {
 }
 
 resource "kubernetes_service" "management-ui-service" {
+  depends_on = [kubernetes_namespace.management-ui]
   metadata {
     name      = "management-ui"
     namespace = "management-ui"
@@ -272,6 +283,7 @@ resource "kubernetes_service" "management-ui-service" {
 }
 
 resource "kubernetes_deployment" "management-ui-deployment" {
+  depends_on = [kubernetes_namespace.management-ui]
   metadata {
     name      = "management-ui"
     namespace = "management-ui"
