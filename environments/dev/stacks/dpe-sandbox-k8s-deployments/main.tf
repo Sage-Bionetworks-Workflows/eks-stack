@@ -69,7 +69,7 @@ resource "kubernetes_namespace" "testing" {
 # }
 
 resource "kubernetes_manifest" "client_deployment" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -95,10 +95,11 @@ spec:
         ports:
         - containerPort: 9000 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "client_service" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -111,10 +112,11 @@ spec:
   selector:
     role: client 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "frontend_service" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -127,10 +129,11 @@ spec:
   selector:
     role: frontend 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "frontend_deployment" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -157,10 +160,11 @@ spec:
         ports:
         - containerPort: 80 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "backend_service" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -173,10 +177,11 @@ spec:
   selector:
     role: backend 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "backend_deployment" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -203,6 +208,7 @@ spec:
         ports:
         - containerPort: 6379 
 EOF
+  )
 }
 
 
@@ -216,7 +222,7 @@ resource "kubernetes_namespace" "management-ui" {
 }
 
 resource "kubernetes_manifest" "management-ui-service" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -230,10 +236,11 @@ spec:
   selector:
     role: management-ui 
 EOF
+  )
 }
 
 resource "kubernetes_manifest" "management-ui-deployment" {
-  manifest = <<EOF
+  manifest = yamldecode(<<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -256,6 +263,7 @@ spec:
         ports:
         - containerPort: 9001
 EOF
+  )
 }
 
 resource "kubernetes_namespace" "stars-namespace" {
