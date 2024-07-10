@@ -21,6 +21,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   space_id                = "root"
   additional_project_globs = [
     "modules/*",
+    "modules/**/*",
   ]
 }
 
