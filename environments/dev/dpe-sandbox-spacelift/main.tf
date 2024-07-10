@@ -65,8 +65,8 @@ resource "spacelift_stack_dependency_reference" "private-subnet-ids-reference" {
 
 resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "security_group_id"
-  input_name          = "TF_VAR_security_group_id"
+  output_name         = "node_security_group_id"
+  input_name          = "TF_VAR_node_security_group_id"
 }
 
 resource "spacelift_stack_dependency_reference" "region-name" {
