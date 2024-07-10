@@ -13,3 +13,15 @@ output "vpc_security_group_id" {
 output "region" {
   value = var.region
 }
+
+output "vpc_cidr_block" {
+  value = var.cidr
+}
+
+output "vpc_public_subnet_cidrs" {
+  value = var.public_subnet_cidrs
+}
+
+output "vpc_private_subnet_cidrs" {
+  value = var.private_subnet_cidrs
+}
