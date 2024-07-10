@@ -7,5 +7,21 @@ resource "spacelift_context" "k8s-kubeconfig" {
   before_init = [
     "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
   ]
+
+  before_plan = [
+    "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
+  ]
+
+  before_apply = [
+    "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
+  ]
+
+  before_perform = [
+    "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
+  ]
+
+  before_destroy = [
+    "aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME"
+  ]
 }
 
