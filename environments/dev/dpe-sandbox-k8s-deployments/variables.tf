@@ -12,3 +12,8 @@ variable "node_security_group_id" {
   description = "Node security group ID"
   type        = string
 }
+
+variable "vpc_cidr_block" {
+  description = "VPC CIDR block"
+  type        = string
+}

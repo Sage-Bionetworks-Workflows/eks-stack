@@ -2,6 +2,10 @@ output "vpc_id" {
   value = module.sage-aws-vpc.vpc_id
 }
 
+output "vpc_cidr_block" {
+  value = module.sage-aws-vpc.vpc_cidr_block
+}
+
 output "private_subnet_ids" {
   value = module.sage-aws-vpc.private_subnet_ids
 }

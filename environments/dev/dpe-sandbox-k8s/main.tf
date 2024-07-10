@@ -1,6 +1,6 @@
 module "sage-aws-vpc" {
   source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
-  version  = "0.2.1"
+  version  = "0.2.2"
   vpc_name = "dpe-sandbox"
 }
 
