@@ -7,7 +7,7 @@ output "private_subnet_ids" {
 }
 
 output "vpc_security_group_id" {
-  value = module.sage-aws-vpc.security_group_id
+  value = module.sage-aws-vpc.vpc_security_group_id
 }
 
 output "node_security_group_id" {
