@@ -87,6 +87,12 @@ resource "spacelift_stack_dependency_reference" "cluster-name" {
   input_name          = "CLUSTER_NAME"
 }
 
+resource "spacelift_stack_dependency_reference" "cluster-name-tfvar" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "cluster_name"
+  input_name          = "TF_VAR_cluster_name"
+}
+
 # resource "spacelift_policy_attachment" "policy-attachment" {
 #   policy_id = each.value.policy_id
 #   stack_id  = spacelift_stack.k8s-stack.id
