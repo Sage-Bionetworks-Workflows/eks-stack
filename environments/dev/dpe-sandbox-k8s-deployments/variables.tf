@@ -1,14 +1,14 @@
 variable "vpc_id" {
-  description = "ID of the parent spacelift space"
+  description = "VPC ID"
   type        = string
 }
 
 variable "private_subnet_ids" {
-  description = "ID of the parent spacelift space"
+  description = "Private subnet IDs"
   type        = list(string)
 }
 
-variable "security_group_id" {
-  description = "ID of the parent spacelift space"
+variable "node_security_group_id" {
+  description = "Node security group ID"
   type        = string
 }

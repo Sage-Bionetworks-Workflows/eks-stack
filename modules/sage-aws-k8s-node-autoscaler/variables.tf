@@ -32,7 +32,7 @@ variable "private_vpc_subnet_ids" {
   type        = list(string)
 }
 
-variable "vpc_security_group_id" {
+variable "node_security_group_id" {
   description = "Security group ID to attach to the EKS cluster"
   type        = string
 }

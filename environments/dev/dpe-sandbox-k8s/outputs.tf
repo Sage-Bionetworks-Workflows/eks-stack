@@ -6,8 +6,12 @@ output "private_subnet_ids" {
   value = module.sage-aws-vpc.private_subnet_ids
 }
 
-output "security_group_id" {
+output "vpc_security_group_id" {
   value = module.sage-aws-vpc.security_group_id
+}
+
+output "node_security_group_id" {
+  value = module.sage-aws-eks.node_security_group_id
 }
 
 output "region" {
