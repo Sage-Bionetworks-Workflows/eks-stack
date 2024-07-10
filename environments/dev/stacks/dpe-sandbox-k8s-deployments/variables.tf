@@ -17,3 +17,15 @@ variable "vpc_cidr_block" {
   description = "VPC CIDR block"
   type        = string
 }
+
+variable "kube_config_path" {
+  description = "Kube config path"
+  type        = string
+  default     = "~/.kube/config"
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}

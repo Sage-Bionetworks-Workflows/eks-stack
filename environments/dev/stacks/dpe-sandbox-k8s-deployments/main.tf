@@ -92,8 +92,9 @@ resource "kubernetes_deployment" "client-deployment" {
 
       spec {
         container {
-          name  = "client"
-          image = "calico/star-probe:v0.1.0"
+          name              = "client"
+          image             = "calico/star-probe:v0.1.0"
+          image_pull_policy = "Always"
 
           command = ["probe", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status"]
 
@@ -167,8 +168,9 @@ resource "kubernetes_deployment" "frontend-deployment" {
 
       spec {
         container {
-          name  = "frontend"
-          image = "calico/star-probe:v0.1.0"
+          name              = "frontend"
+          image             = "calico/star-probe:v0.1.0"
+          image_pull_policy = "Always"
 
           command = ["probe", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status"]
 
