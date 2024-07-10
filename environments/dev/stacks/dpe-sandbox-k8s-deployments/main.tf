@@ -224,8 +224,8 @@ resource "kubernetes_deployment" "backend-deployment" {
 
       spec {
         container {
-          name  = "backend"
-          image = "calico/star-probe:v0.1.0"
+          name              = "backend"
+          image             = "calico/star-probe:v0.1.0"
           image_pull_policy = "Always"
 
           command = ["probe", "--http-port=6379", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status"]
@@ -242,17 +242,17 @@ resource "kubernetes_deployment" "backend-deployment" {
 
 resource "kubernetes_namespace" "management-ui" {
   metadata {
-    name = "management-ui "
+    name = "management-ui"
     labels = {
-      "role" = "management-ui "
+      "role" = "management-ui"
     }
   }
 }
 
 resource "kubernetes_service" "management-ui-service" {
   metadata {
-    name      = "management-ui "
-    namespace = "management-ui "
+    name      = "management-ui"
+    namespace = "management-ui"
   }
 
   spec {
@@ -264,15 +264,15 @@ resource "kubernetes_service" "management-ui-service" {
     }
 
     selector = {
-      role = "management-ui "
+      role = "management-ui"
     }
   }
 }
 
 resource "kubernetes_deployment" "management-ui-deployment" {
   metadata {
-    name      = "management-ui "
-    namespace = "management-ui "
+    name      = "management-ui"
+    namespace = "management-ui"
   }
 
   spec {
@@ -280,21 +280,21 @@ resource "kubernetes_deployment" "management-ui-deployment" {
 
     selector {
       match_labels = {
-        role = "management-ui "
+        role = "management-ui"
       }
     }
 
     template {
       metadata {
         labels = {
-          role = "management-ui "
+          role = "management-ui"
         }
       }
 
       spec {
         container {
-          name  = "management-ui "
-          image = "calico/star-collect:v0.1.0"
+          name              = "management-ui"
+          image             = "calico/star-collect:v0.1.0"
           image_pull_policy = "Always"
 
           port {
