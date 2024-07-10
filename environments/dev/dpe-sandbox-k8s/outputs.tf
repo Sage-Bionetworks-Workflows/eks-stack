@@ -6,6 +6,14 @@ output "vpc_cidr_block" {
   value = module.sage-aws-vpc.vpc_cidr_block
 }
 
+output "vpc_public_subnet_cidrs" {
+  value = module.sage-aws-vpc.vpc_public_subnet_cidrs
+}
+
+output "vpc_private_subnet_cidrs" {
+  value = module.sage-aws-vpc.vpc_private_subnet_cidrs
+}
+
 output "private_subnet_ids" {
   value = module.sage-aws-vpc.private_subnet_ids
 }
