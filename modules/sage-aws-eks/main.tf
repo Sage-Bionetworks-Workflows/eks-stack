@@ -83,6 +83,7 @@ module "eks" {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
     SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
     WorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+    VPCResourceController    = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   }
 
   # Cluster access entry
