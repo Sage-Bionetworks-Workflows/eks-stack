@@ -68,147 +68,175 @@ resource "kubernetes_namespace" "testing" {
 # EOF
 # }
 
-resource "kubernetes_manifest" "client_deployment" {
-  manifest = yamldecode(<<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: client 
-  namespace: client
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      role: client
-  template:
-    metadata:
-      labels:
-        role: client 
-    spec:
-      containers:
-      - name: client 
-        image: calico/star-probe:v0.1.0
-        imagePullPolicy: Always
-        command:
-        - probe
-        - --urls=http://frontend.stars:80/status,http://backend.stars:6379/status
-        ports:
-        - containerPort: 9000 
-EOF
-  )
+resource "kubernetes_deployment" "client-deployment" {
+  metadata {
+    name      = "client"
+    namespace = "client"
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        role = "client"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          role = "client"
+        }
+      }
+
+      spec {
+        container {
+          name  = "client"
+          image = "calico/star-probe:v0.1.0"
+
+          command = ["probe", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status"]
+
+          port {
+            container_port = 9000
+          }
+        }
+      }
+    }
+  }
+
 }
 
-resource "kubernetes_manifest" "client_service" {
-  manifest = yamldecode(<<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: client
-  namespace: client
-spec:
-  ports:
-  - port: 9000 
-    targetPort: 9000
-  selector:
-    role: client 
-EOF
-  )
+resource "kubernetes_service" "client-service" {
+  metadata {
+    name      = "client"
+    namespace = "client"
+  }
+
+  spec {
+    selector = {
+      role = "client"
+    }
+
+    port {
+      port        = 9000
+      target_port = 9000
+    }
+  }
 }
 
-resource "kubernetes_manifest" "frontend_service" {
-  manifest = yamldecode(<<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend 
-  namespace: stars
-spec:
-  ports:
-  - port: 80 
-    targetPort: 80 
-  selector:
-    role: frontend 
-EOF
-  )
+resource "kubernetes_service" "frontend-service" {
+  metadata {
+    name      = "frontend"
+    namespace = "stars"
+  }
+
+  spec {
+    selector = {
+      role = "frontend"
+    }
+
+    port {
+      port        = 80
+      target_port = 80
+    }
+  }
 }
 
-resource "kubernetes_manifest" "frontend_deployment" {
-  manifest = yamldecode(<<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend 
-  namespace: stars
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      role: frontend
-  template:
-    metadata:
-      labels:
-        role: frontend 
-    spec:
-      containers:
-      - name: frontend 
-        image: calico/star-probe:v0.1.0
-        imagePullPolicy: Always
-        command:
-        - probe
-        - --http-port=80
-        - --urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status
-        ports:
-        - containerPort: 80 
-EOF
-  )
+resource "kubernetes_deployment" "frontend-deployment" {
+  metadata {
+    name      = "frontend"
+    namespace = "stars"
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        role = "frontend"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          role = "frontend"
+        }
+      }
+
+      spec {
+        container {
+          name  = "frontend"
+          image = "calico/star-probe:v0.1.0"
+
+          command = ["probe", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status"]
+
+          port {
+            container_port = 80
+          }
+        }
+      }
+    }
+  }
 }
 
-resource "kubernetes_manifest" "backend_service" {
-  manifest = yamldecode(<<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend 
-  namespace: stars
-spec:
-  ports:
-  - port: 6379
-    targetPort: 6379 
-  selector:
-    role: backend 
-EOF
-  )
+
+resource "kubernetes_service" "backend-service" {
+  metadata {
+    name      = "backend"
+    namespace = "stars"
+  }
+
+  spec {
+    selector = {
+      role = "backend"
+    }
+
+    port {
+      port        = 6379
+      target_port = 6379
+    }
+  }
 }
 
-resource "kubernetes_manifest" "backend_deployment" {
-  manifest = yamldecode(<<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: backend 
-  namespace: stars
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      role: backend
-  template:
-    metadata:
-      labels:
-        role: backend 
-    spec:
-      containers:
-      - name: backend 
-        image: calico/star-probe:v0.1.0
-        imagePullPolicy: Always
-        command:
-        - probe
-        - --http-port=6379
-        - --urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status
-        ports:
-        - containerPort: 6379 
-EOF
-  )
+resource "kubernetes_deployment" "backend-deployment" {
+  metadata {
+    name      = "backend"
+    namespace = "stars"
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        role = "backend"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          role = "backend"
+        }
+      }
+
+      spec {
+        container {
+          name  = "backend"
+          image = "calico/star-probe:v0.1.0"
+          image_pull_policy = "Always"
+
+          command = ["probe", "--http-port=6379", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status"]
+
+          port {
+            container_port = 6379
+          }
+        }
+      }
+    }
+  }
 }
 
 
@@ -221,49 +249,61 @@ resource "kubernetes_namespace" "management-ui" {
   }
 }
 
-resource "kubernetes_manifest" "management-ui-service" {
-  manifest = yamldecode(<<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: management-ui 
-  namespace: management-ui 
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80 
-    targetPort: 9001
-  selector:
-    role: management-ui 
-EOF
-  )
+resource "kubernetes_service" "management-ui-service" {
+  metadata {
+    name      = "management-ui "
+    namespace = "management-ui "
+  }
+
+  spec {
+    type = "LoadBalancer"
+
+    port {
+      port        = 80
+      target_port = 9001
+    }
+
+    selector = {
+      role = "management-ui "
+    }
+  }
 }
 
-resource "kubernetes_manifest" "management-ui-deployment" {
-  manifest = yamldecode(<<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: management-ui 
-  namespace: management-ui 
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      role: management-ui
-  template:
-    metadata:
-      labels:
-        role: management-ui 
-    spec:
-      containers:
-      - name: management-ui 
-        image: calico/star-collect:v0.1.0
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 9001
-EOF
-  )
+resource "kubernetes_deployment" "management-ui-deployment" {
+  metadata {
+    name      = "management-ui "
+    namespace = "management-ui "
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        role = "management-ui "
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          role = "management-ui "
+        }
+      }
+
+      spec {
+        container {
+          name  = "management-ui "
+          image = "calico/star-collect:v0.1.0"
+          image_pull_policy = "Always"
+
+          port {
+            container_port = 9001
+          }
+        }
+      }
+    }
+  }
 }
 
 resource "kubernetes_namespace" "stars-namespace" {
