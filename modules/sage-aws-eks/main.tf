@@ -57,6 +57,7 @@ module "eks" {
     }
     vpc-cni = {
       most_recent = true
+      # Derived from https://github.com/aws/amazon-vpc-cni-k8s/blob/master/charts/aws-vpc-cni/values.yaml
       configuration_values = jsonencode({
         enableNetworkPolicy = "true",
         init = {
@@ -64,8 +65,8 @@ module "eks" {
             DISABLE_TCP_EARLY_DEMUX = "true"
           }
         }
-        nodeagent = {
-          enablePolicyEventLogs = "true"
+        nodeAgent = {
+          enablePolicyEventLogs = var.enable_policy_event_logs ? "true" : "false"
         }
         env = {
           ENABLE_POD_ENI                    = "true",

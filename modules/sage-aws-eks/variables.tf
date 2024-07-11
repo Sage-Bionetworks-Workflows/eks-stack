@@ -38,3 +38,9 @@ variable "vpc_security_group_id" {
   description = "Security group ID to attach to the EKS cluster"
   type        = string
 }
+
+variable "enable_policy_event_logs" {
+  description = "Enable logging of policy events"
+  type        = bool
+  default     = false
+}
