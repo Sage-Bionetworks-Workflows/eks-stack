@@ -14,7 +14,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   branch                  = "ibcdpe-935-vpc-updates"
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
-  project_root            = "environments"
+  project_root            = ""
   terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   repository              = "eks-stack"
@@ -33,12 +33,12 @@ resource "spacelift_space" "environment" {
 }
 
 module "terraform-registry" {
-  source     = "../modules"
+  source     = "./modules"
   depends_on = [spacelift_stack.root_administrative_stack]
 }
 
 module "common" {
-  source     = "./common"
+  source     = "./common-resources"
   depends_on = [spacelift_stack.root_administrative_stack]
 }
 

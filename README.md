@@ -4,25 +4,36 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
 
 # Directory Structure
 ```
-.
-├── environments: Contains all the "Things" that are going to be deployed
-│   ├── common: Resources that are environment independent
-│   │   ├── contexts: Contexts that we'll attach across environments
-│   │   └── policies: Rego policies that can be attached to 0..* spacelift stacks
-│   └── dev: Development/sandbox environment
-│       ├── spacelift: Terraform scripts to manage spacelift resources
-│       │   └── dpe-sandbox: Spacelift specific resources to manage the CI/CD pipeline
-│       └── stacks: The deployable cloud resources
-│           ├── dpe-sandbox-k8s: K8s + supporting AWS resources
-│           └── dpe-sandbox-k8s-deployments: Resources deployed inside of a K8s cluster
+.:  Contains references to all the "Things" that are going to be deployed
+├── common-resources: Resources that are environment independent
+│   ├── contexts: Contexts that we'll attach across environments
+│   └── policies: Rego policies that can be attached to 0..* spacelift stacks
+├── dev: Development/sandbox environment
+│   ├── spacelift: Terraform scripts to manage spacelift resources
+│   │   └── dpe-sandbox: Spacelift specific resources to manage the CI/CD pipeline
+│   └── stacks: The deployable cloud resources
+│       ├── dpe-sandbox-k8s: K8s + supporting AWS resources
+│       └── dpe-sandbox-k8s-deployments: Resources deployed inside of a K8s cluster
 └── modules: Templatized collections of terraform resources that are used in a stack
     ├── apache-airflow: K8s deployment for apache airflow
     │   └── templates: Resources used during deployment of airflow
-    ├── k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
     ├── sage-aws-eks: Sage specific EKS cluster for AWS
+    ├── sage-aws-k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
     └── sage-aws-vpc: Sage specific VPC for AWS
 ```
 
+This root `main.tf` contains all the "Things" that are going to be deployed. 
+In this top level directory you'll find that the terraform files are bringing together 
+everything that should be deployed in spacelift declerativly. The items declared in 
+this top level directory are as follows:
+
+1) A single root administrative stack that is responsible for taking each and every resource to deploy it to spacelift.
+2) A spacelift space that everything is deployed under called `environment`.
+3) Reference to the `terraform-registry` modules directory.
+4) Reference to `common-resources` or reusable resources that are not environment specific.
+5) The environment specific resources such as `dev`, `staging`, or `prod`
+
+This structure is looking to https://github.com/antonbabenko/terraform-best-practices/tree/master/examples for inspiration.
 
 ## AWS VPC + AWS EKS
 This section describes the VPC (Virtual Private Cloud) that the EKS cluster is deployed
