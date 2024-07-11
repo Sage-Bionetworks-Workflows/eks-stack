@@ -24,17 +24,68 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
 ```
 
 
-# EKS-stack
+## AWS VPC + AWS EKS
+This section describes the VPC (Virtual Private Cloud) that the EKS cluster is deployed
+to.
 
-Leveraging spot.io, we spin up an EKS stack behind an existing private VPC that has scale-to-zero capabilities. To deploy this stack:
+### AWS VPC
 
-TODO: Instructions need to be re-writen. Deployment is occuring through spacelift.io
+The VPC used in this project is created with the [AWS VPC Terraform module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest).
+It contains a number of defaults for our use-case at sage. Head on over to the module
+definition to learn more.
 
-<!-- 1. log into dpe-prod via jumpcloud and export the credentials (you must have admin)
-2. run `terraform apply`
-3. This will deploy the terraform stack.  The terraform backend state is stored in an S3 bucket.  The terraform state is stored in the S3 bucket `s3://dpe-terraform-bucket`
-4. The spot.io account token is stored in AWS secrets manager: `spotinst_token`
-5. Add `AmazonEBSCSIDriverPolicy` and `SecretsManagerReadWrite` to the IAM policy -->
+### AWS EKS
+
+[AWS EKS](https://aws.amazon.com/eks/) is a managed kubernetes cluster that handles
+many of the tasks around running a k8s cluster. On-top of it we are providing the
+configurable parameters in order to run a number of workloads.
+
+#### EKS API access
+API access to the kubernetes cluster endpoint is set to `Public and private`. 
+
+##### Public
+This allows one outside of the VPC to connect via `kubectl` and related tools to 
+interact with kubernetes resources. By default, this API server endpoint is public to 
+the internet, and access to the API server is secured using a combination of AWS 
+Identity and Access Management (IAM) and native Kubernetes Role Based Access Control 
+(RBAC).
+
+##### Private
+You can enable private access to the Kubernetes API server so that all communication 
+between your worker nodes and the API server stays within your VPC. You can limit the 
+IP addresses that can access your API server from the internet, or completely disable 
+internet access to the API server.
+
+
+#### EKS VPC CNI Plugin
+This section describes the VPC CNI (Container Network Interface) that is being used
+within the EKS cluster. The plugin is responsible for allocating VPC IP addresses to 
+Kubernetes nodes and configuring the necessary networking for Pods on each node.
+
+
+#### Security groups for pods
+Allows us to assign EC2 security groups directly to pods running in AWS EKS clusters.
+This can be used as an alternative or in conjunction with `Kubernetes network policies`.
+
+#### Kubernetes network policies
+Controls network traffic within the cluster, for example pod to pod traffic.
+
+Further reading:
+- https://docs.aws.amazon.com/eks/latest/userguide/cni-network-policy.html
+- https://docs.aws.amazon.com/eks/latest/userguide/security-groups-for-pods.html
+- https://aws.amazon.com/blogs/containers/introducing-security-groups-for-pods/
+- https://kubernetes.io/docs/concepts/services-networking/network-policies/
+
+
+#### EKS Autoscaler
+
+Us use spot.io to manage the nodes attached to each of the EKS cluster. This tool has
+scale-to-zerio capabilities and will dynamically add or removes nodes from the cluster
+depending on the required demand. The autoscaler is templatized and provided as a
+terraform module to be used within an EKS stack.
+
+
+#### Connecting to an EKS cluster for kubectl commands
 
 To connect to the EKS stack running in AWS you'll need to make sure that you have
 SSO setup for the account you'll be using. Once setup run the commands below:
@@ -48,54 +99,4 @@ aws sso login --profile dpe-prod-admin
 # assuming that we want to use the `role/eks_admin_role` to connect to the k8s 
 # cluster". This will update your kubeconfig with permissions to access the cluster.
 aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:iam::766808016710:role/eks_admin_role --profile dpe-prod-admin
-```
-
-## Future work
-
-1. Create a separate VPC dedicated to the K8 cluster
-2. Create CI/CD to deploy this stack
-3. Push this entire stack behind a module
-4. Create a module for the node groups so we can attach node groups to EKS cluster
-
-
-## Adding a node group (WIP)
-
-1. Add an EKS node group
-
-```
-two = {
-    name         = "seqera"
-    desired_size = 1
-    min_size     = 0
-    max_size     = 10
-
-    instance_types = ["t3.large"]
-    capacity_type  = "SPOT"
-}
-```
-
-2. Add an AWS IAM instance profile
-
-```
-data "aws_iam_instance_profiles" "profile2" {
-  depends_on = [module.eks]
-  role_name = module.eks.eks_managed_node_groups["two"].iam_role_name
-}
-```
-
-3. Add an ocean virtual node group
-
-```
-module "ocean-aws-k8s-vng_gpu" {
-    source = "spotinst/ocean-aws-k8s-vng/spotinst"
-
-    name = "seqera"  # Name of VNG in Ocean
-    ocean_id = module.ocean-aws-k8s.ocean_id
-    subnet_ids = var.subnet_ids
-
-    iam_instance_profile = tolist(data.aws_iam_instance_profiles.profile2.arns)[0]
-    # instance_types = ["g4dn.xlarge","g4dn.2xlarge"] # Limit VNG to specific instance types
-    # spot_percentage = 50 # Change the spot %
-    tags = var.tags
-}
 ```
