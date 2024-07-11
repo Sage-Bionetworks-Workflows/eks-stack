@@ -64,6 +64,11 @@ module "eks" {
             DISABLE_TCP_EARLY_DEMUX = "true"
           }
         }
+        NodeAgent = {
+          properties = {
+            enablePolicyEventLogs = "true"
+          }
+        }
         env = {
           ENABLE_POD_ENI                    = "true",
           POD_SECURITY_GROUP_ENFORCING_MODE = "standard",
