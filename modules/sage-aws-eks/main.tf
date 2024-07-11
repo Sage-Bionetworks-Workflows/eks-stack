@@ -56,8 +56,6 @@ module "eks" {
       most_recent = true
     }
     vpc-cni = {
-      # TODO: ENABLE_POD_ENI=true
-      # https://aws.github.io/aws-eks-best-practices/networking/sgpp/
       most_recent = true
       configuration_values = jsonencode({
         enableNetworkPolicy = "true",
@@ -69,7 +67,9 @@ module "eks" {
         env = {
           ENABLE_POD_ENI                    = "true",
           POD_SECURITY_GROUP_ENFORCING_MODE = "standard",
-          AWS_VPC_K8S_CNI_EXTERNALSNAT      = "true"
+          # TODO: Turn on strict mode when we are ready to enforce it
+          # POD_SECURITY_GROUP_ENFORCING_MODE = "strict",
+          AWS_VPC_K8S_CNI_EXTERNALSNAT = "true"
       } })
     }
   }
