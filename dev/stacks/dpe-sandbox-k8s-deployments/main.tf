@@ -55,7 +55,7 @@ module "spacelift-private-workerpool" {
   # Deploy with this as flase in order to create the K8s CRD
   # Create the required secrets
   # Deploy with this as true in order to create the workerpool
-  create-worker-pool = false
+  create-worker-pool = true
 }
 
 resource "kubernetes_namespace" "testing" {
