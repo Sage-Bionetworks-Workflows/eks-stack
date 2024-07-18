@@ -14,3 +14,8 @@ provider "helm" {
     config_path = var.kube_config_path
   }
 }
+
+provider "spotinst" {
+  account = var.spotinst_account
+  token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+}

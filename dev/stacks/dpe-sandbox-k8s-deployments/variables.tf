@@ -34,3 +34,9 @@ variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
 }
+
+variable "spotinst_account" {
+  description = "Spot.io account"
+  type        = string
+  default     = "act-ac6522b4"
+}

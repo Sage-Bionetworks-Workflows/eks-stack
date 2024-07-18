@@ -16,7 +16,7 @@ resource "spacelift_module" "sage-aws-vpc" {
 
 resource "spacelift_version" "sage-aws-vpc-version" {
   module_id      = spacelift_module.sage-aws-vpc.id
-  version_number = "0.2.2"
+  version_number = "0.3.0"
 }
 
 resource "spacelift_module" "sage-aws-eks" {
@@ -37,7 +37,7 @@ resource "spacelift_module" "sage-aws-eks" {
 
 resource "spacelift_version" "sage-aws-eks-version" {
   module_id      = spacelift_module.sage-aws-eks.id
-  version_number = "0.2.6"
+  version_number = "0.3.0"
 }
 
 resource "spacelift_module" "sage-aws-eks-autoscaler" {
@@ -58,7 +58,7 @@ resource "spacelift_module" "sage-aws-eks-autoscaler" {
 
 resource "spacelift_version" "sage-aws-eks-autoscaler-version" {
   module_id      = spacelift_module.sage-aws-eks-autoscaler.id
-  version_number = "0.2.2"
+  version_number = "0.3.0"
 }
 
 resource "spacelift_module" "spacelift-private-workerpool" {
@@ -79,5 +79,5 @@ resource "spacelift_module" "spacelift-private-workerpool" {
 
 resource "spacelift_version" "spacelift-private-workerpool-version" {
   module_id      = spacelift_module.spacelift-private-workerpool.id
-  version_number = "0.1.3"
+  version_number = "0.2.0"
 }
