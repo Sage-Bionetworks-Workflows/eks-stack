@@ -49,7 +49,7 @@ module "sage-aws-eks-autoscaler" {
 
 module "spacelift-private-workerpool" {
   source             = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
-  version            = "0.1.1"
+  version            = "0.1.2"
   cluster_name       = "dpe-k8-sandbox"
   create-worker-pool = false
 }
