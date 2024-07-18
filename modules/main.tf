@@ -79,5 +79,5 @@ resource "spacelift_module" "spacelift-private-workerpool" {
 
 resource "spacelift_version" "spacelift-private-workerpool-version" {
   module_id      = spacelift_module.spacelift-private-workerpool.id
-  version_number = "0.0.1"
+  version_number = "0.1.3"
 }

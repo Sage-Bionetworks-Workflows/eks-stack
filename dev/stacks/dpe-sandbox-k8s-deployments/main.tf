@@ -47,17 +47,6 @@ module "sage-aws-eks-autoscaler" {
 #   ip_protocol       = "-1" # semantically equivalent to all ports
 # }
 
-module "spacelift-private-workerpool" {
-  source       = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
-  version      = "0.0.1"
-  cluster_name = var.cluster_name
-  # Deployment steps:
-  # Deploy with this as false in order to create the K8s CRD
-  # Create the required secrets
-  # Deploy with this as true in order to create the workerpool
-  create-worker-pool = false
-}
-
 resource "kubernetes_namespace" "testing" {
   metadata {
     name = "testing-namespace"
