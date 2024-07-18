@@ -10,11 +10,13 @@ resource "helm_release" "spacelift-workerpool" {
   repository = "https://downloads.spacelift.io/helm"
   chart      = "spacelift-workerpool-controller"
   namespace  = "spacelift-workerpool"
-  version    = "0.1.0"
+  version    = "0.24.0"
   depends_on = [kubernetes_namespace.spacelift-workerpool]
 }
 
 resource "kubernetes_manifest" "test-workerpool" {
+  // This is being conditionally created because of the required order of operations
+  // The CRD must be created before the workerpool, so we need to wait for the helm release to be created
   count = var.create-worker-pool ? 1 : 0
 
   depends_on = [
