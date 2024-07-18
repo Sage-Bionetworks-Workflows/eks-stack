@@ -272,6 +272,9 @@ resource "kubernetes_service" "management-ui-service" {
   spec {
     type = "LoadBalancer"
 
+    # external_ips = ["52.44.61.21/32"]
+    load_balancer_source_ranges = ["52.44.61.21/32"]
+
     port {
       port        = 80
       target_port = 9001
