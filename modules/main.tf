@@ -60,3 +60,24 @@ resource "spacelift_version" "sage-aws-eks-autoscaler-version" {
   module_id      = spacelift_module.sage-aws-eks-autoscaler.id
   version_number = "0.2.2"
 }
+
+resource "spacelift_module" "spacelift-private-workerpool" {
+  github_enterprise {
+    namespace = "Sage-Bionetworks-Workflows"
+    id        = "sage-bionetworks-workflows-gh"
+  }
+
+  name               = "spacelift-private-workerpool"
+  terraform_provider = "aws"
+  administrative     = false
+  branch             = "ibcdpe-935-vpc-updates"
+  description        = "Module for the spacelift private workerpool helm chart which deploys the K8s operator"
+  repository         = "eks-stack"
+  project_root       = "modules/spacelift-private-worker"
+  space_id           = "root"
+}
+
+resource "spacelift_version" "spacelift-private-workerpool-version" {
+  module_id      = spacelift_module.spacelift-private-workerpool.id
+  version_number = "0.1.0"
+}
