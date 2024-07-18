@@ -2,16 +2,16 @@ resource "aws_iam_role" "work_profile_iam_role" {
   name = "work_profile_iam_role_${var.cluster_name}"
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "EKSNodeAssumeRole",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "ec2.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "EKSNodeAssumeRole",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "ec2.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      }
     ]
   })
 
@@ -51,14 +51,14 @@ resource "aws_iam_instance_profile" "profile" {
 }
 
 resource "aws_eks_access_entry" "example" {
-  cluster_name      = var.cluster_name
-  principal_arn     = aws_iam_role.work_profile_iam_role.arn
-  type              = "EC2_LINUX"
-  tags = var.tags
+  cluster_name  = var.cluster_name
+  principal_arn = aws_iam_role.work_profile_iam_role.arn
+  type          = "EC2_LINUX"
+  tags          = var.tags
 }
 
 module "ocean-controller" {
-  source = "spotinst/ocean-controller/spotinst"
+  source  = "spotinst/ocean-controller/spotinst"
   version = "0.54.0"
 
   # Credentials.
@@ -72,14 +72,13 @@ module "ocean-controller" {
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.2.0"
-  # worker_instance_profile_arn      = "arn:aws:iam::766808016710:role/airflow-node-group-eks-node-group-20240517054613935800000001"
 
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = data.aws_subnets.private.ids
+  subnet_ids                       = var.private_vpc_subnet_ids
   worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
-  security_groups                  = [data.aws_security_group.eks_node_security_group.id]
+  security_groups                  = [var.node_security_group_id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
@@ -111,16 +110,18 @@ resource "kubernetes_storage_class" "default" {
   depends_on = [aws_eks_addon.ebs-csi-driver]
 
   metadata {
-    name = "gp3-default"
+    name = "gp3"
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
 
-  storage_provisioner     = data.kubernetes_storage_class.existing.storage_provisioner
-  reclaim_policy          = data.kubernetes_storage_class.existing.reclaim_policy
-  parameters              = data.kubernetes_storage_class.existing.parameters
-  volume_binding_mode     = data.kubernetes_storage_class.existing.volume_binding_mode
-  allow_volume_expansion  = data.kubernetes_storage_class.existing.allow_volume_expansion
-  mount_options           = data.kubernetes_storage_class.existing.mount_options
+  storage_provisioner = "kubernetes.io/aws-ebs"
+  reclaim_policy      = "Delete"
+  parameters = {
+    "fsType" = "ext4"
+    "type"   = "gp3"
+  }
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = true
 }

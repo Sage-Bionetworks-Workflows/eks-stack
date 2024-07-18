@@ -1,19 +1,6 @@
-variable "cluster_name" {
-  description = "Name of K8 cluster"
+variable "vpc_name" {
+  description = "Name of VPC"
   type        = string
-  default     = "dpe-k8"
-}
-
-variable "cluster_version" {
-  description = "Version of K8 cluster"
-  type        = string
-  default     = "1.30"
-}
-
-variable "kube_config_path" {
-  description = "Kube config path"
-  type        = string
-  default     = "~/.kube/config"
 }
 
 variable "cidr" {
@@ -34,12 +21,6 @@ variable "private_subnet_cidrs" {
   default     = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
 }
 
-# variable "create_igw" {
-#   description = "Controls if an Internet Gateway is created for public subnets and the related routes that connect them"
-#   type        = string
-#   default     = "false"
-# }
-
 variable "azs" {
 
   type        = list(string)
@@ -52,18 +33,6 @@ variable "region" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
-}
-
-variable "spotinst_account" {
-  description = "Spot.io account"
-  type        = string
-  default     = "act-ac6522b4"
-}
-
-variable "eks_nodeGroup" {
-  description = "EKS node group name"
-  type        = string
-  default     = "airflow-node-group"
 }
 
 variable "tags" {

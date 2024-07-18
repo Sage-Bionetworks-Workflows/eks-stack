@@ -1,3 +1,1 @@
-## Deployments
-
-These are the different deployments that are within the kubernetes cluster
+This directory is not actively used and will be removed in the future
