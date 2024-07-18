@@ -24,7 +24,7 @@ resource "spacelift_stack" "k8s-stack" {
   worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
 }
 
-resource "spacelift_drift_detection" "core-infra-production-drift-detection" {
+resource "spacelift_drift_detection" "k8s-stack-drift-detection" {
   reconcile = true
   stack_id  = spacelift_stack.k8s-stack.id
   schedule  = ["*/15 * * * *"] # Every 15 minutes
@@ -49,7 +49,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
 }
 
-resource "spacelift_drift_detection" "core-infra-production-drift-detection" {
+resource "spacelift_drift_detection" "k8s-stack-deployments-drift-detection" {
   reconcile = true
   stack_id  = spacelift_stack.k8s-stack-deployments.id
   schedule  = ["*/15 * * * *"] # Every 15 minutes
