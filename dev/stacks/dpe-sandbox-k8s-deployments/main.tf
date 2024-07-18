@@ -47,6 +47,12 @@ module "sage-aws-eks-autoscaler" {
 #   ip_protocol       = "-1" # semantically equivalent to all ports
 # }
 
+module "spacelift-private-workerpool" {
+  source       = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
+  version      = "0.1.0"
+  cluster_name = "dpe-k8-sandbox"
+}
+
 resource "kubernetes_namespace" "testing" {
   metadata {
     name = "testing-namespace"
