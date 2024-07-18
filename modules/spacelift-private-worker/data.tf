@@ -8,7 +8,7 @@ data "aws_eks_cluster_auth" "cluster" {
 
 # This will probable be manually created in the AWS console to prevent the token from being stored in the repo
 # TODO: Some more work is needed to integrate with https://docs.aws.amazon.com/secretsmanager/latest/userguide/integrating_csi_driver.html
-# For an MVP this was manually created
+# For an MVP a kubernetes secret can be created manually
 # data "aws_secretsmanager_secret" "worker-pool-token" {
 #   name = "spacelift_worker_pool_token"
 # }

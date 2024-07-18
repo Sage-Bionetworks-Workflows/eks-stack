@@ -21,13 +21,6 @@ resource "spacelift_stack" "k8s-stack" {
   terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
-  worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
-}
-
-resource "spacelift_drift_detection" "k8s-stack-drift-detection" {
-  reconcile = true
-  stack_id  = spacelift_stack.k8s-stack.id
-  schedule  = ["*/15 * * * *"] # Every 15 minutes
 }
 
 resource "spacelift_stack" "k8s-stack-deployments" {
@@ -46,13 +39,6 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
-  worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
-}
-
-resource "spacelift_drift_detection" "k8s-stack-deployments-drift-detection" {
-  reconcile = true
-  stack_id  = spacelift_stack.k8s-stack-deployments.id
-  schedule  = ["*/15 * * * *"] # Every 15 minutes
 }
 
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
