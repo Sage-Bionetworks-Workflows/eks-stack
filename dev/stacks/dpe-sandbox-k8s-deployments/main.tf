@@ -48,9 +48,10 @@ module "sage-aws-eks-autoscaler" {
 # }
 
 module "spacelift-private-workerpool" {
-  source       = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
-  version      = "0.1.0"
-  cluster_name = "dpe-k8-sandbox"
+  source             = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
+  version            = "0.1.1"
+  cluster_name       = "dpe-k8-sandbox"
+  create-worker-pool = false
 }
 
 resource "kubernetes_namespace" "testing" {
@@ -274,6 +275,7 @@ resource "kubernetes_service" "management-ui-service" {
     namespace = "management-ui"
   }
 
+  # TODO: Update the security group created from this LoadBalancer to only allow source of `52.44.61.21/32`
   spec {
     type = "LoadBalancer"
 
