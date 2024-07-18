@@ -47,3 +47,19 @@ resource "kubernetes_manifest" "test-workerpool" {
     }
   }
 }
+
+# How to create a K8 resource for the spacelift secrets:
+
+# SPACELIFT_WP_TOKEN=<enter-token>
+# SPACELIFT_WP_PRIVATE_KEY=<enter-base64-encoded-key>
+
+# kubectl apply -f - <<EOF
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: test-workerpool
+# type: Opaque
+# stringData:
+#   token: ${SPACELIFT_WP_TOKEN}
+#   privateKey: ${SPACELIFT_WP_PRIVATE_KEY}
+# EOF

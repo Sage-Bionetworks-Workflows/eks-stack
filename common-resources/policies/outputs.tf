@@ -7,3 +7,8 @@ output "check_estimated_cloud_spend_id" {
   value       = spacelift_policy.cloud-spend-estimation.id
   description = "The ID for this spacelift_policy"
 }
+
+output "drift_detection_warning_id" {
+  value       = spacelift_policy.drift-detection-warning.id
+  description = "The ID for this spacelift_policy"
+}
