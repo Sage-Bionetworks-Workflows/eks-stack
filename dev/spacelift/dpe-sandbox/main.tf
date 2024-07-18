@@ -21,6 +21,7 @@ resource "spacelift_stack" "k8s-stack" {
   terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
+  worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
 }
 
 resource "spacelift_stack" "k8s-stack-deployments" {
@@ -39,6 +40,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_version       = "1.7.2"
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
+  worker_pool_id          = "01J33GHR11YSYAEN433PKXBGGK"
 }
 
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
