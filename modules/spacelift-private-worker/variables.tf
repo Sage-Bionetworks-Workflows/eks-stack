@@ -15,3 +15,9 @@ variable "region" {
   default     = "us-east-1"
 }
 
+
+variable "create-worker-pool" {
+  description = "Determines if a workerpool should be created"
+  type        = bool
+  default     = false
+}
