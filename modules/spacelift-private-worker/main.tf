@@ -14,13 +14,19 @@ resource "helm_release" "spacelift-workerpool" {
   depends_on = [kubernetes_namespace.spacelift-workerpool]
 }
 
-resource "kubernetes_manifest" "test_workerpool" {
+resource "kubernetes_manifest" "test-workerpool" {
+  count = var.create-worker-pool ? 1 : 0
+
+  depends_on = [
+    helm_release.spacelift-workerpool
+  ]
+
   manifest = {
     apiVersion = "workers.spacelift.io/v1beta1"
     kind       = "WorkerPool"
     metadata = {
       name      = "test-workerpool"
-      namespace = "spacelift-workerpool" # Assuming it's the same namespace as the helm_release
+      namespace = "spacelift-workerpool"
     }
     spec = {
       poolSize = 2
@@ -38,8 +44,4 @@ resource "kubernetes_manifest" "test_workerpool" {
       }
     }
   }
-
-  depends_on = [
-    helm_release.spacelift-workerpool
-  ]
 }
