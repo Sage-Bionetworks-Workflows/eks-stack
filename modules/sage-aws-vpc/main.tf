@@ -1,5 +1,3 @@
-
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.9.0"
@@ -32,6 +30,7 @@ module "vpc" {
   create_flow_log_cloudwatch_iam_role             = var.capture_flow_logs
   create_flow_log_cloudwatch_log_group            = var.capture_flow_logs
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_retention
+  flow_log_cloudwatch_log_group_class             = "STANDARD"
 
   # Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time
   flow_log_cloudwatch_log_group_skip_destroy = false
