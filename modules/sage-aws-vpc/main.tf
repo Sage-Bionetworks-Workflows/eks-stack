@@ -27,26 +27,15 @@ module "vpc" {
   single_nat_gateway = true
   enable_vpn_gateway = false
 
-  manage_default_security_group = true
+  manage_default_security_group = false
 
-  # default_network_acl_ingress = [
-  #   {
-  #     "action" : "deny",
-  #     "cidr_block" : "0.0.0.0/0",
-  #     "from_port" : 0,
-  #     "protocol" : "-1",
-  #     "rule_no" : 98,
-  #     "to_port" : 0
-  #   },
-  #   {
-  #     "action" : "deny",
-  #     "from_port" : 0,
-  #     "ipv6_cidr_block" : "::/0",
-  #     "protocol" : "-1",
-  #     "rule_no" : 99,
-  #     "to_port" : 0
-  #   }
-  # ]
+  create_flow_log_cloudwatch_iam_role             = var.capture_flow_logs
+  create_flow_log_cloudwatch_log_group            = var.capture_flow_logs
+  flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_retention
+
+  # Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time
+  flow_log_cloudwatch_log_group_skip_destroy = false
+
 
   tags = var.tags
 }

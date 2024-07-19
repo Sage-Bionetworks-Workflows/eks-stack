@@ -16,7 +16,7 @@ resource "spacelift_module" "sage-aws-vpc" {
 
 resource "spacelift_version" "sage-aws-vpc-version" {
   module_id      = spacelift_module.sage-aws-vpc.id
-  version_number = "0.3.0"
+  version_number = "0.3.1"
 }
 
 resource "spacelift_module" "sage-aws-eks" {
