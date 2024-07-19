@@ -2,7 +2,7 @@ module "sage-aws-eks-autoscaler" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version = "0.3.0"
 
-  cluster_name           = "dpe-k8-sandbox"
+  cluster_name           = var.cluster_name
   private_vpc_subnet_ids = var.private_subnet_ids
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
@@ -67,6 +67,87 @@ resource "kubernetes_namespace" "testing" {
 #       - my_pod_security_group_id
 # EOF
 # }
+
+
+# apiVersion: vpcresources.k8s.aws/v1beta1
+# kind: SecurityGroupPolicy
+# metadata:
+#   name: my-security-group-policy
+#   namespace: my-namespace
+# spec:
+#   podSelector: 
+#     matchLabels:
+#       role: my-role
+#   securityGroups:
+#     groupIds:
+#       - my_pod_security_group_id
+
+# resource "aws_security_group" "frontend" {
+#   # ... other configuration ...
+
+#   egress {
+#     from_port        = 0
+#     to_port          = 0
+#     protocol         = "-1"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+# }
+
+
+# resource "aws_security_group" "backend" {
+#   # ... other configuration ...
+
+#   egress {
+#     from_port        = 0
+#     to_port          = 0
+#     protocol         = "-1"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+# }
+
+resource "aws_security_group" "client" {
+  name        = "allow-traffic-client"
+  description = "Allow traffic"
+  vpc_id      = var.vpc_id
+
+  egress {
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "client-node" {
+  security_group_id = aws_security_group.client.id
+  # Node security group
+  referenced_security_group_id = data.aws_security_group.node-security-group.id
+  ip_protocol                  = "-1"
+}
+
+resource "kubernetes_manifest" "security-group-policy-client" {
+  manifest = {
+    apiVersion = "vpcresources.k8s.aws/v1beta1"
+    kind       = "SecurityGroupPolicy"
+    metadata = {
+      name      = "security-group-policy-client"
+      namespace = "client"
+    }
+    spec = {
+      podSelector = {
+        matchLabels = {
+          role = "client"
+        }
+      }
+      securityGroups = {
+        groupIds = [
+          aws_security_group.client.id
+        ]
+      }
+    }
+  }
+}
 
 resource "kubernetes_namespace" "client" {
   metadata {
