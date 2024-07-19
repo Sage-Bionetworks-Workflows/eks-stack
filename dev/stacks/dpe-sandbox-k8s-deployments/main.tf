@@ -101,7 +101,7 @@ resource "kubernetes_deployment" "client-deployment" {
           image             = "calico/star-probe:v0.1.0"
           image_pull_policy = "Always"
 
-          command = ["probe", "--urls=http://frontend.stars:1025/status,http://backend.stars:6379/status"]
+          command = ["probe", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status"]
 
           port {
             container_port = 9000
@@ -145,8 +145,8 @@ resource "kubernetes_service" "frontend-service" {
     }
 
     port {
-      port        = 1025
-      target_port = 9000
+      port        = 80
+      target_port = 80
     }
   }
 }
@@ -180,10 +180,10 @@ resource "kubernetes_deployment" "frontend-deployment" {
           image             = "calico/star-probe:v0.1.0"
           image_pull_policy = "Always"
 
-          command = ["probe", "--urls=http://frontend.stars:1025/status,http://backend.stars:6379/status,http://client.client:9000/status"]
+          command = ["probe", "--http-port=80", "--urls=http://frontend.stars:1025/status,http://backend.stars:6379/status,http://client.client:9000/status"]
 
           port {
-            container_port = 1025
+            container_port = 80
           }
         }
       }
@@ -240,7 +240,7 @@ resource "kubernetes_deployment" "backend-deployment" {
           image             = "calico/star-probe:v0.1.0"
           image_pull_policy = "Always"
 
-          command = ["probe", "--http-port=6379", "--urls=http://frontend.stars:1025/status,http://backend.stars:6379/status,http://client.client:9000/status"]
+          command = ["probe", "--http-port=6379", "--urls=http://frontend.stars:80/status,http://backend.stars:6379/status,http://client.client:9000/status"]
 
           port {
             container_port = 6379
