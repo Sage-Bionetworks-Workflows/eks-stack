@@ -268,11 +268,10 @@ resource "kubernetes_service" "management-ui-service" {
     namespace = "management-ui"
   }
 
-  # TODO: Update the security group created from this LoadBalancer to only allow source of `52.44.61.21/32`
   spec {
     type = "LoadBalancer"
 
-    # external_ips = ["52.44.61.21/32"]
+    # Setting this updates the `Source` field for the LoadBalancer security group
     load_balancer_source_ranges = ["52.44.61.21/32"]
 
     port {
