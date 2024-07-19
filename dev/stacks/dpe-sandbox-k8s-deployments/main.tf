@@ -8,6 +8,14 @@ module "sage-aws-eks-autoscaler" {
   node_security_group_id = var.node_security_group_id
 }
 
+# TODO:
+# Requirements for security groups:
+# They must allow inbound communication from the security group applied to your nodes (for kubelet) over any ports that you've configured probes for.
+# They must allow outbound communication over TCP and UDP ports 53 to a security group assigned to the Pods (or nodes that the Pods run on) running CoreDNS. 
+# The security group for your CoreDNS Pods must allow inbound TCP and UDP port 53 traffic from the security group that you specify.
+# They must have necessary inbound and outbound rules to communicate with other Pods that they need to communicate with.
+
+
 # Anything beyond this is used for testing
 # resource "aws_security_group" "allow_tls" {
 #   name        = "allow_tls"
@@ -107,24 +115,24 @@ resource "kubernetes_namespace" "testing" {
 #   }
 # }
 
-resource "aws_security_group" "client" {
-  name        = "allow-traffic-client"
-  description = "Allow traffic"
-  vpc_id      = var.vpc_id
+# resource "aws_security_group" "client" {
+#   name        = "allow-traffic-client"
+#   description = "Allow traffic"
+#   vpc_id      = var.vpc_id
 
-  egress {
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-}
+#   egress {
+#     protocol         = "-1"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "client-node" {
-  security_group_id = aws_security_group.client.id
-  # Node security group
-  referenced_security_group_id = data.aws_security_group.node-security-group.id
-  ip_protocol                  = "-1"
-}
+# resource "aws_vpc_security_group_ingress_rule" "client-node" {
+#   security_group_id = aws_security_group.client.id
+#   # Node security group
+#   referenced_security_group_id = data.aws_security_group.node-security-group.id
+#   ip_protocol                  = "-1"
+# }
 
 resource "kubernetes_manifest" "security-group-policy-client" {
   manifest = {
