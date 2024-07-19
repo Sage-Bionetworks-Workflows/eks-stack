@@ -70,10 +70,7 @@ module "eks" {
         }
         env = {
           ENABLE_POD_ENI                    = "true",
-          POD_SECURITY_GROUP_ENFORCING_MODE = "standard",
-          # TODO: Turn on strict mode when we are ready to enforce it
-          # POD_SECURITY_GROUP_ENFORCING_MODE = "strict",
-          AWS_VPC_K8S_CNI_EXTERNALSNAT = "true"
+          POD_SECURITY_GROUP_ENFORCING_MODE = var.pod_security_group_enforcing_mode,
       } })
     }
   }
