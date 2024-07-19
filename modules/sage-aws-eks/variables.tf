@@ -44,3 +44,15 @@ variable "enable_policy_event_logs" {
   type        = bool
   default     = false
 }
+
+variable "capture_cloudwatch_logs" {
+  description = "Determine if we should capture logs to cloudwatch."
+  type        = bool
+  default     = false
+}
+
+variable "cloudwatch_retention" {
+  description = "Number of days to retain CloudWatch Logs"
+  type        = number
+  default     = 1
+}

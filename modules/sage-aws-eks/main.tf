@@ -95,6 +95,9 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
   authentication_mode                      = "API"
 
+  cloudwatch_log_group_retention_in_days = var.cloudwatch_retention
+  create_cloudwatch_log_group            = var.capture_cloudwatch_logs
+
 
   access_entries = {
     # One access entry with a policy associated
