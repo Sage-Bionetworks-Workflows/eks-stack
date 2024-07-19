@@ -146,7 +146,7 @@ resource "kubernetes_service" "frontend-service" {
 
     port {
       port        = 1025
-      target_port = 1025
+      target_port = 9000
     }
   }
 }
