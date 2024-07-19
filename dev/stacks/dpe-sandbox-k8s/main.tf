@@ -17,5 +17,5 @@ module "sage-aws-eks" {
   enable_policy_event_logs          = true
   capture_cloudwatch_logs           = true
   cloudwatch_retention              = 1
-  pod_security_group_enforcing_mode = "standard"
+  pod_security_group_enforcing_mode = "strict"
 }
