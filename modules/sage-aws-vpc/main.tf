@@ -27,6 +27,7 @@ module "vpc" {
 
   manage_default_security_group = false
 
+  enable_flow_log                                 = var.capture_flow_logs
   create_flow_log_cloudwatch_iam_role             = var.capture_flow_logs
   create_flow_log_cloudwatch_log_group            = var.capture_flow_logs
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_retention
