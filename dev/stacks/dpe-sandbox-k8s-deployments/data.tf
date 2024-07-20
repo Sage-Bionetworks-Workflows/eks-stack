@@ -15,6 +15,6 @@ data "aws_secretsmanager_secret_version" "secret_credentials" {
 }
 
 
-data "aws_security_group" "node-security-group" {
-  name = "${var.cluster_name}-node"
-}
+# data "aws_security_group" "node-security-group" {
+#   name = "${var.cluster_name}-node"
+# }

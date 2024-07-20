@@ -95,6 +95,14 @@ scale-to-zerio capabilities and will dynamically add or removes nodes from the c
 depending on the required demand. The autoscaler is templatized and provided as a
 terraform module to be used within an EKS stack.
 
+Setup of spotio (Manual per AWS Account):
+
+* Subscribe through the AWS Marketplace: <https://aws.amazon.com/marketplace/saas/ordering?productId=bc241ac2-7b41-4fdd-89d1-6928ec6dae15>
+* "Set up your account" on the spotio website and link it to an existing organization
+* Link the account through the AWS UI:
+* Create a policy (See the JSON in the spotio UI)
+* Create a role (See instructions in the spotio UI)
+
 
 #### Connecting to an EKS cluster for kubectl commands
 
