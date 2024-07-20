@@ -134,28 +134,28 @@ resource "kubernetes_namespace" "testing" {
 #   ip_protocol                  = "-1"
 # }
 
-resource "kubernetes_manifest" "security-group-policy-client" {
-  manifest = {
-    apiVersion = "vpcresources.k8s.aws/v1beta1"
-    kind       = "SecurityGroupPolicy"
-    metadata = {
-      name      = "security-group-policy-client"
-      namespace = "client"
-    }
-    spec = {
-      podSelector = {
-        matchLabels = {
-          role = "client"
-        }
-      }
-      securityGroups = {
-        groupIds = [
-          aws_security_group.client.id
-        ]
-      }
-    }
-  }
-}
+# resource "kubernetes_manifest" "security-group-policy-client" {
+#   manifest = {
+#     apiVersion = "vpcresources.k8s.aws/v1beta1"
+#     kind       = "SecurityGroupPolicy"
+#     metadata = {
+#       name      = "security-group-policy-client"
+#       namespace = "client"
+#     }
+#     spec = {
+#       podSelector = {
+#         matchLabels = {
+#           role = "client"
+#         }
+#       }
+#       securityGroups = {
+#         groupIds = [
+#           aws_security_group.client.id
+#         ]
+#       }
+#     }
+#   }
+# }
 
 resource "kubernetes_namespace" "client" {
   metadata {
