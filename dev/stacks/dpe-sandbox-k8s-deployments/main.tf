@@ -135,74 +135,18 @@ resource "kubernetes_namespace" "testing" {
 #   ip_protocol                  = "-1"
 # }
 
-resource "aws_security_group" "sg-management-ui" {
-  name        = "${var.cluster_name}-sg-management-ui"
-  description = "Security group for EKS client pod-level security"
+resource "aws_security_group" "sg-stars-demo" {
+  name        = "${var.cluster_name}-sg-stars-demo"
+  description = "Security group for EKS pod-level security for the stars demo"
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.sg-backend.id, aws_security_group.sg-frontend.id, aws_security_group.sg-client.id]
-    description     = "Allow all TCP traffic from the security groups"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    self        = true
+    description = "Allow all TCP traffic from the security groups"
   }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "tcp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all TCP traffic to the node security group"
-  }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "udp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all UDP traffic to the node security group"
-  }
-
-  tags = var.tags
-}
-
-resource "aws_security_group" "sg-client" {
-  name        = "${var.cluster_name}-sg-client"
-  description = "Security group for EKS client pod-level security"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port       = 9000
-    to_port         = 9000
-    protocol        = "tcp"
-    security_groups = [aws_security_group.sg-backend.id, aws_security_group.sg-frontend.id, aws_security_group.sg-management-ui.id]
-    description     = "Allow all TCP traffic from the security groups"
-  }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "tcp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all TCP traffic to the node security group"
-  }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "udp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all UDP traffic to the node security group"
-  }
-
-  tags = var.tags
-}
-
-resource "aws_security_group" "sg-frontend" {
-  name        = "${var.cluster_name}-sg-frontend"
-  description = "Security group for EKS frontend pod-level security"
-  vpc_id      = var.vpc_id
 
   # ingress {
   #   # TODO: If I had any probes like liveness or health checks I would need to explicity allow it here
@@ -213,15 +157,6 @@ resource "aws_security_group" "sg-frontend" {
   #   description     = "Allow all TCP traffic from the security groups"
   # }
 
-  ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.sg-client.id, aws_security_group.sg-backend.id, aws_security_group.sg-management-ui.id]
-    description     = "Allow all TCP traffic from the security groups"
-  }
-
-
   egress {
     from_port       = 53
     to_port         = 53
@@ -241,131 +176,56 @@ resource "aws_security_group" "sg-frontend" {
   tags = var.tags
 }
 
-resource "aws_security_group" "sg-backend" {
-  name        = "${var.cluster_name}-sg-backend"
-  description = "Security group for EKS backend pod-level security"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port       = 6379
-    to_port         = 6379
-    protocol        = "tcp"
-    security_groups = [aws_security_group.sg-frontend.id, aws_security_group.sg-client.id, aws_security_group.sg-management-ui.id]
-    description     = "Allow all TCP traffic from the security groups"
-  }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "tcp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all TCP traffic to the node security group"
-  }
-
-  egress {
-    from_port       = 53
-    to_port         = 53
-    protocol        = "udp"
-    security_groups = [var.node_security_group_id]
-    description     = "Allow all UDP traffic to the node security group"
-  }
-
-  tags = var.tags
-}
-
-resource "kubernetes_manifest" "security-group-policy-client" {
-  manifest = {
-    apiVersion = "vpcresources.k8s.aws/v1beta1"
-    kind       = "SecurityGroupPolicy"
-    metadata = {
+locals {
+  security_group_policies = {
+    client = {
       name      = "security-group-policy-client"
       namespace = "client"
-    }
-    spec = {
-      podSelector = {
-        matchLabels = {
-          role = "client"
-        }
-      }
-      securityGroups = {
-        groupIds = [
-          aws_security_group.sg-client.id
-        ]
-      }
-    }
-  }
-}
-
-
-resource "kubernetes_manifest" "security-group-policy-backend" {
-  manifest = {
-    apiVersion = "vpcresources.k8s.aws/v1beta1"
-    kind       = "SecurityGroupPolicy"
-    metadata = {
+      role      = "client"
+    },
+    backend = {
       name      = "security-group-policy-backend"
       namespace = "stars"
-    }
-    spec = {
-      podSelector = {
-        matchLabels = {
-          role = "backend"
-        }
-      }
-      securityGroups = {
-        groupIds = [
-          aws_security_group.sg-backend.id
-        ]
-      }
-    }
-  }
-}
-
-
-resource "kubernetes_manifest" "security-group-policy-frontend" {
-  manifest = {
-    apiVersion = "vpcresources.k8s.aws/v1beta1"
-    kind       = "SecurityGroupPolicy"
-    metadata = {
+      role      = "backend"
+    },
+    frontend = {
       name      = "security-group-policy-frontend"
       namespace = "stars"
+      role      = "frontend"
+    },
+    ui = {
+      name      = "security-group-policy-ui"
+      namespace = "management-ui"
+      role      = "management-ui"
+    }
+  }
+}
+
+resource "kubernetes_manifest" "security_group_policy" {
+  for_each = local.security_group_policies
+
+  manifest = {
+    apiVersion = "vpcresources.k8s.aws/v1beta1"
+    kind       = "SecurityGroupPolicy"
+    metadata = {
+      name      = each.value.name
+      namespace = each.value.namespace
     }
     spec = {
       podSelector = {
         matchLabels = {
-          role = "frontend"
+          role = each.value.role
         }
       }
       securityGroups = {
         groupIds = [
-          aws_security_group.sg-frontend.id
+          aws_security_group.sg-stars-demo.id
         ]
       }
     }
   }
 }
 
-resource "kubernetes_manifest" "security-group-policy-ui" {
-  manifest = {
-    apiVersion = "vpcresources.k8s.aws/v1beta1"
-    kind       = "SecurityGroupPolicy"
-    metadata = {
-      name      = "security-group-policy-ui"
-      namespace = "management-ui"
-    }
-    spec = {
-      podSelector = {
-        matchLabels = {
-          role = "management-ui"
-        }
-      }
-      securityGroups = {
-        groupIds = [
-          aws_security_group.sg-management-ui.id
-        ]
-      }
-    }
-  }
-}
 resource "kubernetes_namespace" "client" {
   metadata {
     name = "client"
