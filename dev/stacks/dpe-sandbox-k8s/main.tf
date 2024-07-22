@@ -8,7 +8,7 @@ module "sage-aws-vpc" {
 
 module "sage-aws-eks" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  version = "0.3.6"
+  version = "0.3.7"
 
   cluster_name                      = "dpe-k8-sandbox"
   private_vpc_subnet_ids            = module.sage-aws-vpc.private_subnet_ids
