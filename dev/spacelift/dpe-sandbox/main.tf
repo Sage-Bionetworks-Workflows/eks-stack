@@ -69,6 +69,12 @@ resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
   input_name          = "TF_VAR_node_security_group_id"
 }
 
+resource "spacelift_stack_dependency_reference" "pod-to-node-security-group-id-reference" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "pod_to_node_dns_sg_id"
+  input_name          = "TF_VAR_pod_to_node_dns_sg_id"
+}
+
 resource "spacelift_stack_dependency_reference" "vpc-cidr-block-reference" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
   output_name         = "vpc_cidr_block"

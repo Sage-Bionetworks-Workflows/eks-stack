@@ -13,6 +13,11 @@ variable "node_security_group_id" {
   type        = string
 }
 
+variable "pod_to_node_dns_sg_id" {
+  description = "Pod to node DNS security group ID."
+  type        = string
+}
+
 variable "vpc_cidr_block" {
   description = "VPC CIDR block"
   type        = string
