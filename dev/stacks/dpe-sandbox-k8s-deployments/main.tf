@@ -168,6 +168,14 @@ resource "aws_security_group" "sg-stars-demo" {
   }
 
   egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = ["sg-074a65b7f13f170a4"]
+    description     = "Allow egreee to the EKS Control plane"
+  }
+
+  egress {
     from_port       = 53
     to_port         = 53
     protocol        = "tcp"
