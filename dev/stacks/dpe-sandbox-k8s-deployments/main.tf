@@ -168,14 +168,6 @@ resource "aws_security_group" "sg-stars-demo" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = ["sg-074a65b7f13f170a4"]
-    description     = "Allow egreee to the EKS Control plane"
-  }
-
-  egress {
     from_port       = 53
     to_port         = 53
     protocol        = "tcp"
@@ -238,7 +230,8 @@ resource "kubernetes_manifest" "security_group_policy" {
         groupIds = [
           aws_security_group.sg-stars-demo.id,
           # See https://github.com/aws/amazon-vpc-cni-k8s/issues/1695#issuecomment-947607971 for context on why the control plane SG is added here
-          "sg-0a4dbf02d18f9131c",
+          # TODO: Replace this with a data lookup
+          # "sg-0a4dbf02d18f9131c",
         ]
       }
     }
