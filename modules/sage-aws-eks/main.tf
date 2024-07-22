@@ -41,6 +41,29 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
+resource "aws_security_group" "pod-dns-egress" {
+  name        = "${var.cluster_name}-pod-dns-egress"
+  description = "Allow egress on port 53 for DNS queries to the node security group"
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    self        = true
+    description = "Allow all TCP traffic to the node security group"
+  }
+
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    self        = true
+    description = "Allow all UDP traffic to the node security group"
+  }
+
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.12"
@@ -94,6 +117,23 @@ module "eks" {
 
   cloudwatch_log_group_retention_in_days = var.cloudwatch_retention
   create_cloudwatch_log_group            = var.capture_cloudwatch_logs
+
+  node_security_group_additional_rules = {
+    pod_dns_egress_tcp = {
+      description              = "Allow egress on port 53 for DNS queries to the node security group"
+      from_port                = 53
+      to_port                  = 53
+      protocol                 = "tcp"
+      source_security_group_id = aws_security_group.pod-dns-egress.id
+    }
+    pod_dns_egress_udp = {
+      description              = "Allow egress on port 53 for DNS queries to the node security group"
+      from_port                = 53
+      to_port                  = 53
+      protocol                 = "udp"
+      source_security_group_id = aws_security_group.pod-dns-egress.id
+    }
+  }
 
 
   access_entries = {
