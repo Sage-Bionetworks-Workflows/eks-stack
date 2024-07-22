@@ -135,28 +135,70 @@ resource "kubernetes_namespace" "testing" {
 #   ip_protocol                  = "-1"
 # }
 
-# resource "kubernetes_manifest" "security-group-policy-client" {
-#   manifest = {
-#     apiVersion = "vpcresources.k8s.aws/v1beta1"
-#     kind       = "SecurityGroupPolicy"
-#     metadata = {
-#       name      = "security-group-policy-client"
-#       namespace = "client"
-#     }
-#     spec = {
-#       podSelector = {
-#         matchLabels = {
-#           role = "client"
-#         }
-#       }
-#       securityGroups = {
-#         groupIds = [
-#           aws_security_group.client.id
-#         ]
-#       }
-#     }
-#   }
-# }
+resource "aws_security_group" "eks_pod_security_group" {
+  name        = "eks_pod_security_group"
+  description = "Security group for EKS pod-level security"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [var.node_security_group_id]
+    description     = "Allow all TCP traffic from the node security group"
+  }
+
+  ingress {
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "udp"
+    security_groups = [var.node_security_group_id]
+    description     = "Allow all UDP traffic from the node security group"
+  }
+
+  egress {
+    from_port       = 53
+    to_port         = 53
+    protocol        = "tcp"
+    security_groups = [var.node_security_group_id]
+    description     = "Allow all TCP traffic to the node security group"
+  }
+
+  egress {
+    from_port       = 53
+    to_port         = 53
+    protocol        = "udp"
+    security_groups = [var.node_security_group_id]
+    description     = "Allow all UDP traffic to the node security group"
+  }
+
+  tags = {
+    Name = "eks_pod_security_group"
+  }
+}
+
+resource "kubernetes_manifest" "security-group-policy-client" {
+  manifest = {
+    apiVersion = "vpcresources.k8s.aws/v1beta1"
+    kind       = "SecurityGroupPolicy"
+    metadata = {
+      name      = "security-group-policy-client"
+      namespace = "client"
+    }
+    spec = {
+      podSelector = {
+        matchLabels = {
+          role = "client"
+        }
+      }
+      securityGroups = {
+        groupIds = [
+          aws_security_group.eks_pod_security_group.id
+        ]
+      }
+    }
+  }
+}
 
 resource "kubernetes_namespace" "client" {
   metadata {
