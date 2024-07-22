@@ -62,3 +62,8 @@ variable "pod_security_group_enforcing_mode" {
   type        = string
   default     = "strict"
 }
+
+variable "aws_account_id" {
+  description = "The AWS account ID to use for assuming any roles"
+  type        = string
+}

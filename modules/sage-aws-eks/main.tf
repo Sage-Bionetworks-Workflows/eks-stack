@@ -1,5 +1,5 @@
 resource "aws_iam_role" "admin_role" {
-  name = "eks_admin_role_${var.cluster_name}"
+  name = "eks-admin-role-${var.cluster_name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -7,7 +7,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:root"
+          AWS = "arn:aws:iam::${var.aws_account_id}:root"
         }
         Action = "sts:AssumeRole"
       },
