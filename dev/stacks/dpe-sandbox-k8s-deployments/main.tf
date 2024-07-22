@@ -140,12 +140,14 @@ resource "aws_security_group" "sg-stars-demo" {
   description = "Security group for EKS pod-level security for the stars demo"
   vpc_id      = var.vpc_id
 
+  # TODO: Allow ingress from ELB
+
   ingress {
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
     self        = true
-    description = "Allow all TCP traffic to self"
+    description = "Allow all traffic to self"
   }
 
   # ingress {
@@ -159,10 +161,10 @@ resource "aws_security_group" "sg-stars-demo" {
 
   egress {
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
     self        = true
-    description = "Allow all TCP traffic from self"
+    description = "Allow all traffic from self"
   }
 
   egress {
