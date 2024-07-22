@@ -150,8 +150,8 @@ resource "aws_security_group" "sg-stars-demo" {
 
   # ingress {
   #   # TODO: If I had any probes like liveness or health checks I would need to explicity allow it here
-  #   from_port       = 0
-  #   to_port         = 65535
+  #   from_port       = 9001
+  #   to_port         = 9001
   #   protocol        = "tcp"
   #   security_groups = [var.node_security_group_id]
   #   description     = "Allow all TCP traffic from the security groups"
@@ -173,7 +173,6 @@ resource "aws_security_group" "sg-stars-demo" {
     description     = "Allow all UDP traffic to the node security group"
   }
 
-  tags = var.tags
 }
 
 locals {
