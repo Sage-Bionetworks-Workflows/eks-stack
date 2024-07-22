@@ -228,7 +228,9 @@ resource "kubernetes_manifest" "security_group_policy" {
       }
       securityGroups = {
         groupIds = [
-          aws_security_group.sg-stars-demo.id
+          aws_security_group.sg-stars-demo.id,
+          # See https://github.com/aws/amazon-vpc-cni-k8s/issues/1695#issuecomment-947607971 for context on why the control plane SG is added here
+          "sg-0a4dbf02d18f9131c",
         ]
       }
     }
