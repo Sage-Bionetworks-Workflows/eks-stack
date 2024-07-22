@@ -37,7 +37,7 @@ resource "spacelift_module" "sage-aws-eks" {
 
 resource "spacelift_version" "sage-aws-eks-version" {
   module_id      = spacelift_module.sage-aws-eks.id
-  version_number = "0.3.4"
+  version_number = "0.3.5"
 }
 
 resource "spacelift_module" "sage-aws-eks-autoscaler" {

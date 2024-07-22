@@ -119,15 +119,17 @@ module "eks" {
   create_cloudwatch_log_group            = var.capture_cloudwatch_logs
 
   node_security_group_additional_rules = {
-    pod_dns_egress_tcp = {
-      description              = "Allow egress on port 53 for DNS queries to the node security group"
+    pod_dns_ingress_tcp = {
+      type                     = "ingress"
+      description              = "Allow ingress on port 53 for DNS queries to the node security group"
       from_port                = 53
       to_port                  = 53
       protocol                 = "tcp"
       source_security_group_id = aws_security_group.pod-dns-egress.id
     }
-    pod_dns_egress_udp = {
-      description              = "Allow egress on port 53 for DNS queries to the node security group"
+    pod_dns_ingress_udp = {
+      type                     = "ingress"
+      description              = "Allow ingress on port 53 for DNS queries to the node security group"
       from_port                = 53
       to_port                  = 53
       protocol                 = "udp"
