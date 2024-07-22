@@ -111,14 +111,16 @@ resource "spacelift_stack_destructor" "k8s-stack-destructor" {
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
-  integration_id = "01HXW154N60KJ8NCC93H1VYPNM"
+  # org-sagebase-dnt-dev-aws-integration
+  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
   stack_id       = spacelift_stack.k8s-stack.id
   read           = true
   write          = true
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration-attachment" {
-  integration_id = "01HXW154N60KJ8NCC93H1VYPNM"
+  # org-sagebase-dnt-dev-aws-integration
+  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
   stack_id       = spacelift_stack.k8s-stack-deployments.id
   read           = true
   write          = true
