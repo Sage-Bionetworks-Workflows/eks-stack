@@ -46,11 +46,13 @@ resource "aws_security_group" "pod-dns-egress" {
   description = "Allow egress on port 53 for DNS queries to the node security group"
   vpc_id      = var.vpc_id
 
+  for_each = var.private_subnet_cidrs
+
   egress {
     from_port   = 53
     to_port     = 53
     protocol    = "tcp"
-    self        = true
+    cidr_blocks = [each.value]
     description = "Allow all TCP traffic to the node security group"
   }
 
@@ -58,7 +60,7 @@ resource "aws_security_group" "pod-dns-egress" {
     from_port   = 53
     to_port     = 53
     protocol    = "udp"
-    self        = true
+    cidr_blocks = [each.value]
     description = "Allow all UDP traffic to the node security group"
   }
 
