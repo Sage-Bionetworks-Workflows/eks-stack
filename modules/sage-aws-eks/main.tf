@@ -50,7 +50,7 @@ resource "aws_security_group" "pod-dns-egress" {
     from_port   = 53
     to_port     = 53
     protocol    = "tcp"
-    cidr_blocks = [var.private_subnet_cidrs]
+    cidr_blocks = var.private_subnet_cidrs
     description = "Allow all TCP traffic to the node security group"
   }
 
@@ -58,7 +58,7 @@ resource "aws_security_group" "pod-dns-egress" {
     from_port   = 53
     to_port     = 53
     protocol    = "udp"
-    cidr_blocks = [var.private_subnet_cidrs]
+    cidr_blocks = var.private_subnet_cidrs
     description = "Allow all UDP traffic to the node security group"
   }
 
