@@ -145,7 +145,7 @@ resource "aws_security_group" "sg-stars-demo" {
     to_port     = 65535
     protocol    = "tcp"
     self        = true
-    description = "Allow all TCP traffic from the security groups"
+    description = "Allow all TCP traffic to self"
   }
 
   # ingress {
@@ -156,6 +156,14 @@ resource "aws_security_group" "sg-stars-demo" {
   #   security_groups = [var.node_security_group_id]
   #   description     = "Allow all TCP traffic from the security groups"
   # }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+    description = "Allow all TCP traffic from self"
+  }
 
   egress {
     from_port       = 53
