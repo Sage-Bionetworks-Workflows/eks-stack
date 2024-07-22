@@ -19,5 +19,5 @@ module "sage-aws-eks" {
   cloudwatch_retention              = 1
   pod_security_group_enforcing_mode = "strict"
   aws_account_id                    = "631692904429"
-  vpc_private_subnet_cidrs          = module.sage-aws-vpc.vpc_private_subnet_cidrs
+  private_subnet_cidrs              = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
