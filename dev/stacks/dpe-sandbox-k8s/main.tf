@@ -8,7 +8,7 @@ module "sage-aws-vpc" {
 
 module "sage-aws-eks" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  version = "0.3.5"
+  version = "0.3.6"
 
   cluster_name                      = "dpe-k8-sandbox"
   private_vpc_subnet_ids            = module.sage-aws-vpc.private_subnet_ids
@@ -19,4 +19,5 @@ module "sage-aws-eks" {
   cloudwatch_retention              = 1
   pod_security_group_enforcing_mode = "strict"
   aws_account_id                    = "631692904429"
+  vpc_private_subnet_cidrs          = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
