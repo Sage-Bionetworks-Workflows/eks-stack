@@ -6,6 +6,7 @@ module "sage-aws-eks-autoscaler" {
   private_vpc_subnet_ids = var.private_subnet_ids
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
+  spotinst_account       = var.spotinst_account
 }
 
 # TODO:

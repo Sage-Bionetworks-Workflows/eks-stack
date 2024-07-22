@@ -39,5 +39,5 @@ variable "cluster_name" {
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
-  default     = "act-ac6522b4"
+  default     = "act-45de6f47"
 }
