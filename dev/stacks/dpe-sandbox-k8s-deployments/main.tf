@@ -11,6 +11,40 @@ module "sage-aws-eks-autoscaler" {
 
 
 
+resource "kubernetes_network_policy" "allow-kube-system" {
+  for_each = toset(["stars", "client"])
+
+  metadata {
+    name      = "allow-kube-system"
+    namespace = each.value
+  }
+
+  spec {
+    pod_selector {}
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "kube-system"
+          }
+        }
+      }
+    }
+
+    egress {
+      to {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "kube-system"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress", "Egress"]
+  }
+}
 resource "kubernetes_network_policy" "default_deny" {
   for_each = toset(["stars", "client"])
 
