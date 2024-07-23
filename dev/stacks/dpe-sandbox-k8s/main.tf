@@ -17,7 +17,7 @@ module "sage-aws-eks" {
   enable_policy_event_logs          = true
   capture_cloudwatch_logs           = true
   cloudwatch_retention              = 1
-  pod_security_group_enforcing_mode = "strict"
+  pod_security_group_enforcing_mode = "standard"
   aws_account_id                    = "631692904429"
   private_subnet_cidrs              = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
