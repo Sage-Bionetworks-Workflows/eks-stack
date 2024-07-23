@@ -9,89 +9,22 @@ module "sage-aws-eks-autoscaler" {
   spotinst_account       = var.spotinst_account
 }
 
-# TODO:
-# Requirements for security groups:
-# They must allow inbound communication from the security group applied to your nodes (for kubelet) over any ports that you've configured probes for.
-# They must allow outbound communication over TCP and UDP ports 53 to a security group assigned to the Pods (or nodes that the Pods run on) running CoreDNS. 
-# The security group for your CoreDNS Pods must allow inbound TCP and UDP port 53 traffic from the security group that you specify.
-# They must have necessary inbound and outbound rules to communicate with other Pods that they need to communicate with.
 
 
-# Anything beyond this is used for testing
+resource "kubernetes_network_policy" "default_deny" {
+  for_each = toset(["stars", "client"])
 
-# resource "kubernetes_manifest" "security_group_policy" {
-#   manifest = <<EOF
-# apiVersion: vpcresources.k8s.aws/v1beta1
-# kind: SecurityGroupPolicy
-# metadata:
-#   name: my-test-security-group-policy
-#   namespace: testing-namespace
-# spec:
-#   podSelector: {}
-#   securityGroups:
-#     groupIds:
-#       - my_pod_security_group_id
-# EOF
-# }
+  metadata {
+    name      = "default-deny"
+    namespace = each.value
+  }
 
+  spec {
+    pod_selector {}
 
-# apiVersion: vpcresources.k8s.aws/v1beta1
-# kind: SecurityGroupPolicy
-# metadata:
-#   name: my-security-group-policy
-#   namespace: my-namespace
-# spec:
-#   podSelector: 
-#     matchLabels:
-#       role: my-role
-#   securityGroups:
-#     groupIds:
-#       - my_pod_security_group_id
-
-# resource "aws_security_group" "frontend" {
-#   # ... other configuration ...
-
-#   egress {
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
-# }
-
-
-# resource "aws_security_group" "backend" {
-#   # ... other configuration ...
-
-#   egress {
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
-# }
-
-# resource "aws_security_group" "client" {
-#   name        = "allow-traffic-client"
-#   description = "Allow traffic"
-#   vpc_id      = var.vpc_id
-
-#   egress {
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
-# }
-
-# resource "aws_vpc_security_group_ingress_rule" "client-node" {
-#   security_group_id = aws_security_group.client.id
-#   # Node security group
-#   referenced_security_group_id = data.aws_security_group.node-security-group.id
-#   ip_protocol                  = "-1"
-# }
-
+    policy_types = ["Ingress", "Egress"]
+  }
+}
 
 resource "kubernetes_namespace" "client" {
   metadata {
