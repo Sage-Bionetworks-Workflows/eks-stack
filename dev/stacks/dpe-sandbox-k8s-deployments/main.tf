@@ -71,6 +71,70 @@ resource "kubernetes_network_policy" "allow_ui_client" {
   }
 }
 
+resource "kubernetes_network_policy" "backend_policy" {
+  metadata {
+    name      = "backend-policy"
+    namespace = "stars"
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        role = "backend"
+      }
+    }
+
+    ingress {
+      from {
+        pod_selector {
+          match_labels = {
+            role = "frontend"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 6379
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "frontend_policy" {
+  metadata {
+    name      = "frontend-policy"
+    namespace = "stars"
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        role = "frontend"
+      }
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "client"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 80
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
 resource "kubernetes_namespace" "client" {
   metadata {
     name = "client"
