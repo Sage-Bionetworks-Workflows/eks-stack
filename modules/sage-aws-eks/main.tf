@@ -90,6 +90,7 @@ module "eks" {
         }
         nodeAgent = {
           enablePolicyEventLogs = var.enable_policy_event_logs ? "true" : "false"
+          enableCloudWatchLogs  = var.capture_cloudwatch_logs ? "true" : "false"
         }
         env = {
           ENABLE_POD_ENI                    = "true",
