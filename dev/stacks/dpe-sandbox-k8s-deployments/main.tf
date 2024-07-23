@@ -25,6 +25,51 @@ resource "kubernetes_network_policy" "default_deny" {
     policy_types = ["Ingress", "Egress"]
   }
 }
+resource "kubernetes_network_policy" "allow_ui" {
+  metadata {
+    name      = "allow-ui"
+    namespace = "stars"
+  }
+
+  spec {
+    pod_selector {}
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "management-ui"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "allow_ui_client" {
+  metadata {
+    name      = "allow-ui"
+    namespace = "client"
+  }
+
+  spec {
+    pod_selector {}
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            role = "management-ui"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
 
 resource "kubernetes_namespace" "client" {
   metadata {
