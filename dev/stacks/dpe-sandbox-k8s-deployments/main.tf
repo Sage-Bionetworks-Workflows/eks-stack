@@ -116,8 +116,8 @@ resource "aws_security_group" "sg-stars-demo" {
   }
 
   ingress {
-    from_port       = 31969
-    to_port         = 31969
+    from_port       = 0
+    to_port         = 0
     protocol        = "tcp"
     security_groups = [var.node_security_group_id]
     description     = "Test to allow traffic coming from ELB"
