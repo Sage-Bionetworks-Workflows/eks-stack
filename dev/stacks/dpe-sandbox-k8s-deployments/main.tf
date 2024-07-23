@@ -229,7 +229,8 @@ resource "kubernetes_manifest" "security_group_policy" {
       securityGroups = {
         groupIds = [
           aws_security_group.sg-stars-demo.id,
-          var.pod_to_node_dns_sg_id
+          var.pod_to_node_dns_sg_id,
+          "sg-0fe24d1b5771d961f",
         ]
       }
     }
