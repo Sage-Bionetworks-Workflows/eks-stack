@@ -198,6 +198,11 @@ resource "kubernetes_network_policy" "client_policy" {
 
     egress {
       to {
+        namespace_selector {
+          match_labels = {
+            role = "stars"
+          }
+        }
         pod_selector {
           match_labels = {
             role = "frontend"
