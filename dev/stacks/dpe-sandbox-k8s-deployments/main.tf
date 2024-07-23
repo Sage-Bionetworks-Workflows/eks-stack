@@ -200,7 +200,7 @@ resource "kubernetes_network_policy" "client_policy" {
       to {
         namespace_selector {
           match_labels = {
-            role = "stars"
+            "kubernetes.io/metadata.name" = "stars"
           }
         }
         pod_selector {
