@@ -112,7 +112,15 @@ resource "aws_security_group" "sg-stars-demo" {
     to_port         = 10250
     protocol        = "tcp"
     security_groups = [var.node_security_group_id]
-    description     = "Allow all traffic to self"
+    description     = "Allow all traffic from node for kubelet."
+  }
+
+  ingress {
+    from_port       = 31969
+    to_port         = 31969
+    protocol        = "tcp"
+    security_groups = [var.node_security_group_id]
+    description     = "Test to allow traffic coming from ELB"
   }
 
   # ingress {
