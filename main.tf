@@ -17,7 +17,7 @@ resource "spacelift_stack" "root_administrative_stack" {
 
   administrative          = true
   autodeploy              = true
-  branch                  = "ibcdpe-935-vpc-updates"
+  branch                  = "main"
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
   project_root            = ""
