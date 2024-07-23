@@ -132,21 +132,7 @@ resource "kubernetes_network_policy" "backend_policy" {
       }
     }
 
-    egress {
-      to {
-        pod_selector {
-          match_labels = {
-            role = "frontend"
-          }
-        }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 80
-      }
-    }
-
-    policy_types = ["Ingress", "Egress"]
+    policy_types = ["Ingress"]
   }
 }
 
@@ -194,6 +180,38 @@ resource "kubernetes_network_policy" "frontend_policy" {
     }
 
     policy_types = ["Ingress", "Egress"]
+  }
+}
+
+resource "kubernetes_network_policy" "client_policy" {
+  metadata {
+    name      = "client-policy"
+    namespace = "client"
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        role = "client"
+      }
+    }
+
+    egress {
+      to {
+        pod_selector {
+          match_labels = {
+            role = "frontend"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 80
+      }
+    }
+
+    policy_types = ["Egress"]
   }
 }
 
