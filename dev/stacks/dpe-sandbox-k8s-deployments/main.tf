@@ -104,7 +104,6 @@ resource "kubernetes_network_policy" "allow_ui_client" {
     policy_types = ["Ingress"]
   }
 }
-
 resource "kubernetes_network_policy" "backend_policy" {
   metadata {
     name      = "backend-policy"
@@ -133,7 +132,21 @@ resource "kubernetes_network_policy" "backend_policy" {
       }
     }
 
-    policy_types = ["Ingress"]
+    egress {
+      to {
+        pod_selector {
+          match_labels = {
+            role = "frontend"
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = 80
+      }
+    }
+
+    policy_types = ["Ingress", "Egress"]
   }
 }
 
@@ -165,7 +178,22 @@ resource "kubernetes_network_policy" "frontend_policy" {
       }
     }
 
-    policy_types = ["Ingress"]
+    egress {
+      to {
+        pod_selector {
+          match_labels = {
+            role = "backend"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 6379
+      }
+    }
+
+    policy_types = ["Ingress", "Egress"]
   }
 }
 
