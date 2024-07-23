@@ -59,6 +59,7 @@ resource "kubernetes_network_policy" "default_deny" {
     policy_types = ["Ingress", "Egress"]
   }
 }
+
 resource "kubernetes_network_policy" "allow_ui" {
   metadata {
     name      = "allow-ui"
@@ -72,7 +73,7 @@ resource "kubernetes_network_policy" "allow_ui" {
       from {
         namespace_selector {
           match_labels = {
-            role = "management-ui"
+            "kubernetes.io/metadata.name" = "management-ui"
           }
         }
       }
@@ -95,7 +96,7 @@ resource "kubernetes_network_policy" "allow_ui_client" {
       from {
         namespace_selector {
           match_labels = {
-            role = "management-ui"
+            "kubernetes.io/metadata.name" = "management-ui"
           }
         }
       }
@@ -153,7 +154,7 @@ resource "kubernetes_network_policy" "frontend_policy" {
       from {
         namespace_selector {
           match_labels = {
-            role = "client"
+            "kubernetes.io/metadata.name" = "client"
           }
         }
       }
