@@ -47,6 +47,7 @@ module "sage-aws-eks-autoscaler" {
 #   ip_protocol       = "-1" # semantically equivalent to all ports
 # }
 
+
 resource "kubernetes_namespace" "testing" {
   metadata {
     name = "testing-namespace"

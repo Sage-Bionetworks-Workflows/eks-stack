@@ -1,11 +1,14 @@
-import {
-  # The initial administrative stack is created manually in the Spacelift UI, and imported
-  # See https://docs.spacelift.io/vendors/terraform/terraform-provider.html#proposed-workflow
-  # "We suggest to first manually create a single administrative stack, and then use it 
-  # to programmatically define other stacks as necessary."
-  to = spacelift_stack.root_administrative_stack
-  id = "root-spacelift-administrative-stack"
-}
+# After infra is imported it can be commented out or removed. Keeping it here for reference.
+
+# import {
+#   # The initial administrative stack is created manually in the Spacelift UI, and imported
+#   # See https://docs.spacelift.io/vendors/terraform/terraform-provider.html#proposed-workflow
+#   # "We suggest to first manually create a single administrative stack, and then use it 
+#   # to programmatically define other stacks as necessary."
+#   to = spacelift_stack.root_administrative_stack
+#   id = "root-spacelift-administrative-stack"
+# }
+
 resource "spacelift_stack" "root_administrative_stack" {
   github_enterprise {
     namespace = "Sage-Bionetworks-Workflows"
