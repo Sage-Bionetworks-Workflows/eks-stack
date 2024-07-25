@@ -17,6 +17,8 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
 └── modules: Templatized collections of terraform resources that are used in a stack
     ├── apache-airflow: K8s deployment for apache airflow
     │   └── templates: Resources used during deployment of airflow
+    ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
+    ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
     ├── sage-aws-eks: Sage specific EKS cluster for AWS
     ├── sage-aws-k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
     └── sage-aws-vpc: Sage specific VPC for AWS
@@ -54,6 +56,10 @@ configurable parameters in order to run a number of workloads.
 #### EKS API access
 API access to the kubernetes cluster endpoint is set to `Public and private`. 
 
+Reading:
+
+- <https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/network_connectivity.md>
+
 ##### Public
 This allows one outside of the VPC to connect via `kubectl` and related tools to 
 interact with kubernetes resources. By default, this API server endpoint is public to 
@@ -78,8 +84,12 @@ Kubernetes nodes and configuring the necessary networking for Pods on each node.
 Allows us to assign EC2 security groups directly to pods running in AWS EKS clusters.
 This can be used as an alternative or in conjunction with `Kubernetes network policies`.
 
+See `modules/demo-pod-level-security-groups-strict` for more context on how this works.
+
 #### Kubernetes network policies
 Controls network traffic within the cluster, for example pod to pod traffic.
+
+See `modules/demo-network-policies` for more context on how this works.
 
 Further reading:
 - https://docs.aws.amazon.com/eks/latest/userguide/cni-network-policy.html
@@ -90,10 +100,25 @@ Further reading:
 
 #### EKS Autoscaler
 
-Us use spot.io to manage the nodes attached to each of the EKS cluster. This tool has
+We use spot.io to manage the nodes attached to each of the EKS cluster. This tool has
 scale-to-zerio capabilities and will dynamically add or removes nodes from the cluster
 depending on the required demand. The autoscaler is templatized and provided as a
 terraform module to be used within an EKS stack.
+
+Setup of spotio (Manual per AWS Account):
+
+* Subscribe through the AWS Marketplace: <https://aws.amazon.com/marketplace/saas/ordering?productId=bc241ac2-7b41-4fdd-89d1-6928ec6dae15>
+* "Set up your account" on the spotio website and link it to an existing organization
+* Link the account through the AWS UI:
+* Create a policy (See the JSON in the spotio UI)
+* Create a role (See instructions in the spotio UI)
+
+After this has been setup the last item is to get an API token from the spotio UI and
+add it to the AWS secret manager.
+
+* Log into the spot UI and go to <https://console.spotinst.com/settings/v2/tokens/permanent>
+* Create a new Permanent token, name it `{AWS-Account-Name}-token` or similar
+* Copy the token and create an `AWS Secrets Manager` Plaintext secret named `spotinst_token` with a description `Spot.io token`
 
 
 #### Connecting to an EKS cluster for kubectl commands
@@ -111,3 +136,68 @@ aws sso login --profile dpe-prod-admin
 # cluster". This will update your kubeconfig with permissions to access the cluster.
 aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:iam::766808016710:role/eks_admin_role --profile dpe-prod-admin
 ```
+
+### Spacelift
+Here are some instructions on setting up spacelift.
+
+
+#### Connecting a new AWS account for cloud integration
+
+This document describes the abbreviated process below:
+<https://docs.spacelift.io/integrations/cloud-providers/aws#setup-guide>
+
+- Create a new role and set it's name to something unique within the account, such as `spacelift-admin-role`
+- Description: "Role for spacelift CICD to assume when deploying resources managed by terraform"
+- Use the custom trust policy below:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::324880187172:root"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringLike": {
+                    "sts:ExternalId": "sagebionetworks@*"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::{{AWS ACCOUNT ID}}:root"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+```
+
+- Attach a few policies to the role:
+  - `PowerUserAccess`
+  - Create an inline policy to allow interaction with IAM (Needed if TF is going to be creating, editing, and deleting IAM roles/policies):
+```
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"iam:*Role",
+				"iam:*RolePolicy",
+				"iam:*RolePolicies",
+				"iam:*Policy",
+				"iam:*PolicyVersion",
+				"iam:*OpenIDConnectProvider",
+				"iam:*InstanceProfile"
+			],
+			"Resource": "*"
+		}
+	]
+}
+```
+- Add a new `spacelift_aws_integration` resources to the `common-resources/aws-integrations` directory.

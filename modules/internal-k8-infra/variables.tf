@@ -25,7 +25,6 @@ variable "region" {
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
-  default     = "act-ac6522b4"
 }
 
 variable "tags" {

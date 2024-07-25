@@ -13,6 +13,11 @@ variable "node_security_group_id" {
   type        = string
 }
 
+variable "pod_to_node_dns_sg_id" {
+  description = "Pod to node DNS security group ID."
+  type        = string
+}
+
 variable "vpc_cidr_block" {
   description = "VPC CIDR block"
   type        = string
@@ -33,4 +38,11 @@ variable "region" {
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
+  default     = "dpe-k8-sandbox"
+}
+
+variable "spotinst_account" {
+  description = "Spot.io account"
+  type        = string
+  default     = "act-45de6f47"
 }
