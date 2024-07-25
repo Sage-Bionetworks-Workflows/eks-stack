@@ -65,7 +65,7 @@ variable "cloudwatch_retention" {
 variable "pod_security_group_enforcing_mode" {
   description = "Valid values are 'standard' or 'strict'. More information: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/README.md#pod_security_group_enforcing_mode-v1110"
   type        = string
-  default     = "strict"
+  default     = "standard"
 }
 
 variable "aws_account_id" {
