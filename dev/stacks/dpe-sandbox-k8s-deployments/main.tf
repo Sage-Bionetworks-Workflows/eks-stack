@@ -11,7 +11,7 @@ module "sage-aws-eks-autoscaler" {
 
 module "victoria-metrics" {
   source  = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version = "0.0.3"
+  version = "0.0.4"
 
   cluster_name = var.cluster_name
 }
