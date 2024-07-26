@@ -8,3 +8,8 @@ module "sage-aws-eks-autoscaler" {
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
 }
+
+module "victoria-metrics" {
+  source  = "spacelift.io/sagebionetworks/victoria-metrics/aws"
+  version = "0.0.2"
+}
