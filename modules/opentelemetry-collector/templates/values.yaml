@@ -13,9 +13,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: ${env:MY_POD_IP}:4317
+        endpoint: $${env:MY_POD_IP}:4317
       http:
-        endpoint: ${env:MY_POD_IP}:4318
+        endpoint: $${env:MY_POD_IP}:4318
 service:
   extensions:
     - health_check
@@ -46,4 +46,4 @@ service:
         - otlp
   telemetry:
     metrics:
-      address: ${env:MY_POD_IP}:8888
+      address: $${env:MY_POD_IP}:8888

@@ -4,7 +4,7 @@ resource "kubernetes_namespace" "opentelemetry" {
   }
 }
 
-resource "helm_release" "victoria-metrics" {
+resource "helm_release" "opentelemetry" {
   name       = "opentelemetry-collector"
   repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
   chart      = "opentelemetry-collector"
