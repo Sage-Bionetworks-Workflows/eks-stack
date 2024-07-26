@@ -19,6 +19,6 @@ module "victoria-metrics" {
 
 module "opentelemetry-collector" {
   source       = "spacelift.io/sagebionetworks/opentelemetry-collector/aws"
-  version      = "0.0.2"
+  version      = "0.0.3"
   cluster_name = var.cluster_name
 }
