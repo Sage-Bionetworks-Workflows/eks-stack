@@ -102,7 +102,8 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
-  desired_capacity                 = var.desired_capacity
+  # TODO: Fix this it does not seem to work
+  desired_capacity = var.desired_capacity
 }
 
 resource "aws_eks_addon" "coredns" {

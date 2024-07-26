@@ -32,6 +32,23 @@ locals {
       space_id           = "root"
       version_number     = "0.0.3"
     }
+
+    cert-manager = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "cert-manager"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = "ibcdpe-1007-monitoring"
+      description        = "Helm chart deployment for cert-manager which handles certificate management."
+      project_root       = "modules/cert-manager"
+      space_id           = "root"
+      version_number     = "0.0.1"
+    }
   }
 }
 
