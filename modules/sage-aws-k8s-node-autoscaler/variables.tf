@@ -43,3 +43,9 @@ variable "tags" {
     "CostCenter" = "No Program / 000000"
   }
 }
+
+variable "desired_capacity" {
+  description = "Desired capacity of the node group"
+  type        = number
+  default     = 1
+}
