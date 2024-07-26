@@ -13,7 +13,7 @@ resource "spacelift_stack" "k8s-stack" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "main"
+  branch                  = "ibcdpe-1007-monitoring"
   description             = "Infrastructure to support deploying to an EKS cluster"
   name                    = "DPE DEV Kubernetes Infrastructure"
   project_root            = "dev/stacks/dpe-sandbox-k8s"
@@ -31,7 +31,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "main"
+  branch                  = "ibcdpe-1007-monitoring"
   description             = "Deployments internal to an EKS cluster"
   name                    = "DPE DEV Kubernetes Deployments"
   project_root            = "dev/stacks/dpe-sandbox-k8s-deployments"

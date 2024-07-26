@@ -201,3 +201,20 @@ This document describes the abbreviated process below:
 }
 ```
 - Add a new `spacelift_aws_integration` resources to the `common-resources/aws-integrations` directory.
+
+
+
+
+
+
+### Junk notes that should not be committed:
+aws sso login --profile dnt-dev-admin
+aws eks update-kubeconfig --region us-east-1 --name dpe-k8-sandbox --role-arn arn:aws:iam::631692904429:role/eks-admin-role-dpe-k8-sandbox --profile dnt-dev-admin
+
+
+# Checklist of things I need to get done:
+- Why is the service not found, and why can the demo not all connect to eachother
+- Should I implement pod level security groups?
+- Should I use k8s network policies?
+- Can I use the 'strict' networking rule
+- Connecting to the application through the TGW instead of through the internet/public VPN IP
