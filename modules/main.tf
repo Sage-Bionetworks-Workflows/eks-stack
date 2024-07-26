@@ -38,7 +38,10 @@ resource "spacelift_module" "sage-aws-vpc" {
 
 resource "spacelift_version" "sage-aws-vpc-version" {
   module_id      = spacelift_module.sage-aws-vpc.id
-  version_number = "0.3.3"
+  version_number = "0.3.4"
+  keepers = {
+    "version" = "0.3.4"
+  }
 }
 
 resource "spacelift_module" "sage-aws-eks" {
@@ -59,7 +62,10 @@ resource "spacelift_module" "sage-aws-eks" {
 
 resource "spacelift_version" "sage-aws-eks-version" {
   module_id      = spacelift_module.sage-aws-eks.id
-  version_number = "0.3.9"
+  version_number = "0.3.10"
+  keepers = {
+    "version" = "0.3.10"
+  }
 }
 
 resource "spacelift_module" "sage-aws-eks-autoscaler" {
@@ -80,7 +86,10 @@ resource "spacelift_module" "sage-aws-eks-autoscaler" {
 
 resource "spacelift_version" "sage-aws-eks-autoscaler-version" {
   module_id      = spacelift_module.sage-aws-eks-autoscaler.id
-  version_number = "0.3.2"
+  version_number = "0.3.3"
+  keepers = {
+    "version" = "0.3.3"
+  }
 }
 
 resource "spacelift_module" "spacelift-private-workerpool" {
@@ -97,11 +106,15 @@ resource "spacelift_module" "spacelift-private-workerpool" {
   repository         = "eks-stack"
   project_root       = "modules/spacelift-private-worker"
   space_id           = "root"
+
 }
 
 resource "spacelift_version" "spacelift-private-workerpool-version" {
   module_id      = spacelift_module.spacelift-private-workerpool.id
-  version_number = "0.2.0"
+  version_number = "0.2.1"
+  keepers = {
+    "version" = "0.2.1"
+  }
 }
 
 resource "spacelift_module" "spacelift_modules" {
@@ -126,4 +139,7 @@ resource "spacelift_version" "spacelift_versions" {
   for_each       = local.spacelift_modules
   module_id      = spacelift_module.spacelift_modules[each.key].id
   version_number = each.value.version_number
+  keepers = {
+    "version" = each.value.version_number
+  }
 }
