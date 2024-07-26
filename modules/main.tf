@@ -104,27 +104,6 @@ resource "spacelift_version" "spacelift-private-workerpool-version" {
   version_number = "0.2.0"
 }
 
-resource "spacelift_module" "spacelift-private-workerpool" {
-  github_enterprise {
-    namespace = "Sage-Bionetworks-Workflows"
-    id        = "sage-bionetworks-workflows-gh"
-  }
-
-  name               = "spacelift-private-workerpool"
-  terraform_provider = "aws"
-  administrative     = false
-  branch             = "ibcdpe-1007-monitoring"
-  description        = "Module for the spacelift private workerpool helm chart which deploys the K8s operator"
-  repository         = "eks-stack"
-  project_root       = "modules/spacelift-private-worker"
-  space_id           = "root"
-}
-
-resource "spacelift_version" "spacelift-private-workerpool-version" {
-  module_id      = spacelift_module.spacelift-private-workerpool.id
-  version_number = "0.1.3"
-}
-
 resource "spacelift_module" "spacelift_modules" {
   for_each = local.spacelift_modules
 
