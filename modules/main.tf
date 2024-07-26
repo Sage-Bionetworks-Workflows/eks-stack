@@ -30,7 +30,7 @@ locals {
       description        = "Helm chart deployment for the OTEL collector"
       project_root       = "modules/opentelemetry-collector"
       space_id           = "root"
-      version_number     = "0.0.2"
+      version_number     = "0.0.3"
     }
   }
 }
