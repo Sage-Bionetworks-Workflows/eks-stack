@@ -16,7 +16,22 @@ locals {
       space_id           = "root"
       version_number     = "0.0.4"
     }
-    # Add more modules here if needed
+    opentelemetry-collector = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "opentelemetry-collector"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = "ibcdpe-1007-monitoring"
+      description        = "Helm chart deployment for the OTEL collector"
+      project_root       = "modules/opentelemetry-collector"
+      space_id           = "root"
+      version_number     = "0.0.1"
+    }
   }
 }
 
