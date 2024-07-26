@@ -14,7 +14,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.0.2"
+      version_number     = "0.0.3"
     }
     # Add more modules here if needed
   }
