@@ -794,6 +794,10 @@ grafana:
         gnetId: 1860
         revision: 22
         datasource: VictoriaMetrics
+      trivyoperator:
+        gnetId: 17813
+        revision: 2
+        datasource: VictoriaMetrics
 
   defaultDashboardsTimezone: utc
 
