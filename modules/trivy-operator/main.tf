@@ -16,3 +16,26 @@ resource "helm_release" "trivy-operator" {
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
 }
+
+resource "kubernetes_manifest" "vmservicescrape" {
+  manifest = {
+    apiVersion = "operator.victoriametrics.com/v1beta1"
+    kind       = "VMServiceScrape"
+    metadata = {
+      name      = "trivy-vmservicescrape"
+      namespace = kubernetes_namespace.trivy-system.metadata[0].name
+    }
+    spec = {
+      endpoints = [
+        {
+          port = "metrics"
+        }
+      ]
+      selector = {
+        matchLabels = {
+          "app.kubernetes.io/name" = "trivy-operator"
+        }
+      }
+    }
+  }
+}

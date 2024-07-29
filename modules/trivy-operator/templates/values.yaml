@@ -216,7 +216,7 @@ service:
 # have no effect.
 serviceMonitor:
   # -- enabled determines whether a serviceMonitor should be deployed
-  enabled: true
+  enabled: false
   # -- The namespace where Prometheus expects to find service monitors
   namespace: ~
   # -- Interval at which metrics should be scraped. If not specified Prometheus’ global scrape interval is used.
