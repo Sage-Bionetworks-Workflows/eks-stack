@@ -40,6 +40,7 @@ resource "kubernetes_manifest" "vmservicescrape" {
   }
 }
 
+# converts the trivy-operator metrics to policy reporter format
 resource "helm_release" "trivy-operator-polr-adapter" {
   name       = "trivy-operator-polr-adapter"
   repository = "https://fjogeleit.github.io/trivy-operator-polr-adapter"
@@ -53,6 +54,7 @@ resource "helm_release" "trivy-operator-polr-adapter" {
   values = [templatefile("${path.module}/templates/values-trivy-operator-polr-adapter.yaml", {})]
 }
 
+# UI for viewing Policy Reports
 resource "helm_release" "policy-reporter" {
   name       = "policy-reporter"
   repository = "https://kyverno.github.io/policy-reporter"
