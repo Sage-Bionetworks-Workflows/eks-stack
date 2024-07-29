@@ -39,7 +39,7 @@ adapters:
     timeout: 2
     applyLabels: []
   cisKubeBenchReports:
-    enabled: true
+    enabled: false
     timeout: 2
     applyLabels: []
   complianceReports:
