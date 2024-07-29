@@ -49,6 +49,23 @@ locals {
       space_id           = "root"
       version_number     = "0.0.1"
     }
+
+    trivy-operator = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "trivy-operator"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = "ibcdpe-1007-monitoring"
+      description        = "Helm chart deployment for trivy-operator which handles security and vulnerability scanning."
+      project_root       = "modules/trivy-operator"
+      space_id           = "root"
+      version_number     = "0.0.1"
+    }
   }
 }
 

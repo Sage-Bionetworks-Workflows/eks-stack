@@ -41,6 +41,16 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   space_id                = spacelift_space.dpe-sandbox.id
 }
 
+resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
+  for_each = {
+    k8s-stack             = spacelift_stack.k8s-stack,
+    k8s-stack-deployments = spacelift_stack.k8s-stack-deployments
+  }
+
+  stack_id            = each.value.id
+  depends_on_stack_id = var.admin_stack_id
+}
+
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
   context_id = "kubernetes-deployments-kubeconfig"
   stack_id   = spacelift_stack.k8s-stack-deployments.id

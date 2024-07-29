@@ -7,7 +7,7 @@ module "sage-aws-eks-autoscaler" {
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
-  desired_capacity       = 2
+  # desired_capacity       = 2
 }
 
 module "victoria-metrics" {
@@ -17,8 +17,7 @@ module "victoria-metrics" {
   cluster_name = var.cluster_name
 }
 
-module "opentelemetry-collector" {
-  source       = "spacelift.io/sagebionetworks/opentelemetry-collector/aws"
-  version      = "0.0.3"
-  cluster_name = var.cluster_name
+module "trivy-operator" {
+  source  = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  version = "0.0.1"
 }

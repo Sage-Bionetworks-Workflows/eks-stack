@@ -56,4 +56,5 @@ module "dev-resources" {
     module.terraform-registry,
   ]
   parent_space_id = spacelift_space.environment.id
+  admin_stack_id  = spacelift_stack.root_administrative_stack.id
 }
