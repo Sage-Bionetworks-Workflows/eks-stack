@@ -17,5 +17,5 @@ module "victoria-metrics" {
 
 module "trivy-operator" {
   source  = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version = "0.0.6"
+  version = "0.0.7"
 }
