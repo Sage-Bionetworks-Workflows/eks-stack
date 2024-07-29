@@ -14,7 +14,7 @@ resource "helm_release" "trivy-operator" {
     kubernetes_namespace.trivy-system
   ]
 
-  values = [templatefile("${path.module}/templates/values.yaml", {})]
+  values = [templatefile("${path.module}/templates/values-trivy-operator.yaml", {})]
 }
 
 resource "kubernetes_manifest" "vmservicescrape" {
@@ -38,4 +38,30 @@ resource "kubernetes_manifest" "vmservicescrape" {
       }
     }
   }
+}
+
+resource "helm_release" "trivy-operator-polr-adapter" {
+  name       = "trivy-operator-polr-adapter"
+  repository = "https://fjogeleit.github.io/trivy-operator-polr-adapter"
+  chart      = "trivy-operator-polr-adapter"
+  namespace  = "trivy-system"
+  version    = "0.8.0"
+  depends_on = [
+    kubernetes_namespace.trivy-system
+  ]
+
+  values = [templatefile("${path.module}/templates/values-trivy-operator-polr-adapter.yaml", {})]
+}
+
+resource "helm_release" "policy-reporter" {
+  name       = "policy-reporter"
+  repository = "https://kyverno.github.io/policy-reporter"
+  chart      = "policy-reporter"
+  namespace  = "trivy-system"
+  version    = "2.24.1"
+  depends_on = [
+    kubernetes_namespace.trivy-system
+  ]
+
+  values = [templatefile("${path.module}/templates/values-policy-reporter.yaml", {})]
 }

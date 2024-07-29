@@ -1,0 +1,107 @@
+replicaCount: 1
+
+image:
+  registry: ghcr.io
+  repository: fjogeleit/trivy-operator-polr-adapter
+  pullPolicy: IfNotPresent
+  tag: 0.8.0
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+crds:
+  install: true
+
+port:
+  name: http
+  number: 8080
+
+livenessProbe:
+  httpGet:
+    path: /ready
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+
+adapters:
+  vulnerabilityReports:
+    enabled: true
+    timeout: 2
+    # apply labels from the source report
+    applyLabels: []
+  configAuditReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  cisKubeBenchReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  complianceReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  rbacAssessmentReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  exposedSecretReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  infraAssessmentReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  clusterInfraAssessmentReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+  clusterVulnerabilityReports:
+    enabled: true
+    timeout: 2
+    applyLabels: []
+
+rbac:
+  enabled: true
+
+podAnnotations: {}
+
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1234
+
+securityContext:
+  runAsUser: 1234
+  runAsNonRoot: true
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+resources: {}
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceAccount:
+  create: true
+
