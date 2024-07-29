@@ -1,3 +1,4 @@
+# Sets values for https://github.com/fjogeleit/trivy-operator-polr-adapter/tree/main/charts/trivy-operator-polr-adapter/templates
 replicaCount: 1
 
 image:

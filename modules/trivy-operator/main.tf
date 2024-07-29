@@ -60,7 +60,8 @@ resource "helm_release" "policy-reporter" {
   namespace  = "trivy-system"
   version    = "2.24.1"
   depends_on = [
-    kubernetes_namespace.trivy-system
+    kubernetes_namespace.trivy-system,
+    helm_release.trivy-operator-polr-adapter
   ]
 
   values = [templatefile("${path.module}/templates/values-policy-reporter.yaml", {})]
