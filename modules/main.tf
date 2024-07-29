@@ -16,39 +16,6 @@ locals {
       space_id           = "root"
       version_number     = "0.0.5"
     }
-    opentelemetry-collector = {
-      github_enterprise = {
-        namespace = "Sage-Bionetworks-Workflows"
-        id        = "sage-bionetworks-workflows-gh"
-      }
-      repository = "eks-stack"
-
-      name               = "opentelemetry-collector"
-      terraform_provider = "aws"
-      administrative     = false
-      branch             = "ibcdpe-1007-monitoring"
-      description        = "Helm chart deployment for the OTEL collector"
-      project_root       = "modules/opentelemetry-collector"
-      space_id           = "root"
-      version_number     = "0.0.3"
-    }
-
-    cert-manager = {
-      github_enterprise = {
-        namespace = "Sage-Bionetworks-Workflows"
-        id        = "sage-bionetworks-workflows-gh"
-      }
-      repository = "eks-stack"
-
-      name               = "cert-manager"
-      terraform_provider = "aws"
-      administrative     = false
-      branch             = "ibcdpe-1007-monitoring"
-      description        = "Helm chart deployment for cert-manager which handles certificate management."
-      project_root       = "modules/cert-manager"
-      space_id           = "root"
-      version_number     = "0.0.1"
-    }
 
     trivy-operator = {
       github_enterprise = {
