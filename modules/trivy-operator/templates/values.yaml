@@ -329,7 +329,7 @@ trivyOperator:
 
   # -- excludeImages is comma separated glob patterns for excluding images from scanning.
   # Example: pattern: `k8s.gcr.io/*/*` will exclude image: `k8s.gcr.io/coredns/coredns:v1.8.0`.
-  excludeImages: ""
+  excludeImages: "amazon-k8s-cni:*,amazon-k8s-cni-init:*,amazon/aws-network-policy-agent:*,eks/aws-ebs-csi-driver:*,eks/coredns:*,eks/csi-attacher:*,eks/csi-node-driver-registrar:*,eks/csi-provisioner:*,eks/csi-resizer:*,eks/csi-snapshotter:*,eks/kube-proxy:*,eks/livenessprobe:*"
 
 trivy:
   # -- createConfig indicates whether to create config objects
