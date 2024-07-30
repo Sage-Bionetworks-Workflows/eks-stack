@@ -436,7 +436,7 @@ vmcluster:
       #      - vminsert.domain.com
 
 alertmanager:
-  enabled: true
+  enabled: false
   annotations: {}
   # spec for VMAlertmanager crd
   # https://docs.victoriametrics.com/operator/api.html#vmalertmanagerspec
@@ -604,7 +604,7 @@ alertmanager:
 
 vmalert:
   annotations: {}
-  enabled: true
+  enabled: false
 
   # Controls whether VMAlert should use VMAgent or VMInsert as a target for remotewrite
   remoteWriteVMAgent: false
@@ -688,7 +688,7 @@ vmagent:
     selectAllByDefault: true
     image:
       tag: v1.102.0
-    scrapeInterval: 20s
+    scrapeInterval: 60s
     externalLabels: {}
       # For multi-cluster setups it is useful to use "cluster" label to identify the metrics source.
       # For example:
@@ -914,7 +914,7 @@ kubelet:
   spec:
     scheme: "https"
     honorLabels: true
-    interval: "30s"
+    interval: "60s"
     scrapeTimeout: "5s"
     tlsConfig:
       insecureSkipVerify: true
