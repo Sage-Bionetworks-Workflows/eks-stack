@@ -166,7 +166,7 @@ defaultRules:
       create: true
       rules: {}
     alertmanager:
-      create: true
+      create: false
       rules: {}
 
   # -- Runbook url prefix for default rules
@@ -688,7 +688,7 @@ vmagent:
     selectAllByDefault: true
     image:
       tag: v1.102.0
-    scrapeInterval: 60s
+    scrapeInterval: 30s
     externalLabels: {}
       # For multi-cluster setups it is useful to use "cluster" label to identify the metrics source.
       # For example:
@@ -914,7 +914,7 @@ kubelet:
   spec:
     scheme: "https"
     honorLabels: true
-    interval: "60s"
+    interval: "30s"
     scrapeTimeout: "5s"
     tlsConfig:
       insecureSkipVerify: true
