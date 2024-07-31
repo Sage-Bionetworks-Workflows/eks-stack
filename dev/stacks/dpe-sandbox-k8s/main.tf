@@ -1,6 +1,6 @@
 module "sage-aws-vpc" {
   source             = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
-  version            = "0.3.3"
+  version            = "0.3.4"
   vpc_name           = "dpe-sandbox"
   capture_flow_logs  = true
   flow_log_retention = 1
@@ -8,7 +8,7 @@ module "sage-aws-vpc" {
 
 module "sage-aws-eks" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  version = "0.3.9"
+  version = "0.4.0"
 
   cluster_name                      = "dpe-k8-sandbox"
   private_vpc_subnet_ids            = module.sage-aws-vpc.private_subnet_ids

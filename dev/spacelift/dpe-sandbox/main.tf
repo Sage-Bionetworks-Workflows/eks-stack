@@ -13,7 +13,7 @@ resource "spacelift_stack" "k8s-stack" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "main"
+  branch                  = "ibcdpe-1007-monitoring"
   description             = "Infrastructure to support deploying to an EKS cluster"
   name                    = "DPE DEV Kubernetes Infrastructure"
   project_root            = "dev/stacks/dpe-sandbox-k8s"
@@ -31,7 +31,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "main"
+  branch                  = "ibcdpe-1007-monitoring"
   description             = "Deployments internal to an EKS cluster"
   name                    = "DPE DEV Kubernetes Deployments"
   project_root            = "dev/stacks/dpe-sandbox-k8s-deployments"
@@ -40,6 +40,16 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-sandbox.id
 }
+
+# resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
+#   for_each = {
+#     k8s-stack             = spacelift_stack.k8s-stack,
+#     k8s-stack-deployments = spacelift_stack.k8s-stack-deployments
+#   }
+
+#   stack_id            = each.value.id
+#   depends_on_stack_id = var.admin_stack_id
+# }
 
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
   context_id = "kubernetes-deployments-kubeconfig"
@@ -118,7 +128,7 @@ resource "spacelift_stack_destructor" "k8s-stack-destructor" {
 
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
   # org-sagebase-dnt-dev-aws-integration
-  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
+  integration_id = "01J3R9GX6DC09QV7NV872DDYR3"
   stack_id       = spacelift_stack.k8s-stack.id
   read           = true
   write          = true
@@ -126,7 +136,7 @@ resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment"
 
 resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration-attachment" {
   # org-sagebase-dnt-dev-aws-integration
-  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
+  integration_id = "01J3R9GX6DC09QV7NV872DDYR3"
   stack_id       = spacelift_stack.k8s-stack-deployments.id
   read           = true
   write          = true

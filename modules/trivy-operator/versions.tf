@@ -8,10 +8,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.0"
     }
-    spotinst = {
-      source  = "spotinst/spotinst"
-      version = "1.172.0" # Specify the version you wish to use
-    }
     helm = {
       source  = "hashicorp/helm"
       version = "~> 2.0"

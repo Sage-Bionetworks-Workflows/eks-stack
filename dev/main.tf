@@ -8,4 +8,5 @@ resource "spacelift_space" "development" {
 module "dpe-sandbox-spacelift" {
   source          = "./spacelift/dpe-sandbox"
   parent_space_id = spacelift_space.development.id
+  admin_stack_id  = var.admin_stack_id
 }
