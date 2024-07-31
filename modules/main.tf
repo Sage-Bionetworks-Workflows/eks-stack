@@ -11,7 +11,7 @@ locals {
       name               = "sage-aws-eks"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Terraform module for creating an EKS cluster in AWS"
       project_root       = "modules/sage-aws-eks"
       space_id           = "root"
@@ -28,7 +28,7 @@ locals {
       name               = "sage-aws-vpc"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Terraform module for creating a VPC in AWS"
       project_root       = "modules/sage-aws-vpc"
       space_id           = "root"
@@ -45,7 +45,7 @@ locals {
       name               = "sage-aws-eks-autoscaler"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
       project_root       = "modules/sage-aws-k8s-node-autoscaler"
       space_id           = "root"
@@ -62,7 +62,7 @@ locals {
       name               = "victoria-metrics"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
@@ -79,7 +79,7 @@ locals {
       name               = "trivy-operator"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Helm chart deployment for trivy-operator which handles security and vulnerability scanning."
       project_root       = "modules/trivy-operator"
       space_id           = "root"
@@ -96,7 +96,7 @@ locals {
       name               = "airflow"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
@@ -113,7 +113,7 @@ locals {
       name               = "spacelift-private-workerpool"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.branch
+      branch             = var.git_branch
       description        = "Module for the spacelift private workerpool helm chart which deploys the K8s operator"
       project_root       = "modules/spacelift-private-worker"
       space_id           = "root"
@@ -133,7 +133,7 @@ resource "spacelift_module" "spacelift_modules" {
   name               = each.value.name
   terraform_provider = each.value.terraform_provider
   administrative     = each.value.administrative
-  branch             = each.value.branch
+  branch             = each.value.git_branch
   description        = each.value.description
   repository         = each.value.repository
   project_root       = each.value.project_root
