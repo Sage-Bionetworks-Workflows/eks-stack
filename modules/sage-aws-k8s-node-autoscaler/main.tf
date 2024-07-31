@@ -103,6 +103,9 @@ module "ocean-aws-k8s" {
   max_scale_down_percentage        = 33
   tags                             = var.tags
   # TODO: Fix this it does not seem to work
+  # `desired_capacity` does not seem to force the number of nodes to increase. Look
+  # through the documentation to determine how we might manually scale up the number
+  # of nodes if we wanted to.
   desired_capacity = var.desired_capacity
 }
 
