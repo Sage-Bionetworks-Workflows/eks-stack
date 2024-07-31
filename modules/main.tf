@@ -133,7 +133,7 @@ resource "spacelift_module" "spacelift_modules" {
   name               = each.value.name
   terraform_provider = each.value.terraform_provider
   administrative     = each.value.administrative
-  branch             = each.value.git_branch
+  branch             = each.value.branch
   description        = each.value.description
   repository         = each.value.repository
   project_root       = each.value.project_root
