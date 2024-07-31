@@ -112,6 +112,24 @@ module "ocean-aws-k8s" {
   filters = {
     exclude_metal = true
     hypervisor    = ["nitro"]
+
+    architectures           = null
+    categories              = null
+    disk_types              = null
+    exclude_families        = null
+    include_families        = null
+    is_ena_supported        = null
+    max_gpu                 = null
+    max_memory_gib          = null
+    max_network_performance = null
+    max_vcpu                = null
+    min_enis                = null
+    min_gpu                 = null
+    min_memory_gib          = null
+    min_network_performance = null
+    min_vcpu                = null
+    root_device_types       = null
+    virtualization_types    = null
   }
 }
 
