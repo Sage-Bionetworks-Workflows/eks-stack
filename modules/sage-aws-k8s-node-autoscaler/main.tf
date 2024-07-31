@@ -91,7 +91,7 @@ module "ocean-controller" {
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.2.0"
+  version = "1.4.0"
 
   # Configuration
   cluster_name                     = var.cluster_name
@@ -107,6 +107,15 @@ module "ocean-aws-k8s" {
   # through the documentation to determine how we might manually scale up the number
   # of nodes if we wanted to.
   desired_capacity = var.desired_capacity
+}
+
+module "ocean-aws-k8s-vng" {
+  source                               = "spotinst/ocean-aws-k8s-vng/spotinst"
+  ocean_id                             = module.ocean-aws-k8s.ocean_id
+  name                                 = "nitro-vng"
+  instance_types_filters_enable        = true
+  instance_types_filters_exclude_metal = true
+  instance_types_filters_hypervisor    = ["nitro"]
 }
 
 resource "aws_eks_addon" "coredns" {
