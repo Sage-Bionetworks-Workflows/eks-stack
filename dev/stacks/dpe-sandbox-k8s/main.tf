@@ -1,6 +1,6 @@
 module "sage-aws-vpc" {
   source             = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
-  version            = "0.3.3"
+  version            = "0.3.4"
   vpc_name           = "dpe-sandbox"
   capture_flow_logs  = true
   flow_log_retention = 1
