@@ -33,6 +33,23 @@ locals {
       space_id           = "root"
       version_number     = "0.0.12"
     }
+
+    airflow = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "airflow"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = "ibcdpe-1007-monitoring"
+      description        = "Helm chart deployment for apache airflow."
+      project_root       = "modules/apache-airflow"
+      space_id           = "root"
+      version_number     = "0.0.1"
+    }
   }
 }
 
