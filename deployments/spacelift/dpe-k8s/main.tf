@@ -54,7 +54,7 @@ resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
 
   stack_id   = spacelift_stack.k8s-stack.id
   name       = "TF_VAR_${each.key}"
-  value      = type(each.value) == "list" ? join(",", each.value) : each.value
+  value      = jsonencode(each.value)
   write_only = false
 }
 
@@ -81,7 +81,7 @@ resource "spacelift_environment_variable" "k8s-stack-deployments-environment-var
 
   stack_id   = spacelift_stack.k8s-stack-deployments.id
   name       = "TF_VAR_${each.key}"
-  value      = type(each.value) == "list" ? join(",", each.value) : each.value
+  value      = jsonencode(each.value)
   write_only = false
 }
 
