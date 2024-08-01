@@ -9,6 +9,19 @@ locals {
     public_subnet_cidrs               = var.public_subnet_cidrs
     private_subnet_cidrs              = var.private_subnet_cidrs
   }
+
+  k8s_stack_deployments_variables = {
+    spotinst_account = var.spotinst_account
+  }
+
+  # Variables to be passed from the k8s stack to the deployments stack
+  k8s_stack_to_deployment_variables = {
+    vpc_id                 = "TF_VAR_vpc_id"
+    private_subnet_ids     = "TF_VAR_private_subnet_ids"
+    node_security_group_id = "TF_VAR_node_security_group_id"
+    pod_to_node_dns_sg_id  = "TF_VAR_pod_to_node_dns_sg_id"
+    vpc_cidr_block         = "TF_VAR_vpc_cidr_block"
+  }
 }
 
 resource "spacelift_space" "dpe-space" {
@@ -37,7 +50,7 @@ resource "spacelift_stack" "k8s-stack" {
 }
 
 resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
-  for_each = [k8s_stack_environment_variables]
+  for_each = [locals.k8s_stack_environment_variables]
 
   stack_id   = spacelift_stack.k8s-stack.id
   name       = each.key
@@ -64,7 +77,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 }
 
 resource "spacelift_environment_variable" "k8s-stack-deployments-environment-variables" {
-  for_each = [var.aws_account_id, var.region, var.pod_security_group_enforcing_mode, var.cluster_name, var.vpc_name]
+  for_each = [local.k8s_stack_deployments_variables]
 
   stack_id   = spacelift_stack.k8s-stack-deployments.id
   name       = each.key
@@ -100,34 +113,12 @@ resource "spacelift_stack_dependency" "k8s-stack-to-deployments" {
   depends_on_stack_id = spacelift_stack.k8s-stack.id
 }
 
-resource "spacelift_stack_dependency_reference" "vpc-id-reference" {
-  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "vpc_id"
-  input_name          = "TF_VAR_vpc_id"
-}
+resource "spacelift_stack_dependency_reference" "dependency-references" {
+  for_each = local.k8s_stack_to_deployment_variables
 
-resource "spacelift_stack_dependency_reference" "private-subnet-ids-reference" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "private_subnet_ids"
-  input_name          = "TF_VAR_private_subnet_ids"
-}
-
-resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
-  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "node_security_group_id"
-  input_name          = "TF_VAR_node_security_group_id"
-}
-
-resource "spacelift_stack_dependency_reference" "pod-to-node-security-group-id-reference" {
-  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "pod_to_node_dns_sg_id"
-  input_name          = "TF_VAR_pod_to_node_dns_sg_id"
-}
-
-resource "spacelift_stack_dependency_reference" "vpc-cidr-block-reference" {
-  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "vpc_cidr_block"
-  input_name          = "TF_VAR_vpc_cidr_block"
+  output_name         = each.key
+  input_name          = each.value
 }
 
 resource "spacelift_stack_dependency_reference" "region-name" {
@@ -140,12 +131,6 @@ resource "spacelift_stack_dependency_reference" "cluster-name" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
   output_name         = "cluster_name"
   input_name          = "CLUSTER_NAME"
-}
-
-resource "spacelift_stack_dependency_reference" "cluster-name-tfvar" {
-  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
-  output_name         = "cluster_name"
-  input_name          = "TF_VAR_cluster_name"
 }
 
 # resource "spacelift_policy_attachment" "policy-attachment" {
