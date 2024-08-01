@@ -12,6 +12,7 @@ locals {
 
   k8s_stack_deployments_variables = {
     spotinst_account = var.spotinst_account
+    vpc_cidr_block   = var.vpc_cidr_block
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
@@ -20,7 +21,6 @@ locals {
     private_subnet_ids     = "TF_VAR_private_subnet_ids"
     node_security_group_id = "TF_VAR_node_security_group_id"
     pod_to_node_dns_sg_id  = "TF_VAR_pod_to_node_dns_sg_id"
-    vpc_cidr_block         = "TF_VAR_vpc_cidr_block"
   }
 }
 
@@ -50,7 +50,7 @@ resource "spacelift_stack" "k8s-stack" {
 }
 
 resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
-  for_each = [locals.k8s_stack_environment_variables]
+  for_each = [local.k8s_stack_environment_variables]
 
   stack_id   = spacelift_stack.k8s-stack.id
   name       = each.key
