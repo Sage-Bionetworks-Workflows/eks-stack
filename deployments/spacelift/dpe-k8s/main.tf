@@ -53,8 +53,8 @@ resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
   for_each = local.k8s_stack_environment_variables
 
   stack_id   = spacelift_stack.k8s-stack.id
-  name       = each.key
-  value      = "TF_VAR_${each.value}"
+  name       = "TF_VAR_${each.key}"
+  value      = each.value
   write_only = false
 }
 
@@ -80,8 +80,8 @@ resource "spacelift_environment_variable" "k8s-stack-deployments-environment-var
   for_each = local.k8s_stack_deployments_variables
 
   stack_id   = spacelift_stack.k8s-stack-deployments.id
-  name       = each.key
-  value      = "TF_VAR_${each.value}"
+  name       = "TF_VAR_${each.key}"
+  value      = each.value
   write_only = false
 }
 
