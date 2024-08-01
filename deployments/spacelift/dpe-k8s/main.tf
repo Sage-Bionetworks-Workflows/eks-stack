@@ -50,7 +50,7 @@ resource "spacelift_stack" "k8s-stack" {
 }
 
 resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
-  for_each = [local.k8s_stack_environment_variables]
+  for_each = local.k8s_stack_environment_variables
 
   stack_id   = spacelift_stack.k8s-stack.id
   name       = each.key
@@ -77,7 +77,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 }
 
 resource "spacelift_environment_variable" "k8s-stack-deployments-environment-variables" {
-  for_each = [local.k8s_stack_deployments_variables]
+  for_each = local.k8s_stack_deployments_variables
 
   stack_id   = spacelift_stack.k8s-stack-deployments.id
   name       = each.key
