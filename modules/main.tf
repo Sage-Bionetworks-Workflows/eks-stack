@@ -66,7 +66,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.0.7"
+      version_number     = "0.1.1"
     }
 
     trivy-operator = {

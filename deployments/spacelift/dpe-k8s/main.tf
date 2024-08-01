@@ -1,7 +1,20 @@
-resource "spacelift_space" "dpe-sandbox" {
-  name             = "dpe-sandbox"
+locals {
+  k8s_stack_environment_variables = {
+    aws_account_id                    = var.aws_account_id
+    region                            = var.region
+    pod_security_group_enforcing_mode = var.pod_security_group_enforcing_mode
+    cluster_name                      = var.cluster_name
+    vpc_name                          = var.vpc_name
+    vpc_cidr_block                    = var.vpc_cidr_block
+    public_subnet_cidrs               = var.public_subnet_cidrs
+    private_subnet_cidrs              = var.private_subnet_cidrs
+  }
+}
+
+resource "spacelift_space" "dpe-space" {
+  name             = var.spacelift_space
   parent_space_id  = var.parent_space_id
-  description      = "Contains resources for the DPE team for sandbox testing."
+  description      = "Contains resources for the DPE team."
   inherit_entities = true
 }
 
@@ -12,15 +25,24 @@ resource "spacelift_stack" "k8s-stack" {
   }
 
   administrative          = false
-  autodeploy              = true
-  branch                  = "ibcdpe-1007-monitoring"
+  autodeploy              = var.auto_deploy
+  branch                  = var.git_branch
   description             = "Infrastructure to support deploying to an EKS cluster"
-  name                    = "DPE DEV Kubernetes Infrastructure"
-  project_root            = "dev/stacks/dpe-sandbox-k8s"
+  name                    = var.k8s_stack_name
+  project_root            = var.k8s_stack_project_root
   repository              = "eks-stack"
-  terraform_version       = "1.7.2"
+  terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
-  space_id                = spacelift_space.dpe-sandbox.id
+  space_id                = spacelift_space.dpe-space.id
+}
+
+resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
+  for_each = [k8s_stack_environment_variables]
+
+  stack_id   = spacelift_stack.k8s-stack.id
+  name       = each.key
+  value      = "TF_VAR_${each.value}"
+  write_only = false
 }
 
 resource "spacelift_stack" "k8s-stack-deployments" {
@@ -30,16 +52,33 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   }
 
   administrative          = false
-  autodeploy              = true
-  branch                  = "ibcdpe-1007-monitoring"
+  autodeploy              = var.auto_deploy
+  branch                  = var.git_branch
   description             = "Deployments internal to an EKS cluster"
-  name                    = "DPE DEV Kubernetes Deployments"
-  project_root            = "dev/stacks/dpe-sandbox-k8s-deployments"
+  name                    = var.k8s_stack_deployments_name
+  project_root            = var.k8s_stack_deployments_project_root
   repository              = "eks-stack"
-  terraform_version       = "1.7.2"
+  terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
-  space_id                = spacelift_space.dpe-sandbox.id
+  space_id                = spacelift_space.dpe-space.id
 }
+
+resource "spacelift_environment_variable" "k8s-stack-deployments-environment-variables" {
+  for_each = [var.aws_account_id, var.region, var.pod_security_group_enforcing_mode, var.cluster_name, var.vpc_name]
+
+  stack_id   = spacelift_stack.k8s-stack-deployments.id
+  name       = each.key
+  value      = "TF_VAR_${each.value}"
+  write_only = false
+}
+
+
+# TODO: There is some work here that is needed:
+# 1) When we increment a module the admin stack needs to run and create the new resources/modules in spacelift
+# 2) We need any stacks that are using that new resource/module then need to run
+# The problem:
+# When this dependent stack is run it might be "Skipped" because the admin stack does not have different values in the `output.tf` that is used here
+# That means the child stack is never run.
 
 # resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
 #   for_each = {
@@ -127,16 +166,15 @@ resource "spacelift_stack_destructor" "k8s-stack-destructor" {
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
-  # org-sagebase-dnt-dev-aws-integration
-  integration_id = "01J3R9GX6DC09QV7NV872DDYR3"
+  integration_id = var.aws_integration_id
   stack_id       = spacelift_stack.k8s-stack.id
   read           = true
   write          = true
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration-attachment" {
-  # org-sagebase-dnt-dev-aws-integration
-  integration_id = "01J3R9GX6DC09QV7NV872DDYR3"
+
+  integration_id = var.aws_integration_id
   stack_id       = spacelift_stack.k8s-stack-deployments.id
   read           = true
   write          = true
