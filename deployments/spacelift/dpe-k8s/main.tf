@@ -12,7 +12,7 @@ locals {
 }
 
 resource "spacelift_space" "dpe-space" {
-  name             = var.spacelift_space
+  name             = var.space_name
   parent_space_id  = var.parent_space_id
   description      = "Contains resources for the DPE team."
   inherit_entities = true
