@@ -15,7 +15,7 @@ global:
   clusterDomain: cluster.local
   # -- Kubernetes cluster name
   # It is used to attached to telemetry data via resource detection processor
-  clusterName: ""
+  clusterName: "dpe-k8-sandbox"
   # -- Kubernetes cluster cloud provider along with distribution if any.
   # example: `aws`, `azure`, `gcp`, `gcp/autogke`, `hcloud`, `other`
   # Based on the cloud, storage class for the persistent volume is selected.
