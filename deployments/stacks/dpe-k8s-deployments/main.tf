@@ -12,7 +12,7 @@ module "sage-aws-eks-autoscaler" {
 
 module "victoria-metrics" {
   source  = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version = "0.2.0"
+  version = "0.2.1"
 }
 
 module "trivy-operator" {
