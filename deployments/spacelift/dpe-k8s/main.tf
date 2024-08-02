@@ -14,6 +14,7 @@ locals {
   k8s_stack_deployments_variables = {
     spotinst_account = var.spotinst_account
     vpc_cidr_block   = var.vpc_cidr_block
+    cluster_name     = var.cluster_name
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
