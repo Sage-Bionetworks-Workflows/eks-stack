@@ -9,7 +9,7 @@ resource "helm_release" "victoria-metrics" {
   repository = "https://victoriametrics.github.io/helm-charts/"
   chart      = "victoria-metrics-k8s-stack"
   namespace  = "victoria-metrics"
-  version    = "0.24.3"
+  version    = "0.24.5"
   depends_on = [
     kubernetes_namespace.victoria-metrics
   ]
