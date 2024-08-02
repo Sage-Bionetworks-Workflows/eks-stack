@@ -2474,8 +2474,8 @@ postgresql:
 # Do not set config containing secrets via plain text values, use Env Var or k8s secret object
 # yamllint disable rule:line-length
 config:
-    secrets:
-        backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
+  secrets:
+      backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
   core:
     dags_folder: '{{ include "airflow_dags" . }}'
     # This is ignored when used with the official Docker image
