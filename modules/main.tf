@@ -15,7 +15,7 @@ locals {
       description        = "Terraform module for creating an EKS cluster in AWS"
       project_root       = "modules/sage-aws-eks"
       space_id           = "root"
-      version_number     = "0.4.0"
+      version_number     = "0.5.0"
     }
 
     vpc = {
@@ -32,7 +32,7 @@ locals {
       description        = "Terraform module for creating a VPC in AWS"
       project_root       = "modules/sage-aws-vpc"
       space_id           = "root"
-      version_number     = "0.3.4"
+      version_number     = "0.4.0"
     }
 
     eks-autoscaler = {
@@ -49,7 +49,7 @@ locals {
       description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
       project_root       = "modules/sage-aws-k8s-node-autoscaler"
       space_id           = "root"
-      version_number     = "0.4.2"
+      version_number     = "0.5.0"
     }
 
     victoria-metrics = {
@@ -66,7 +66,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.1.1"
+      version_number     = "0.2.0"
     }
 
     trivy-operator = {
@@ -83,7 +83,7 @@ locals {
       description        = "Helm chart deployment for trivy-operator which handles security and vulnerability scanning."
       project_root       = "modules/trivy-operator"
       space_id           = "root"
-      version_number     = "0.0.12"
+      version_number     = "0.1.0"
     }
 
     airflow = {
@@ -100,7 +100,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.0.1"
+      version_number     = "0.1.0"
     }
 
     private-workerpool = {
@@ -117,7 +117,7 @@ locals {
       description        = "Module for the spacelift private workerpool helm chart which deploys the K8s operator"
       project_root       = "modules/spacelift-private-worker"
       space_id           = "root"
-      version_number     = "0.2.1"
+      version_number     = "0.3.0"
     }
   }
 }

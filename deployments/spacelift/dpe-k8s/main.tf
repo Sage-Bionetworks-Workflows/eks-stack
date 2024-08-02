@@ -37,6 +37,10 @@ resource "spacelift_stack" "k8s-stack" {
     id        = "sage-bionetworks-workflows-gh"
   }
 
+  depends_on = [
+    spacelift_space.dpe-space
+  ]
+
   administrative          = false
   autodeploy              = var.auto_deploy
   branch                  = var.git_branch
@@ -63,6 +67,10 @@ resource "spacelift_stack" "k8s-stack-deployments" {
     namespace = "Sage-Bionetworks-Workflows"
     id        = "sage-bionetworks-workflows-gh"
   }
+
+  depends_on = [
+    spacelift_space.dpe-space
+  ]
 
   administrative          = false
   autodeploy              = var.auto_deploy
