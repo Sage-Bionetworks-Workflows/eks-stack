@@ -1,0 +1,18 @@
+resource "kubernetes_namespace" "signoz" {
+  metadata {
+    name = "signoz"
+  }
+}
+
+resource "helm_release" "victoria-metrics" {
+  name       = "signoz"
+  repository = "https://charts.signoz.io"
+  chart      = "signoz"
+  namespace  = "signoz"
+  version    = "0.47.0"
+  depends_on = [
+    kubernetes_namespace.signoz
+  ]
+
+  values = [templatefile("${path.module}/templates/values.yaml", {})]
+}

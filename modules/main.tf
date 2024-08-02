@@ -119,6 +119,23 @@ locals {
       space_id           = "root"
       version_number     = "0.3.0"
     }
+
+    signoz = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "signoz"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "SigNoz is an open-source Datadog or New Relic alternative. Get APM, logs, traces, metrics, exceptions, & alerts in a single tool."
+      project_root       = "modules/signoz"
+      space_id           = "root"
+      version_number     = "0.1.1"
+    }
   }
 }
 
