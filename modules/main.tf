@@ -134,7 +134,7 @@ locals {
       description        = "SigNoz is an open-source Datadog or New Relic alternative. Get APM, logs, traces, metrics, exceptions, & alerts in a single tool."
       project_root       = "modules/signoz"
       space_id           = "root"
-      version_number     = "0.1.1"
+      version_number     = "0.1.2"
     }
   }
 }
