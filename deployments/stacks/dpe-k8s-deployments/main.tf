@@ -16,8 +16,9 @@ module "victoria-metrics" {
 }
 
 module "trivy-operator" {
-  source  = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version = "0.1.1"
+  depends_on = [module.victoria-metrics]
+  source     = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  version    = "0.1.3"
 }
 
 module "airflow" {
