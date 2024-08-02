@@ -66,7 +66,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.2.2"
+      version_number     = "0.2.3"
     }
 
     trivy-operator = {
@@ -100,7 +100,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.1.2"
+      version_number     = "0.1.3"
     }
 
     private-workerpool = {
