@@ -52,6 +52,10 @@ resource "spacelift_stack" "k8s-stack" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
+  additional_project_globs = [
+    "deployments/*",
+    "deployments/**/*",
+  ]
 }
 
 resource "spacelift_environment_variable" "k8s-stack-environment-variables" {
@@ -83,6 +87,10 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
+  additional_project_globs = [
+    "deployments/*",
+    "deployments/**/*",
+  ]
 }
 
 resource "spacelift_environment_variable" "k8s-stack-deployments-environment-variables" {

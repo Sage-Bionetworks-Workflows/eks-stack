@@ -27,7 +27,7 @@ module "dpe-sandbox-spacelift-development" {
   k8s_stack_project_root = "deployments/stacks/dpe-k8s"
 
   k8s_stack_deployments_name         = "DPE DEV Kubernetes Deployments"
-  k8s_stack_deployments_project_root = "dev/stacks/dpe-k8s-deployments"
+  k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
   aws_account_id = "631692904429"
   region         = "us-east-1"
@@ -58,7 +58,7 @@ module "dpe-sandbox-spacelift-development" {
 #   k8s_stack_project_root = "deployments/stacks/dpe-k8s"
 
 #   k8s_stack_deployments_name         = "DPE DEV Kubernetes Deployments"
-#   k8s_stack_deployments_project_root = "dev/stacks/dpe-k8s-deployments"
+#   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
 #   aws_account_id = "631692904429"
 #   region         = "us-east-1"
