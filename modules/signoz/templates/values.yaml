@@ -20,7 +20,7 @@ global:
   # example: `aws`, `azure`, `gcp`, `gcp/autogke`, `hcloud`, `other`
   # Based on the cloud, storage class for the persistent volume is selected.
   # When set to 'aws' or 'gcp' along with `installCustomStorageClass` enabled, then new expandible storage class is created.
-  cloud: other
+  cloud: aws
 
 # -- SigNoz chart name override
 nameOverride: ""
@@ -2674,7 +2674,7 @@ k8s-infra:
       # env detector included below adds custom labels using OTEL_RESOURCE_ATTRIBUTES envvar (set envResourceAttributes value)
       detectors:
         # - elastic_beanstalk
-        # - eks
+        - eks
         # - ecs
         # - ec2
         # - gcp
