@@ -25,3 +25,8 @@ module "airflow" {
   source  = "spacelift.io/sagebionetworks/airflow/aws"
   version = "0.1.1"
 }
+
+module "signoz" {
+  source  = "spacelift.io/sagebionetworks/signoz/aws"
+  version = "0.1.1"
+}
