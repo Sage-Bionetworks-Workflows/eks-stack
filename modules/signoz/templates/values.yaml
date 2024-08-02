@@ -1263,7 +1263,7 @@ alertmanager:
 
 # Default values for schemaMigrator
 schemaMigrator:
-  enabled: true
+  enabled: false
   name: "schema-migrator"
 
   image:
