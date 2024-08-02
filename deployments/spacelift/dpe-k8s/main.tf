@@ -54,8 +54,7 @@ resource "spacelift_stack" "k8s-stack" {
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
   additional_project_globs = [
-    "deployments/*",
-    "deployments/**/*",
+    "deployments/"
   ]
 }
 
@@ -89,8 +88,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
   additional_project_globs = [
-    "deployments/*",
-    "deployments/**/*",
+    "deployments/"
   ]
 }
 
