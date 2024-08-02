@@ -32,7 +32,7 @@ locals {
       description        = "Terraform module for creating a VPC in AWS"
       project_root       = "modules/sage-aws-vpc"
       space_id           = "root"
-      version_number     = "0.4.1"
+      version_number     = "0.4.2"
     }
 
     eks-autoscaler = {
