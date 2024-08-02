@@ -83,7 +83,7 @@ locals {
       description        = "Helm chart deployment for trivy-operator which handles security and vulnerability scanning."
       project_root       = "modules/trivy-operator"
       space_id           = "root"
-      version_number     = "0.1.2"
+      version_number     = "0.1.3"
     }
 
     airflow = {
