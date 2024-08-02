@@ -4,7 +4,8 @@ global:
   imageRegistry: &GLOBAL_IMAGE_REGISTRY null
   # -- Global Image Pull Secrets
   # TODO: Extract this out to configuration that is passed in
-  imagePullSecrets: myregistrykey
+  imagePullSecrets: 
+  - myregistrykey
   # -- Overrides the storage class for all PVC with persistence enabled.
   # If not set, the default storage class is used.
   # If set to "-", storageClassName: "", which disables dynamic provisioning
