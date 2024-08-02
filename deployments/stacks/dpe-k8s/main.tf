@@ -1,6 +1,6 @@
 module "sage-aws-vpc" {
   source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
-  version  = "0.4.0"
+  version  = "0.4.1"
   vpc_name = var.vpc_name
   # TODO: Per https://sagebionetworks.jira.com/browse/IT-3824
   # We will soon not have to capture the VPC flow logs outself as every account with a VPC will have them enabled by default
