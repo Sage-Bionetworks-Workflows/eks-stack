@@ -13,6 +13,7 @@ resource "helm_release" "signoz" {
   depends_on = [
     kubernetes_namespace.signoz
   ]
+  timeout = 900
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
 }

@@ -13,6 +13,7 @@ resource "helm_release" "victoria-metrics" {
   depends_on = [
     kubernetes_namespace.victoria-metrics
   ]
+  timeout = 900
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
 }

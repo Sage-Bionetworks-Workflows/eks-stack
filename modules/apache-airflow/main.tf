@@ -37,6 +37,7 @@ resource "helm_release" "airflow" {
   namespace  = "airflow"
   version    = "1.11.0"
   depends_on = [kubernetes_namespace.airflow]
+  timeout    = 900
 
   # https://github.com/hashicorp/terraform-provider-helm/issues/683#issuecomment-830872443
   wait = false

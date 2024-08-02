@@ -13,6 +13,7 @@ resource "helm_release" "trivy-operator" {
   depends_on = [
     kubernetes_namespace.trivy-system
   ]
+  timeout = 900
 
   values = [templatefile("${path.module}/templates/values-trivy-operator.yaml", {})]
 }
@@ -45,6 +46,7 @@ resource "helm_release" "trivy-operator-polr-adapter" {
   depends_on = [
     kubernetes_namespace.trivy-system
   ]
+  timeout = 900
 
   values = [templatefile("${path.module}/templates/values-trivy-operator-polr-adapter.yaml", {})]
 }
@@ -60,6 +62,7 @@ resource "helm_release" "policy-reporter" {
     kubernetes_namespace.trivy-system,
     helm_release.trivy-operator-polr-adapter
   ]
+  timeout = 900
 
   values = [templatefile("${path.module}/templates/values-policy-reporter.yaml", {})]
 }
