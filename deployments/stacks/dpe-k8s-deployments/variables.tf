@@ -38,11 +38,9 @@ variable "region" {
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
-  default     = "dpe-k8-sandbox"
 }
 
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
-  default     = "act-45de6f47"
 }

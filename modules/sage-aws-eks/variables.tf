@@ -1,7 +1,6 @@
 variable "cluster_name" {
   description = "Name of K8 cluster"
   type        = string
-  default     = "dpe-k8-dev"
 }
 
 variable "cluster_version" {

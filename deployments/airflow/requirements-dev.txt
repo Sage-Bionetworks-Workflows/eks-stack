@@ -1,6 +1,0 @@
-opentelemetry-exporter-otlp ==1.21.0 # make the synapseclient and apache-airflow play nice
-synapseclient ~=4.1.1
-fs-synapse ~=2.0
-s3fs ~=2023.5
-metaflow ~=2.9
-boto3 >=1.7.0,<2.0
