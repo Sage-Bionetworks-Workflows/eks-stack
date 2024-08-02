@@ -21,7 +21,6 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  source       = "spacelift.io/sagebionetworks/airflow/aws"
-  version      = "0.1.1"
-  cluster_name = var.cluster_name
+  source  = "spacelift.io/sagebionetworks/airflow/aws"
+  version = "0.1.1"
 }
