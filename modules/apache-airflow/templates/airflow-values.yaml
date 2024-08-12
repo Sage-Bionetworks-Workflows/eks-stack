@@ -1,5 +1,15 @@
+webserverSecretKeySecretName: airflow-webserver-secret
+airflowVersion: 2.7.1
+defaultAirflowRepository: bfaublesage/airflow
+defaultAirflowTag: 2.7.1-python-3.10
+
 config:
+    webserver:
+        expose_config: false
+        service:
+            type: LoadBalancer
     secrets:
+        backend: airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend 
         backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
     # webserver:
     #     authenticate: true
@@ -14,7 +24,9 @@ config:
     #     ssl_cert = <path to cert>
     #     ssl_cacert = <path to cacert>
 
-# service:
-#   type: LoadBalancer # or another type as needed
-#   annotations:
-#     alb.ingress.kubernetes.io/scheme: "internal"
+dags:
+    gitSync:
+        enabled: true
+        repo: https://github.com/Sage-Bionetworks-Workflows/orca-recipes
+        subPath: dags
+        branch: main
