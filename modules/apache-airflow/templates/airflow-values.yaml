@@ -3,11 +3,13 @@ airflowVersion: 2.7.1
 defaultAirflowRepository: bfaublesage/airflow
 defaultAirflowTag: 2.7.1-python-3.10
 
+# webserver:
+#     service:
+#         type: LoadBalancer
+
 config:
     webserver:
         expose_config: false
-        service:
-            type: LoadBalancer
     secrets:
         backend: airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend 
         backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
