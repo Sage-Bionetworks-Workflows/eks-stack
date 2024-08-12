@@ -23,7 +23,7 @@ module "trivy-operator" {
 
 module "airflow" {
   source  = "spacelift.io/sagebionetworks/airflow/aws"
-  version = "0.2.1"
+  version = "0.2.2"
 }
 
 module "argo-cd" {
