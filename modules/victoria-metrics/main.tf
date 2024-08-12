@@ -4,15 +4,30 @@ resource "kubernetes_namespace" "victoria-metrics" {
   }
 }
 
-resource "helm_release" "victoria-metrics" {
-  name       = "victoria-metrics-k8s-stack"
-  repository = "https://victoriametrics.github.io/helm-charts/"
-  chart      = "victoria-metrics-k8s-stack"
-  namespace  = "victoria-metrics"
-  version    = "0.24.5"
-  depends_on = [
-    kubernetes_namespace.victoria-metrics
-  ]
+resource "kubectl_manifest" "argo-deployment" {
+  depends_on = [kubernetes_namespace.victoria-metrics]
 
-  values = [templatefile("${path.module}/templates/values.yaml", {})]
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: victoria-metrics-k8s-stack
+  namespace: argo-cd
+spec:
+  project: default
+  sources:
+  - repoURL: 'https://victoriametrics.github.io/helm-charts/'
+    chart: victoria-metrics-k8s-stack
+    targetRevision: 0.24.5
+    helm:
+      releaseName: victoria-metrics-k8s-stack
+      valueFiles:
+      - $values/modules/victoria-metrics/templates/values.yaml
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ibcdpe-1034-argocd
+    ref: values
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: victoria-metrics
+YAML
 }
