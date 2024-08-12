@@ -694,7 +694,7 @@ workers:
 
   waitForMigrations:
     # Whether to create init container to wait for db migrations
-    enabled: true
+    enabled: false
     env: []
     # Detailed default security context for waitForMigrations for container level
     securityContexts:
@@ -854,7 +854,7 @@ scheduler:
 
   waitForMigrations:
     # Whether to create init container to wait for db migrations
-    enabled: true
+    enabled: false
     env: []
     # Detailed default security context for waitForMigrations for container level
     securityContexts:
@@ -1234,7 +1234,7 @@ webserver:
 
   waitForMigrations:
     # Whether to create init container to wait for db migrations
-    enabled: true
+    enabled: false
     env: []
     # Detailed default security context for waitForMigrations for container level
     securityContexts:
@@ -1392,7 +1392,7 @@ triggerer:
 
   waitForMigrations:
     # Whether to create init container to wait for db migrations
-    enabled: true
+    enabled: false
     env: []
     # Detailed default security context for waitForMigrations for container level
     securityContexts:
@@ -1529,7 +1529,7 @@ dagProcessor:
 
   waitForMigrations:
     # Whether to create init container to wait for db migrations
-    enabled: true
+    enabled: false
     env: []
 
   env: []
