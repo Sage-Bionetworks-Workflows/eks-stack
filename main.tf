@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "ibcdpe-1007-split-into-vars"
+  git_branch = "ibcdpe-1034-argocd"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {

@@ -103,6 +103,23 @@ locals {
       version_number     = "0.2.0"
     }
 
+    argo-cd = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "argo-cd"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for argo-cd."
+      project_root       = "modules/argo-cd"
+      space_id           = "root"
+      version_number     = "0.2.0"
+    }
+
     private-workerpool = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"
