@@ -34,6 +34,9 @@ resource "kubectl_manifest" "argo-deployment" {
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
+metadata:
+  name: apache-airflow
+  namespace: airflow
 spec:
   sources:
   - repoURL: 'https://airflow.apache.org'
