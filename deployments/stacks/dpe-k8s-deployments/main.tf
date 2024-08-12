@@ -25,3 +25,8 @@ module "airflow" {
   source  = "spacelift.io/sagebionetworks/airflow/aws"
   version = "0.1.1"
 }
+
+module "argo-cd" {
+  source  = "spacelift.io/sagebionetworks/argo-cd/aws"
+  version = "0.2.0"
+}
