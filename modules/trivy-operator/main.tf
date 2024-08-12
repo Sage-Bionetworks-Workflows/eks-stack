@@ -28,7 +28,7 @@ spec:
     ref: values
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ibcdpe-1034-argocd
-    path: modules/trivy-operator/templates/trivy-service-scrape.yaml
+    path: modules/trivy-operator/resources
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: trivy-system
