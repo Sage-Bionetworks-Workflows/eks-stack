@@ -21,7 +21,7 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
     │   └── templates: Resources used during deployment of this helm chart
     ├── trivy-operator: K8s deployment for trivy, along with a few supporting charts for security scanning
     │   └── templates: Resources used during deployment of these helm charts
-    ├── trivy-operator: K8s deployment for victoria metrics, a promethus like tool for cluster metric collection
+    ├── victoria-metrics: K8s deployment for victoria metrics, a promethus like tool for cluster metric collection
     │   └── templates: Resources used during deployment of these helm charts
     ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
     ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
