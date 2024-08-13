@@ -10,7 +10,7 @@ resource "helm_release" "argo-cd" {
   chart      = "argo-cd"
   namespace  = "argocd"
   version    = "7.4.3"
-  depends_on = [kubernetes_namespace.argo-cd]
+  depends_on = [kubernetes_namespace.argocd]
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
 }

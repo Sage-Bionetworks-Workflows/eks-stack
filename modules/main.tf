@@ -117,7 +117,7 @@ locals {
       description        = "Helm chart deployment for argo-cd."
       project_root       = "modules/argo-cd"
       space_id           = "root"
-      version_number     = "0.3.0"
+      version_number     = "0.3.1"
     }
 
     private-workerpool = {
