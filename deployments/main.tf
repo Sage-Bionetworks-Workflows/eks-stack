@@ -19,6 +19,7 @@ module "dpe-sandbox-spacelift-development" {
 
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
   auto_deploy        = true
+  auto_prune         = true
   git_branch         = var.git_branch
 
   space_name = "dpe-sandbox"

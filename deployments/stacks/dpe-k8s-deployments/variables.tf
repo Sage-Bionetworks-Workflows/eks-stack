@@ -44,3 +44,13 @@ variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
 }
+
+variable "auto_deploy" {
+  description = "Automatically deploy the stack"
+  type        = bool
+}
+
+variable "auto_prune" {
+  description = "Automatically prune kubernetes resources"
+  type        = bool
+}

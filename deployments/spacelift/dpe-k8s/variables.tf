@@ -34,6 +34,13 @@ variable "git_branch" {
 variable "auto_deploy" {
   description = "Automatically deploy the stack"
   type        = bool
+  default     = false
+}
+
+variable "auto_prune" {
+  description = "Automatically prune kubernetes resources"
+  type        = bool
+  default     = false
 }
 
 variable "k8s_stack_name" {

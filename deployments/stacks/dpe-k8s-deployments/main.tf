@@ -23,9 +23,11 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  depends_on = [module.victoria-metrics, module.argo-cd]
-  source     = "spacelift.io/sagebionetworks/airflow/aws"
-  version    = "0.3.0"
+  depends_on  = [module.victoria-metrics, module.argo-cd]
+  source      = "spacelift.io/sagebionetworks/airflow/aws"
+  version     = "0.3.0"
+  auto_deploy = var.auto_deploy
+  auto_prune  = var.auto_prune
 }
 
 module "argo-cd" {
