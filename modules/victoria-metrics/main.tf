@@ -15,6 +15,10 @@ metadata:
   namespace: argocd
 spec:
   syncPolicy:
+  %{if var.auto_deploy}
+    automated:
+      prune: ${var.auto_prune}
+  %{endif}
     syncOptions:
     - ServerSideApply=true
   project: default

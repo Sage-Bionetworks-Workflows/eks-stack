@@ -15,6 +15,11 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  %{if var.auto_deploy}
+  syncPolicy:
+    automated:
+      prune: ${var.auto_prune}
+  %{endif}
   sources:
   - repoURL: 'https://aquasecurity.github.io/helm-charts/'
     chart: trivy-operator
@@ -47,6 +52,11 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  %{if var.auto_deploy}
+  syncPolicy:
+    automated:
+      prune: ${var.auto_prune}
+  %{endif}
   sources:
   - repoURL: 'https://fjogeleit.github.io/trivy-operator-polr-adapter'
     chart: trivy-operator-polr-adapter
@@ -77,6 +87,11 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  %{if var.auto_deploy}
+  syncPolicy:
+    automated:
+      prune: ${var.auto_prune}
+  %{endif}
   sources:
   - repoURL: 'https://kyverno.github.io/policy-reporter'
     chart: policy-reporter
