@@ -14,6 +14,9 @@ metadata:
   name: victoria-metrics-k8s-stack
   namespace: argocd
 spec:
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
   project: default
   sources:
   - repoURL: 'https://victoriametrics.github.io/helm-charts/'
