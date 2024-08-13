@@ -47,32 +47,29 @@ Victoria metrics UI to explore prometheus metrics:
 ## Creating a custom service scrape
 When adding more services to the k8s cluster you will want to determine if the service
 supports prometheus metric collection. If it does you will want to add a scrape config
-that instructs VM to collect metric data from it. For example this terraform config is
-used within the trivy operator to export metric data:
+that instructs VM to collect metric data from it. To create this service scrape we are
+defining a `.yaml` file that create a kubernetes resource like:
 
+```yaml
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: trivy-vmservicescrape
+spec:
+  endpoints:
+    - port: metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trivy-operator
 ```
-resource "kubernetes_manifest" "vmservicescrape" {
-  manifest = {
-    apiVersion = "operator.victoriametrics.com/v1beta1"
-    kind       = "VMServiceScrape"
-    metadata = {
-      name      = "trivy-vmservicescrape"
-      namespace = kubernetes_namespace.trivy-system.metadata[0].name
-    }
-    spec = {
-      endpoints = [
-        {
-          port = "metrics"
-        }
-      ]
-      selector = {
-        matchLabels = {
-          "app.kubernetes.io/name" = "trivy-operator"
-        }
-      }
-    }
-  }
-}
+
+Once this has been defined when we are creating an ArgoCD Application resource definition
+we will want to reference the directory where we are storing this yaml file under `.spec.sources`:
+
+```yaml
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: main
+    path: modules/trivy-operator/resources
 ```
 
 ## Adding more grafana dashboards from grafana.com

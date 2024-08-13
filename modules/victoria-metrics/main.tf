@@ -12,7 +12,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: victoria-metrics-k8s-stack
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   sources:

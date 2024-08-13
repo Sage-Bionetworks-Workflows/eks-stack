@@ -12,7 +12,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: trivy-operator
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   sources:
@@ -35,25 +35,6 @@ spec:
 YAML
 }
 
-
-# resource "kubectl_manifest" "vmservicescrape" {
-#   depends_on = [helm_release.trivy-operator]
-
-#   yaml_body = <<YAML
-# apiVersion: operator.victoriametrics.com/v1beta1
-# kind: VMServiceScrape
-# metadata:
-#   name: trivy-vmservicescrape
-#   namespace: ${kubernetes_namespace.trivy-system.metadata[0].name}
-# spec:
-#   endpoints:
-#     - port: metrics
-#   selector:
-#     matchLabels:
-#       app.kubernetes.io/name: trivy-operator
-# YAML
-# }
-
 # converts the trivy-operator metrics to policy reporter format
 resource "kubectl_manifest" "argo-deployment-trivy-operator-polr-adapter" {
   depends_on = [kubernetes_namespace.trivy-system]
@@ -63,7 +44,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: trivy-operator-polr-adapter
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   sources:
@@ -93,7 +74,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: policy-reporter
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   sources:

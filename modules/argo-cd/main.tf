@@ -1,6 +1,6 @@
-resource "kubernetes_namespace" "argo-cd" {
+resource "kubernetes_namespace" "argocd" {
   metadata {
-    name = "argo-cd"
+    name = "argocd"
   }
 }
 
@@ -8,7 +8,7 @@ resource "helm_release" "argo-cd" {
   name       = "argo-cd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  namespace  = "argo-cd"
+  namespace  = "argocd"
   version    = "7.4.3"
   depends_on = [kubernetes_namespace.argo-cd]
 

@@ -17,6 +17,12 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
 └── modules: Templatized collections of terraform resources that are used in a stack
     ├── apache-airflow: K8s deployment for apache airflow
     │   └── templates: Resources used during deployment of airflow
+    ├── argo-cd: K8s deployment for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
+    │   └── templates: Resources used during deployment of this helm chart
+    ├── trivy-operator: K8s deployment for trivy, along with a few supporting charts for security scanning
+    │   └── templates: Resources used during deployment of these helm charts
+    ├── trivy-operator: K8s deployment for victoria metrics, a promethus like tool for cluster metric collection
+    │   └── templates: Resources used during deployment of these helm charts
     ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
     ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
     ├── sage-aws-eks: Sage specific EKS cluster for AWS
@@ -37,56 +43,51 @@ this top level directory are as follows:
 
 This structure is looking to https://github.com/antonbabenko/terraform-best-practices/tree/master/examples for inspiration.
 
-## AWS VPC + AWS EKS
-This section describes the VPC (Virtual Private Cloud) that the EKS cluster is deployed
-to.
-
-### AWS VPC
-
+## AWS VPC
 The VPC used in this project is created with the [AWS VPC Terraform module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest).
 It contains a number of defaults for our use-case at sage. Head on over to the module
 definition to learn more.
 
-### AWS EKS
+## AWS EKS
 
 [AWS EKS](https://aws.amazon.com/eks/) is a managed kubernetes cluster that handles
 many of the tasks around running a k8s cluster. On-top of it we are providing the
 configurable parameters in order to run a number of workloads.
 
-#### EKS API access
+### EKS API access
 API access to the kubernetes cluster endpoint is set to `Public and private`. 
 
 Reading:
 
 - <https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/network_connectivity.md>
 
-##### Public
+#### Public
 This allows one outside of the VPC to connect via `kubectl` and related tools to 
 interact with kubernetes resources. By default, this API server endpoint is public to 
 the internet, and access to the API server is secured using a combination of AWS 
 Identity and Access Management (IAM) and native Kubernetes Role Based Access Control 
 (RBAC).
 
-##### Private
+#### Private
 You can enable private access to the Kubernetes API server so that all communication 
 between your worker nodes and the API server stays within your VPC. You can limit the 
 IP addresses that can access your API server from the internet, or completely disable 
 internet access to the API server.
 
 
-#### EKS VPC CNI Plugin
+### EKS VPC CNI Plugin
 This section describes the VPC CNI (Container Network Interface) that is being used
 within the EKS cluster. The plugin is responsible for allocating VPC IP addresses to 
 Kubernetes nodes and configuring the necessary networking for Pods on each node.
 
 
-#### Security groups for pods
+### Security groups for pods
 Allows us to assign EC2 security groups directly to pods running in AWS EKS clusters.
 This can be used as an alternative or in conjunction with `Kubernetes network policies`.
 
 See `modules/demo-pod-level-security-groups-strict` for more context on how this works.
 
-#### Kubernetes network policies
+### Kubernetes network policies
 Controls network traffic within the cluster, for example pod to pod traffic.
 
 See `modules/demo-network-policies` for more context on how this works.
@@ -98,7 +99,7 @@ Further reading:
 - https://kubernetes.io/docs/concepts/services-networking/network-policies/
 
 
-#### EKS Autoscaler
+### EKS Autoscaler
 
 We use spot.io to manage the nodes attached to each of the EKS cluster. This tool has
 scale-to-zerio capabilities and will dynamically add or removes nodes from the cluster
@@ -121,7 +122,7 @@ add it to the AWS secret manager.
 * Copy the token and create an `AWS Secrets Manager` Plaintext secret named `spotinst_token` with a description `Spot.io token`
 
 
-#### Connecting to an EKS cluster for kubectl commands
+### Connecting to an EKS cluster for kubectl commands
 
 To connect to the EKS stack running in AWS you'll need to make sure that you have
 SSO setup for the account you'll be using. Once setup run the commands below:
@@ -137,7 +138,66 @@ aws sso login --profile dpe-prod-admin
 aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:iam::766808016710:role/eks_admin_role --profile dpe-prod-admin
 ```
 
-### Spacelift
+### Security and Audits in place for the EKS cluster
+Requested in <https://sagebionetworks.jira.com/browse/IT-3824> AWS Guard
+
+### Deploying an application to the kubernetes cluster
+Deployment of applications to the kubernetes cluster is handled through the combination
+of terraform (.tf) scripts, spacelift (CICD tool), and ArgoCd (Declarative definitions 
+for applications).
+
+To start of the deployment journey the first step is to create a new terraform module
+that encapsulating everything that is required to deploy any cloud resources, in
+addition to defining any kubernetes specific resources that will be deployed to the
+cluster.
+
+#### Creating the terraform module
+This is supplemental information to what is defined within the [modules readme](./modules/README.md)
+
+1. Create a new directory for your module within `./modules`, it should be named after what you are deploying.
+2. At a minimum you must define a `main.tf` and `versions.tf` script that define:
+   1. What cloud resources you are deploying
+   2. The providers required for deploying those cloud resources
+3. You may also define any number of additional [files](https://opentofu.org/docs/language/files/) and [resources](https://opentofu.org/docs/language/resources/syntax/) that are specific to the module you are creating.
+
+#### Deploying a kubernetes resource to the cluster (ArgoCD)
+Deployment of applications and kubernetes specific resources to the cluster is handled
+via Argo CD, which is a declarative, GitOps continuous delivery tool for Kubernetes. The
+usage of this tool instead of terraform allows for continous monitoring of Kubernetes
+resources to align expected state with the actual state of the cluster. It has extensive
+support to deploy helm charts, and Kubernetes yaml files.
+
+The [declarative setup for ArgoCD](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup)
+is done through defining specific Kubernetes resources as defined in the [ArgoCD Custom Resource Definition (CRD)](https://github.com/argoproj/argo-cd/tree/master/manifests/crds).
+
+For our use cases we will typically be creating an [Application Specification](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/)
+which defines a number of pointers and configuration elements for ArgoCD to deploy to
+the Kubernetes cluster. In addition we are taking advantage of [Multiple Sources for an Application](https://argo-cd.readthedocs.io/en/stable/user-guide/multiple_sources/)
+to install public helm charts with out custom `values.yaml` files without the need to
+create our own helm chart and host it in our repository. See the following [readme for a real example](./modules/apache-airflow/README.md)
+we are using for deploying out `Apache Airflow` instance. 
+
+### Access resources on the kubernetes cluster
+As of August 2024 the only access to resources on the kubernetes cluster is occuring
+through kubectl port forward sessions. No internet facing load balancers are avaiable
+to connect to.
+
+Using a tool like `K9s` navigate to the pod in question and start a port forward session.
+Then open up a browser and go to the `localhost` and port you have specified in your
+port forward session. 
+
+(Area of future work to have better secrets management): https://sagebionetworks.jira.com/browse/IBCDPE-1038
+
+Most, but not all, resources will have a login page where you'll
+need to enter in a username and password. These resources will have a Kubernetes secret
+in base64 that you'll be able to look at and get the appropriate username/password to
+log into the tool. Once you obtain the Base64 data you'll need to decode it and then 
+log into the tool. Examples:
+
+ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
+Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
+
+## Spacelift
 Here are some instructions on setting up spacelift.
 
 
@@ -193,7 +253,8 @@ This document describes the abbreviated process below:
 				"iam:*Policy",
 				"iam:*PolicyVersion",
 				"iam:*OpenIDConnectProvider",
-				"iam:*InstanceProfile"
+				"iam:*InstanceProfile",
+				"iam:ListPolicyVersions"
 			],
 			"Resource": "*"
 		}
