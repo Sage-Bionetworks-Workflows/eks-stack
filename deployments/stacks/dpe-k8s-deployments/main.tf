@@ -13,13 +13,13 @@ module "sage-aws-eks-autoscaler" {
 module "victoria-metrics" {
   depends_on = [module.argo-cd]
   source     = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version    = "0.4.5"
+  version    = "0.4.6"
 }
 
 module "trivy-operator" {
   depends_on = [module.victoria-metrics, module.argo-cd]
   source     = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version    = "0.3.0"
+  version    = "0.3.1"
 }
 
 module "airflow" {
