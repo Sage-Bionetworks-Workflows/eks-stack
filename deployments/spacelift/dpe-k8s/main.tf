@@ -17,6 +17,7 @@ locals {
     cluster_name     = var.cluster_name
     auto_deploy      = var.auto_deploy
     auto_prune       = var.auto_prune
+    git_revision     = var.git_branch
   }
 
   # Variables to be passed from the k8s stack to the deployments stack

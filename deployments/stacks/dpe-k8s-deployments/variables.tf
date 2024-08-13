@@ -54,3 +54,9 @@ variable "auto_prune" {
   description = "Automatically prune kubernetes resources"
   type        = bool
 }
+
+variable "git_revision" {
+  description = "The git revision to deploy"
+  type        = string
+  default     = "main"
+}
