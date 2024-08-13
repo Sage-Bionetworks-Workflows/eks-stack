@@ -29,6 +29,15 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ibcdpe-1034-argocd
     ref: values
+  ignoreDifferences:
+  - group: "*"
+    kind: "Secret"
+    jsonPointers:
+    - /data/admin-password
+  - group: "apps"
+    kind: "Deployment"
+    jsonPointers:
+    - /spec/template/metadata/annotations/checksum~1secret
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: victoria-metrics
