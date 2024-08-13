@@ -15,6 +15,8 @@ locals {
     spotinst_account = var.spotinst_account
     vpc_cidr_block   = var.vpc_cidr_block
     cluster_name     = var.cluster_name
+    auto_deploy      = var.auto_deploy
+    auto_prune       = var.auto_prune
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
@@ -109,15 +111,15 @@ resource "spacelift_environment_variable" "k8s-stack-deployments-environment-var
 # When this dependent stack is run it might be "Skipped" because the admin stack does not have different values in the `output.tf` that is used here
 # That means the child stack is never run.
 
-# resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
-#   for_each = {
-#     k8s-stack             = spacelift_stack.k8s-stack,
-#     k8s-stack-deployments = spacelift_stack.k8s-stack-deployments
-#   }
+resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
+  for_each = {
+    k8s-stack             = spacelift_stack.k8s-stack,
+    k8s-stack-deployments = spacelift_stack.k8s-stack-deployments
+  }
 
-#   stack_id            = each.value.id
-#   depends_on_stack_id = var.admin_stack_id
-# }
+  stack_id            = each.value.id
+  depends_on_stack_id = var.admin_stack_id
+}
 
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
   context_id = "kubernetes-deployments-kubeconfig"
