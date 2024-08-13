@@ -893,7 +893,9 @@ createUserJob:
   # Annotations on the create user job pod
   annotations: {}
   # jobAnnotations are annotations on the create user job
-  jobAnnotations: {}
+  jobAnnotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
 
   # Labels specific to createUserJob objects and pods
   labels: {}
@@ -979,7 +981,9 @@ migrateDatabaseJob:
   # Annotations on the database migration pod
   annotations: {}
   # jobAnnotations are annotations on the database migration job
-  jobAnnotations: {}
+  jobAnnotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
 
   # When not set, the values defined in the global securityContext will be used
   securityContext: {}
