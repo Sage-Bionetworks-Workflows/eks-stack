@@ -9,3 +9,9 @@ variable "auto_prune" {
   type        = bool
   default     = false
 }
+
+variable "git_revision" {
+  description = "The git revision to deploy"
+  type        = string
+  default     = "main"
+}

@@ -31,7 +31,7 @@ spec:
       valueFiles:
       - $values/modules/victoria-metrics/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1034-argocd
+    targetRevision: ${var.git_revision}
     ref: values
   ignoreDifferences:
   - group: "*"

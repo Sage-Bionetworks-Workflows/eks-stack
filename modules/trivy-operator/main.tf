@@ -29,10 +29,10 @@ spec:
       valueFiles:
       - $values/modules/trivy-operator/templates/values-trivy-operator.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1034-argocd
+    targetRevision: ${var.git_revision}
     ref: values
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1034-argocd
+    targetRevision: ${var.git_revision}
     path: modules/trivy-operator/resources
   destination:
     server: 'https://kubernetes.default.svc'
@@ -66,7 +66,7 @@ spec:
       valueFiles:
       - $values/modules/trivy-operator/templates/values-trivy-operator-polr-adapter.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1034-argocd
+    targetRevision: ${var.git_revision}
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
@@ -101,7 +101,7 @@ spec:
       valueFiles:
       - $values/modules/trivy-operator/templates/values-policy-reporter.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1034-argocd
+    targetRevision: ${var.git_revision}
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
