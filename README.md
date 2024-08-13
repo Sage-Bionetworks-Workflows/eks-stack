@@ -139,7 +139,28 @@ aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:ia
 ```
 
 ### Security and Audits in place for the EKS cluster
-Requested in <https://sagebionetworks.jira.com/browse/IT-3824> AWS Guard
+AWS Guard is being used to perform audit trails for the EKS cluster, it involves 2
+components for the cluster:
+
+1. [EKS Audit Log Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html)
+2. [GuardDuty Runtime Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring-configuration.html)
+
+
+The initial configuration of these is handled through the `securitycentral` IT account.
+Runtime Monitoring is installed manually via terraform modules, allowing it to be torn
+down when we destroy the VPC and EKS cluster.
+
+
+In addition to this scanning that is in place we are also taking advantage of the
+[trivy-operator](https://github.com/aquasecurity/trivy-operator), a 
+"Kubernetes-native security toolkit". The use of this tool will give us regular scans
+of the resources that we are deploying to the kubernetes cluster. As resources are added
+trivy will spin up and add more to the existing reports. In addition 
+[policy-report](https://github.com/kyverno/policy-reporter) has been installed to the
+cluster to give a UI to review the results without needing to dig into kubernetes
+resources. The use of these reports will be regularly reviewed as new applications are
+added to the cluster, in addition the use of the SBOM (Software bill of materials) will
+allow us to review for any security advisories.
 
 ### Deploying an application to the kubernetes cluster
 Deployment of applications to the kubernetes cluster is handled through the combination
@@ -173,7 +194,7 @@ is done through defining specific Kubernetes resources as defined in the [ArgoCD
 For our use cases we will typically be creating an [Application Specification](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/)
 which defines a number of pointers and configuration elements for ArgoCD to deploy to
 the Kubernetes cluster. In addition we are taking advantage of [Multiple Sources for an Application](https://argo-cd.readthedocs.io/en/stable/user-guide/multiple_sources/)
-to install public helm charts with out custom `values.yaml` files without the need to
+to install public helm charts with our custom `values.yaml` files without the need to
 create our own helm chart and host it in our repository. See the following [readme for a real example](./modules/apache-airflow/README.md)
 we are using for deploying out `Apache Airflow` instance. 
 
@@ -194,8 +215,8 @@ in base64 that you'll be able to look at and get the appropriate username/passwo
 log into the tool. Once you obtain the Base64 data you'll need to decode it and then 
 log into the tool. Examples:
 
-ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
-Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
+- ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
+- Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
 
 ## Spacelift
 Here are some instructions on setting up spacelift.
