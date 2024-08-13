@@ -11,27 +11,30 @@ module "sage-aws-eks-autoscaler" {
 }
 
 module "victoria-metrics" {
-  depends_on  = [module.argo-cd]
-  source      = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version     = "0.4.6"
-  auto_deploy = var.auto_deploy
-  auto_prune  = var.auto_prune
+  depends_on   = [module.argo-cd]
+  source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
+  version      = "0.4.7"
+  auto_deploy  = var.auto_deploy
+  auto_prune   = var.auto_prune
+  git_revision = var.git_revision
 }
 
 module "trivy-operator" {
-  depends_on  = [module.victoria-metrics, module.argo-cd]
-  source      = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version     = "0.3.1"
-  auto_deploy = var.auto_deploy
-  auto_prune  = var.auto_prune
+  depends_on   = [module.victoria-metrics, module.argo-cd]
+  source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  version      = "0.3.2"
+  auto_deploy  = var.auto_deploy
+  auto_prune   = var.auto_prune
+  git_revision = var.git_revision
 }
 
 module "airflow" {
-  depends_on  = [module.victoria-metrics, module.argo-cd]
-  source      = "spacelift.io/sagebionetworks/airflow/aws"
-  version     = "0.3.0"
-  auto_deploy = var.auto_deploy
-  auto_prune  = var.auto_prune
+  depends_on   = [module.victoria-metrics, module.argo-cd]
+  source       = "spacelift.io/sagebionetworks/airflow/aws"
+  version      = "0.3.1"
+  auto_deploy  = var.auto_deploy
+  auto_prune   = var.auto_prune
+  git_revision = var.git_revision
 }
 
 module "argo-cd" {
