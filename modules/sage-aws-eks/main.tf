@@ -3,38 +3,42 @@ resource "aws_iam_role" "admin_role" {
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${var.aws_account_id}:root"
+    Statement = flatten([
+      for arn in tolist(data.aws_iam_roles.administrator-roles.arns) : [
+        {
+          Effect = "Allow"
+          Principal = {
+            AWS = arn
+          }
+          Action = "sts:AssumeRole"
         }
-        Action = "sts:AssumeRole"
-      },
-    ]
+      ]
+    ])
   })
 
   tags = var.tags
 }
 
-# resource "aws_iam_role" "viewer_role" {
-#   name = "eks_viewer_role_${var.cluster_name}"
+resource "aws_iam_role" "viewer_role" {
+  name = "eks-viewer-role-${var.cluster_name}"
 
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Principal = {
-#           AWS = "arn:aws:sts::766808016710:assumed-role/AWSReservedSSO_Developer_92af2c086e7e7f38/bryan.fauble@sagebase.org"
-#         }
-#         Action = "sts:AssumeRole"
-#       },
-#     ]
-#   })
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = flatten([
+      for arn in concat(tolist(data.aws_iam_roles.developer-roles.arns), tolist(data.aws_iam_roles.administrator-roles.arns)) : [
+        {
+          Effect = "Allow"
+          Principal = {
+            AWS = arn
+          }
+          Action = "sts:AssumeRole"
+        }
+      ]
+    ])
+  })
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
 
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.admin_role.name
@@ -155,19 +159,19 @@ module "eks" {
         }
       }
     }
-    # eks_viewer_role = {
-    #   kubernetes_groups = []
-    #   principal_arn     = aws_iam_role.viewer_role.arn
+    eks_viewer_role = {
+      kubernetes_groups = []
+      principal_arn     = aws_iam_role.viewer_role.arn
 
-    #   policy_associations = {
-    #     eks_admin_role = {
-    #       policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-    #       access_scope = {
-    #         type = "cluster"
-    #       }
-    #     }
-    #   }
-    # }
+      policy_associations = {
+        eks_admin_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
   }
   tags = var.tags
 }
