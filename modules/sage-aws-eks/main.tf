@@ -161,7 +161,7 @@ module "eks" {
     }
     eks_developer_viewer_role = {
       kubernetes_groups = []
-      principal_arn     = aws_iam_role.viewer_role.arn
+      principal_arn     = aws_iam_role.developer_viewer_role.arn
 
       policy_associations = {
         eks_developer_viewer_role = {
