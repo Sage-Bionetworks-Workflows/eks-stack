@@ -28,3 +28,32 @@ module "sage-aws-eks" {
   aws_account_id                    = var.aws_account_id
   private_subnet_cidrs              = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
+
+resource "aws_iam_role" "viewer_role" {
+  depends_on = [module.sage-aws-eks]
+  name       = "eks-viewer-role-${var.cluster_name}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:assumed-role/AWSReservedSSO_Developer_*"
+        }
+        Action = "sts:AssumeRole"
+      },
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:assumed-role/AWSReservedSSO_Administrator_*"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+
+  tags = {
+    "CostCenter" = "No Program / 000000"
+  }
+}
