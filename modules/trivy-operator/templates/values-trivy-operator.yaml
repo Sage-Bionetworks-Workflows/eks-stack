@@ -419,7 +419,7 @@ trivy:
   # -- ignoreUnfixed is the flag to show only fixed vulnerabilities in
   # vulnerabilities reported by Trivy. Set to true to enable it.
   #
-  ignoreUnfixed: false
+  ignoreUnfixed: true
   # -- a comma separated list of file paths for Trivy to skip
   skipFiles:
   # -- a comma separated list of directories for Trivy to skip
