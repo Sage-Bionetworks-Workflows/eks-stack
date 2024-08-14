@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "ibcdpe-1034-argocd"
+  git_branch = "ibcdpe-1007-guard-duty-manual"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
