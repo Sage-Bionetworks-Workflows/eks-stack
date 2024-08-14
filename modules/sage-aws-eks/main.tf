@@ -19,8 +19,8 @@ resource "aws_iam_role" "admin_role" {
   tags = var.tags
 }
 
-resource "aws_iam_role" "viewer_role" {
-  name = "eks-viewer-role-${var.cluster_name}"
+resource "aws_iam_role" "developer_viewer_role" {
+  name = "eks-developer-viewer-role-${var.cluster_name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -159,13 +159,13 @@ module "eks" {
         }
       }
     }
-    eks_viewer_role = {
+    eks_developer_viewer_role = {
       kubernetes_groups = []
       principal_arn     = aws_iam_role.viewer_role.arn
 
       policy_associations = {
-        eks_admin_role = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+        eks_developer_viewer_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
           access_scope = {
             type = "cluster"
           }
