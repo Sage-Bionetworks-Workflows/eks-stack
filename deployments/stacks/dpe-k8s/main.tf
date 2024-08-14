@@ -15,7 +15,7 @@ module "sage-aws-vpc" {
 
 module "sage-aws-eks" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  version = "0.5.0"
+  version = "0.5.1"
 
   cluster_name                      = var.cluster_name
   private_vpc_subnet_ids            = module.sage-aws-vpc.private_subnet_ids
@@ -27,43 +27,4 @@ module "sage-aws-eks" {
   pod_security_group_enforcing_mode = var.pod_security_group_enforcing_mode
   aws_account_id                    = var.aws_account_id
   private_subnet_cidrs              = module.sage-aws-vpc.vpc_private_subnet_cidrs
-}
-
-data "aws_iam_roles" "developer-roles" {
-  name_regex  = "AWSReservedSSO_Developer_.*"
-  path_prefix = "/aws-reserved/sso.amazonaws.com/"
-}
-
-data "aws_iam_roles" "administrator-roles" {
-  name_regex  = "AWSReservedSSO_Administrator_.*"
-  path_prefix = "/aws-reserved/sso.amazonaws.com/"
-}
-
-data "aws_iam_roles" "something-not-found" {
-  name_regex  = "aaaaaaaaaaaaaaaaaAWSReservedSSO_Administrator_.*"
-  path_prefix = "/aaaaaaaaaaaaaaaaaws-reserved/sso.amazonaws.com/"
-}
-
-resource "aws_iam_role" "viewer_role" {
-  depends_on = [module.sage-aws-eks]
-  name       = "eks-viewer-role-${var.cluster_name}"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = flatten([
-      for arn in concat(tolist(data.aws_iam_roles.developer-roles.arns), tolist(data.aws_iam_roles.administrator-roles.arns), tolist(data.aws_iam_roles.something-not-found.arns)) : [
-        {
-          Effect = "Allow"
-          Principal = {
-            AWS = arn
-          }
-          Action = "sts:AssumeRole"
-        }
-      ]
-    ])
-  })
-
-  tags = {
-    "CostCenter" = "No Program / 000000"
-  }
 }
