@@ -39,6 +39,11 @@ data "aws_iam_roles" "administrator-roles" {
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
 }
 
+data "aws_iam_roles" "something-not-found" {
+  name_regex  = "aaaaaaaaaaaaaaaaaAWSReservedSSO_Administrator_.*"
+  path_prefix = "/aaaaaaaaaaaaaaaaaws-reserved/sso.amazonaws.com/"
+}
+
 resource "aws_iam_role" "viewer_role" {
   depends_on = [module.sage-aws-eks]
   name       = "eks-viewer-role-${var.cluster_name}"
@@ -46,7 +51,7 @@ resource "aws_iam_role" "viewer_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = flatten([
-      for arn in concat(data.aws_iam_roles.developer-roles.arns, data.aws_iam_roles.administrator-roles.arns) : [
+      for arn in concat(tolist(data.aws_iam_roles.developer-roles.arns), tolist(data.aws_iam_roles.administrator-roles.arns), tolist(data.aws_iam_roles.something-not-found.arns)) : [
         {
           Effect = "Allow"
           Principal = {
