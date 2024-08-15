@@ -1,3 +1,8 @@
+# Additional networking recs for the airflow deployment (To implement)
+# Turn on network policies: https://github.com/apache/airflow/blob/main/chart/values.yaml#L225-L228
+# Enable TLS: https://github.com/apache/airflow/blob/main/chart/values.yaml#L162-L170
+# Test that connections to the airflow pods are blocked from the non-airflow namespaces - Except for `kube-system`
+
 resource "kubernetes_namespace" "airflow" {
   metadata {
     name = "airflow"

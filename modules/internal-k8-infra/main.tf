@@ -1,5 +1,5 @@
 module "ocean-controller" {
-  source = "spotinst/ocean-controller/spotinst"
+  source  = "spotinst/ocean-controller/spotinst"
   version = "0.54.0"
 
   # Credentials.
@@ -13,7 +13,6 @@ module "ocean-controller" {
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.2.0"
-  # worker_instance_profile_arn      = "arn:aws:iam::766808016710:role/airflow-node-group-eks-node-group-20240517054613935800000001"
 
   # Configuration
   cluster_name                     = var.cluster_name

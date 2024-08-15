@@ -1,5 +1,5 @@
 resource "aws_iam_role" "admin_role" {
-  name = "eks_admin_role_${var.cluster_name}"
+  name = "eks-admin-role-${var.cluster_name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -7,7 +7,7 @@ resource "aws_iam_role" "admin_role" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::766808016710:root"
+          AWS = "arn:aws:iam::${var.aws_account_id}:root"
         }
         Action = "sts:AssumeRole"
       },
@@ -41,6 +41,29 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
+resource "aws_security_group" "pod-dns-egress" {
+  name        = "${var.cluster_name}-pod-dns-egress"
+  description = "Allow egress on port 53 for DNS queries."
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidrs
+    description = "Allow all TCP traffic to the node security group"
+  }
+
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = var.private_subnet_cidrs
+    description = "Allow all UDP traffic to the node security group"
+  }
+
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.12"
@@ -67,13 +90,11 @@ module "eks" {
         }
         nodeAgent = {
           enablePolicyEventLogs = var.enable_policy_event_logs ? "true" : "false"
+          enableCloudWatchLogs  = var.capture_cloudwatch_logs ? "true" : "false"
         }
         env = {
           ENABLE_POD_ENI                    = "true",
-          POD_SECURITY_GROUP_ENFORCING_MODE = "standard",
-          # TODO: Turn on strict mode when we are ready to enforce it
-          # POD_SECURITY_GROUP_ENFORCING_MODE = "strict",
-          AWS_VPC_K8S_CNI_EXTERNALSNAT = "true"
+          POD_SECURITY_GROUP_ENFORCING_MODE = var.pod_security_group_enforcing_mode,
       } })
     }
   }
@@ -94,6 +115,28 @@ module "eks" {
   # To add the current caller identity as an administrator
   enable_cluster_creator_admin_permissions = true
   authentication_mode                      = "API"
+
+  cloudwatch_log_group_retention_in_days = var.cloudwatch_retention
+  create_cloudwatch_log_group            = var.capture_cloudwatch_logs
+
+  node_security_group_additional_rules = {
+    pod_dns_ingress_tcp = {
+      type                     = "ingress"
+      description              = "Allow ingress on port 53 for DNS queries to the node security group"
+      from_port                = 53
+      to_port                  = 53
+      protocol                 = "tcp"
+      source_security_group_id = aws_security_group.pod-dns-egress.id
+    }
+    pod_dns_ingress_udp = {
+      type                     = "ingress"
+      description              = "Allow ingress on port 53 for DNS queries to the node security group"
+      from_port                = 53
+      to_port                  = 53
+      protocol                 = "udp"
+      source_security_group_id = aws_security_group.pod-dns-egress.id
+    }
+  }
 
 
   access_entries = {

@@ -26,6 +26,10 @@ output "node_security_group_id" {
   value = module.sage-aws-eks.node_security_group_id
 }
 
+output "pod_to_node_dns_sg_id" {
+  value = module.sage-aws-eks.pod_to_node_dns_sg_id
+}
+
 output "region" {
   value = module.sage-aws-vpc.region
 }

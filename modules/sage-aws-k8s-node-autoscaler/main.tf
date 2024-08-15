@@ -15,6 +15,26 @@ resource "aws_iam_role" "work_profile_iam_role" {
     ]
   })
 
+  inline_policy {
+    name = "allow-eks-logs"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "logs:DescribeLogGroups",
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+          ]
+          Effect   = "Allow"
+          Resource = "*"
+        },
+      ]
+    })
+  }
+
   tags = var.tags
 }
 

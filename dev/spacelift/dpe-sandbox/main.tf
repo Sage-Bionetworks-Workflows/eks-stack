@@ -13,7 +13,7 @@ resource "spacelift_stack" "k8s-stack" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "ibcdpe-935-vpc-updates"
+  branch                  = "main"
   description             = "Infrastructure to support deploying to an EKS cluster"
   name                    = "DPE DEV Kubernetes Infrastructure"
   project_root            = "dev/stacks/dpe-sandbox-k8s"
@@ -31,7 +31,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 
   administrative          = false
   autodeploy              = true
-  branch                  = "ibcdpe-935-vpc-updates"
+  branch                  = "main"
   description             = "Deployments internal to an EKS cluster"
   name                    = "DPE DEV Kubernetes Deployments"
   project_root            = "dev/stacks/dpe-sandbox-k8s-deployments"
@@ -67,6 +67,12 @@ resource "spacelift_stack_dependency_reference" "security-group-id-reference" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
   output_name         = "node_security_group_id"
   input_name          = "TF_VAR_node_security_group_id"
+}
+
+resource "spacelift_stack_dependency_reference" "pod-to-node-security-group-id-reference" {
+  stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
+  output_name         = "pod_to_node_dns_sg_id"
+  input_name          = "TF_VAR_pod_to_node_dns_sg_id"
 }
 
 resource "spacelift_stack_dependency_reference" "vpc-cidr-block-reference" {
@@ -111,14 +117,16 @@ resource "spacelift_stack_destructor" "k8s-stack-destructor" {
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
-  integration_id = "01HXW154N60KJ8NCC93H1VYPNM"
+  # org-sagebase-dnt-dev-aws-integration
+  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
   stack_id       = spacelift_stack.k8s-stack.id
   read           = true
   write          = true
 }
 
 resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration-attachment" {
-  integration_id = "01HXW154N60KJ8NCC93H1VYPNM"
+  # org-sagebase-dnt-dev-aws-integration
+  integration_id = "01J3DNYVM4AWWSDY3QEVRMQ076"
   stack_id       = spacelift_stack.k8s-stack-deployments.id
   read           = true
   write          = true

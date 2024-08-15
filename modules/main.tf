@@ -7,7 +7,7 @@ resource "spacelift_module" "sage-aws-vpc" {
   name               = "sage-aws-vpc"
   terraform_provider = "aws"
   administrative     = false
-  branch             = "ibcdpe-935-vpc-updates"
+  branch             = "main"
   description        = "Terraform module for creating a VPC in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-vpc"
@@ -16,7 +16,7 @@ resource "spacelift_module" "sage-aws-vpc" {
 
 resource "spacelift_version" "sage-aws-vpc-version" {
   module_id      = spacelift_module.sage-aws-vpc.id
-  version_number = "0.2.2"
+  version_number = "0.3.3"
 }
 
 resource "spacelift_module" "sage-aws-eks" {
@@ -28,7 +28,7 @@ resource "spacelift_module" "sage-aws-eks" {
   name               = "sage-aws-eks"
   terraform_provider = "aws"
   administrative     = false
-  branch             = "ibcdpe-935-vpc-updates"
+  branch             = "main"
   description        = "Terraform module for creating an EKS cluster in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-eks"
@@ -37,7 +37,7 @@ resource "spacelift_module" "sage-aws-eks" {
 
 resource "spacelift_version" "sage-aws-eks-version" {
   module_id      = spacelift_module.sage-aws-eks.id
-  version_number = "0.2.6"
+  version_number = "0.3.9"
 }
 
 resource "spacelift_module" "sage-aws-eks-autoscaler" {
@@ -49,7 +49,7 @@ resource "spacelift_module" "sage-aws-eks-autoscaler" {
   name               = "sage-aws-eks-autoscaler"
   terraform_provider = "aws"
   administrative     = false
-  branch             = "ibcdpe-935-vpc-updates"
+  branch             = "main"
   description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
   repository         = "eks-stack"
   project_root       = "modules/sage-aws-k8s-node-autoscaler"
@@ -58,7 +58,28 @@ resource "spacelift_module" "sage-aws-eks-autoscaler" {
 
 resource "spacelift_version" "sage-aws-eks-autoscaler-version" {
   module_id      = spacelift_module.sage-aws-eks-autoscaler.id
-  version_number = "0.2.2"
+  version_number = "0.3.2"
+}
+
+resource "spacelift_module" "spacelift-private-workerpool" {
+  github_enterprise {
+    namespace = "Sage-Bionetworks-Workflows"
+    id        = "sage-bionetworks-workflows-gh"
+  }
+
+  name               = "spacelift-private-workerpool"
+  terraform_provider = "aws"
+  administrative     = false
+  branch             = "main"
+  description        = "Module for the spacelift private workerpool helm chart which deploys the K8s operator"
+  repository         = "eks-stack"
+  project_root       = "modules/spacelift-private-worker"
+  space_id           = "root"
+}
+
+resource "spacelift_version" "spacelift-private-workerpool-version" {
+  module_id      = spacelift_module.spacelift-private-workerpool.id
+  version_number = "0.2.0"
 }
 
 resource "spacelift_module" "spacelift-private-workerpool" {
