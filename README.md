@@ -135,11 +135,11 @@ aws sso login --profile dpe-prod-admin
 # AWS using my SSO session for the profile `dpe-prod-admin`. After authenticated 
 # assuming that we want to use the `role/eks_admin_role` to connect to the k8s 
 # cluster". This will update your kubeconfig with permissions to access the cluster.
-aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --role-arn arn:aws:iam::766808016710:role/eks_admin_role --profile dpe-prod-admin
+aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --profile dpe-prod-admin
 ```
 
 ### Security and Audits in place for the EKS cluster
-AWS Guard is being used to perform audit trails for the EKS cluster, it involves 2
+AWS Guard duty is being used to perform audit trails for the EKS cluster, it involves 2
 components for the cluster:
 
 1. [EKS Audit Log Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html)
