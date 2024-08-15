@@ -15,7 +15,7 @@ locals {
       description        = "Terraform module for creating an EKS cluster in AWS"
       project_root       = "modules/sage-aws-eks"
       space_id           = "root"
-      version_number     = "0.5.3"
+      version_number     = "0.5.7"
     }
 
     vpc = {

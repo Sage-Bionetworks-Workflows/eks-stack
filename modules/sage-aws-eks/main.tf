@@ -1,48 +1,42 @@
-resource "aws_iam_role" "admin_role" {
-  name = "eks-admin-role-${var.cluster_name}"
+locals {
+  eks_admin_roles            = tolist(data.aws_iam_roles.administrator-roles.arns)
+  eks_developer_viewer_roles = tolist(data.aws_iam_roles.developer-roles.arns)
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = flatten([
-      for arn in tolist(data.aws_iam_roles.administrator-roles.arns) : [
-        {
-          Effect = "Allow"
-          Principal = {
-            AWS = arn
+  eks_admin_role_entries = {
+    for idx, role_arn in zipmap(range(length(local.eks_admin_roles)), local.eks_admin_roles) :
+    "eks_admin_role_${idx}" => {
+      kubernetes_groups = []
+      principal_arn     = role_arn
+
+      policy_associations = {
+        eks_admin_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
           }
-          Action = "sts:AssumeRole"
         }
-      ]
-    ])
-  })
+      }
+    }
+  }
 
-  tags = var.tags
-}
+  eks_developer_viewer_role_entries = {
+    for idx, role_arn in zipmap(range(length(local.eks_developer_viewer_roles)), local.eks_developer_viewer_roles) :
+    "eks_developer_viewer_role_${idx}" => {
+      kubernetes_groups = []
+      principal_arn     = role_arn
 
-resource "aws_iam_role" "developer_viewer_role" {
-  name = "eks-developer-viewer-role-${var.cluster_name}"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = flatten([
-      for arn in concat(tolist(data.aws_iam_roles.developer-roles.arns), tolist(data.aws_iam_roles.administrator-roles.arns)) : [
-        {
-          Effect = "Allow"
-          Principal = {
-            AWS = arn
+      policy_associations = {
+        eks_developer_viewer_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
+          access_scope = {
+            type = "cluster"
           }
-          Action = "sts:AssumeRole"
         }
-      ]
-    ])
-  })
+      }
+    }
+  }
 
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "admin_policy" {
-  role       = aws_iam_role.admin_role.name
-  policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
+  combined_access_entries = merge(local.eks_admin_role_entries, local.eks_developer_viewer_role_entries)
 }
 
 resource "aws_security_group" "pod-dns-egress" {
@@ -144,224 +138,7 @@ module "eks" {
   }
 
 
-  access_entries = {
-    # One access entry with a policy associated
-    eks_admin_role = {
-      kubernetes_groups = []
-      principal_arn     = aws_iam_role.admin_role.arn
+  access_entries = local.combined_access_entries
 
-      policy_associations = {
-        eks_admin_role = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-    eks_developer_viewer_role = {
-      kubernetes_groups = []
-      principal_arn     = aws_iam_role.developer_viewer_role.arn
-
-      policy_associations = {
-        eks_developer_viewer_role = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-  }
   tags = var.tags
 }
-
-# resource "kubernetes_network_policy" "default_deny" {
-#   metadata {
-#     name      = "default-deny"
-#     namespace = "default"
-#   }
-
-#   spec {
-#     pod_selector {}
-
-#     policy_types = ["Ingress", "Egress"]
-#   }
-# }
-
-# resource "kubernetes_network_policy" "allow_dns_access" {
-#   metadata {
-#     name      = "allow-dns-access"
-#     namespace = "default"
-#   }
-
-#   spec {
-#     pod_selector {}
-
-#     policy_types = ["Egress"]
-
-#     egress {
-#       to {
-#         namespace_selector {
-#           match_labels = {
-#             "kubernetes.io/metadata.name" = "kube-system"
-#           }
-#         }
-#         pod_selector {
-#           match_labels = {
-#             "k8s-app" = "kube-dns"
-#           }
-#         }
-#       }
-
-#       ports {
-#         protocol = "UDP"
-#         port     = 53
-#       }
-#     }
-#   }
-# }
-
-################################################################################
-# Restrict traffic flow using Network Policies
-################################################################################
-
-# # Block all ingress and egress traffic within the stars namespace
-# resource "kubernetes_network_policy" "default_deny_stars" {
-#   metadata {
-#     name      = "default-deny"
-#     namespace = "stars"
-#   }
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {}
-#     }
-#   }
-#   depends_on = [module.addons]
-# }
-
-# # Block all ingress and egress traffic within the client namespace
-# resource "kubernetes_network_policy" "default_deny_client" {
-#   metadata {
-#     name      = "default-deny"
-#     namespace = "client"
-#   }
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {}
-#     }
-#   }
-#   depends_on = [module.addons]
-# }
-
-# # Allow the management-ui to access the star application pods
-# resource "kubernetes_network_policy" "allow_ui_to_stars" {
-#   metadata {
-#     name      = "allow-ui"
-#     namespace = "stars"
-#   }
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {}
-#     }
-#     ingress {
-#       from {
-#         namespace_selector {
-#           match_labels = {
-#             role = "management-ui"
-#           }
-#         }
-#       }
-#     }
-#   }
-#   depends_on = [module.addons]
-# }
-
-# # Allow the management-ui to access the client application pods
-# resource "kubernetes_network_policy" "allow_ui_to_client" {
-#   metadata {
-#     name      = "allow-ui"
-#     namespace = "client"
-#   }
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {}
-#     }
-#     ingress {
-#       from {
-#         namespace_selector {
-#           match_labels = {
-#             role = "management-ui"
-#           }
-#         }
-#       }
-#     }
-#   }
-#   depends_on = [module.addons]
-# }
-
-# # Allow the frontend pod to access the backend pod within the stars namespace
-# resource "kubernetes_network_policy" "allow_frontend_to_backend" {
-#   metadata {
-#     name      = "backend-policy"
-#     namespace = "stars"
-#   }
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {
-#         role = "backend"
-#       }
-#     }
-#     ingress {
-#       from {
-#         pod_selector {
-#           match_labels = {
-#             role = "frontend"
-#           }
-#         }
-#       }
-#       ports {
-#         protocol = "TCP"
-#         port     = "6379"
-#       }
-#     }
-#   }
-#   depends_on = [module.addons]
-# }
-
-# # Allow the client pod to access the frontend pod within the stars namespace
-# resource "kubernetes_network_policy" "allow_client_to_backend" {
-#   metadata {
-#     name      = "frontend-policy"
-#     namespace = "stars"
-#   }
-
-#   spec {
-#     policy_types = ["Ingress"]
-#     pod_selector {
-#       match_labels = {
-#         role = "frontend"
-#       }
-#     }
-#     ingress {
-#       from {
-#         namespace_selector {
-#           match_labels = {
-#             role = "client"
-#           }
-#         }
-#       }
-#       ports {
-#         protocol = "TCP"
-#         port     = "80"
-#       }
-#     }
-#   }
-
-#   depends_on = [module.addons]
-# }

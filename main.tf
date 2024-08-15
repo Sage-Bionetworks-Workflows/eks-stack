@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "ibcdpe-1005-eks-developer-role"
+  git_branch = "ibcdpe-1005-eks-dev-role-testing"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
