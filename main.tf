@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "ibcdpe-1007-guard-duty-manual"
+  git_branch = "ibcdpe-1005-eks-developer-role"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
