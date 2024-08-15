@@ -17,6 +17,7 @@ resource "helm_release" "trivy-operator" {
   values = [templatefile("${path.module}/templates/values-trivy-operator.yaml", {})]
 }
 
+<<<<<<< HEAD
 resource "kubernetes_manifest" "vmservicescrape" {
   manifest = {
     apiVersion = "operator.victoriametrics.com/v1beta1"
@@ -38,6 +39,24 @@ resource "kubernetes_manifest" "vmservicescrape" {
       }
     }
   }
+=======
+resource "kubectl_manifest" "vmservicescrape" {
+  depends_on = [helm_release.trivy-operator]
+
+  yaml_body = <<YAML
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: trivy-vmservicescrape
+  namespace: ${kubernetes_namespace.trivy-system.metadata[0].name}
+spec:
+  endpoints:
+    - port: metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trivy-operator
+YAML
+>>>>>>> origin/ibcdpe-1007-split-into-vars
 }
 
 # converts the trivy-operator metrics to policy reporter format

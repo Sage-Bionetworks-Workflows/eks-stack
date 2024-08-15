@@ -12,5 +12,12 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.0"
     }
+<<<<<<< HEAD
+=======
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "1.14.0"
+    }
+>>>>>>> origin/ibcdpe-1007-split-into-vars
   }
 }

@@ -16,7 +16,11 @@ victoria-metrics-operator:
   cleanupImage:
     repository: bitnami/kubectl
     # use image tag that matches k8s API version by default
+<<<<<<< HEAD
     # tag: 1.29.6
+=======
+    tag: 1.30.2
+>>>>>>> origin/ibcdpe-1007-split-into-vars
     pullPolicy: IfNotPresent
 
   createCRD: false # we disable crd creation by operator chart as we create them in this chart

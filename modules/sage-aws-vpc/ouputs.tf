@@ -15,7 +15,7 @@ output "region" {
 }
 
 output "vpc_cidr_block" {
-  value = var.cidr
+  value = var.vpc_cidr_block
 }
 
 output "vpc_public_subnet_cidrs" {

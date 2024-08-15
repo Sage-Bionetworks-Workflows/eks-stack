@@ -9,7 +9,11 @@ resource "helm_release" "victoria-metrics" {
   repository = "https://victoriametrics.github.io/helm-charts/"
   chart      = "victoria-metrics-k8s-stack"
   namespace  = "victoria-metrics"
+<<<<<<< HEAD
   version    = "0.24.3"
+=======
+  version    = "0.24.5"
+>>>>>>> origin/ibcdpe-1007-split-into-vars
   depends_on = [
     kubernetes_namespace.victoria-metrics
   ]

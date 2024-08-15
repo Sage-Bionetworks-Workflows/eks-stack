@@ -38,11 +38,17 @@ variable "region" {
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
+<<<<<<< HEAD:dev/stacks/dpe-sandbox-k8s-deployments/variables.tf
   default     = "dpe-k8-sandbox"
+=======
+>>>>>>> origin/ibcdpe-1007-split-into-vars:deployments/stacks/dpe-k8s-deployments/variables.tf
 }
 
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
+<<<<<<< HEAD:dev/stacks/dpe-sandbox-k8s-deployments/variables.tf
   default     = "act-45de6f47"
+=======
+>>>>>>> origin/ibcdpe-1007-split-into-vars:deployments/stacks/dpe-k8s-deployments/variables.tf
 }

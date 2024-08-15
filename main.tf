@@ -9,6 +9,10 @@
 #   id = "root-spacelift-administrative-stack"
 # }
 
+locals {
+  git_branch = "ibcdpe-1007-split-into-vars"
+}
+
 resource "spacelift_stack" "root_administrative_stack" {
   github_enterprise {
     namespace = "Sage-Bionetworks-Workflows"
@@ -17,7 +21,11 @@ resource "spacelift_stack" "root_administrative_stack" {
 
   administrative          = true
   autodeploy              = true
+<<<<<<< HEAD
   branch                  = "ibcdpe-1007-monitoring"
+=======
+  branch                  = local.git_branch
+>>>>>>> origin/ibcdpe-1007-split-into-vars
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
   project_root            = ""
@@ -41,6 +49,7 @@ resource "spacelift_space" "environment" {
 module "terraform-registry" {
   source     = "./modules"
   depends_on = [spacelift_stack.root_administrative_stack]
+  git_branch = local.git_branch
 }
 
 module "common" {
@@ -48,13 +57,20 @@ module "common" {
   depends_on = [spacelift_stack.root_administrative_stack]
 }
 
-module "dev-resources" {
-  source = "./dev"
+module "deployments" {
+  source = "./deployments"
   depends_on = [
     spacelift_stack.root_administrative_stack,
     module.common,
     module.terraform-registry,
   ]
+<<<<<<< HEAD
   parent_space_id = spacelift_space.environment.id
   admin_stack_id  = spacelift_stack.root_administrative_stack.id
+=======
+  parent_space_id                         = spacelift_space.environment.id
+  admin_stack_id                          = spacelift_stack.root_administrative_stack.id
+  org_sagebase_dnt_dev_aws_integration_id = module.common.org_sagebase_dnt_dev_aws_integration_id
+  git_branch                              = local.git_branch
+>>>>>>> origin/ibcdpe-1007-split-into-vars
 }

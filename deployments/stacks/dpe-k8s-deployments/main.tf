@@ -1,8 +1,7 @@
 module "sage-aws-eks-autoscaler" {
   source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
-  version = "0.4.2"
+  version = "0.5.0"
 
-  cluster_name           = var.cluster_name
   cluster_name           = var.cluster_name
   private_vpc_subnet_ids = var.private_subnet_ids
   vpc_id                 = var.vpc_id
@@ -13,16 +12,16 @@ module "sage-aws-eks-autoscaler" {
 
 module "victoria-metrics" {
   source  = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version = "0.0.7"
+  version = "0.2.1"
 }
 
 module "trivy-operator" {
-  source  = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version = "0.0.12"
+  depends_on = [module.victoria-metrics]
+  source     = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  version    = "0.1.3"
 }
 
 module "airflow" {
-  source       = "spacelift.io/sagebionetworks/airflow/aws"
-  version      = "0.0.1"
-  cluster_name = var.cluster_name
+  source  = "spacelift.io/sagebionetworks/airflow/aws"
+  version = "0.1.1"
 }
