@@ -91,7 +91,7 @@ module "ocean-controller" {
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.2.0"
+  version = "1.4.0"
 
   # Configuration
   cluster_name                     = var.cluster_name
@@ -102,6 +102,35 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
+  # TODO: Fix this it does not seem to work
+  # `desired_capacity` does not seem to force the number of nodes to increase. Look
+  # through the documentation to determine how we might manually scale up the number
+  # of nodes if we wanted to.
+  desired_capacity = var.desired_capacity
+
+
+  filters = {
+    exclude_metal = true
+    hypervisor    = ["nitro"]
+
+    architectures           = null
+    categories              = null
+    disk_types              = null
+    exclude_families        = null
+    include_families        = null
+    is_ena_supported        = null
+    max_gpu                 = null
+    max_memory_gib          = null
+    max_network_performance = null
+    max_vcpu                = null
+    min_enis                = null
+    min_gpu                 = null
+    min_memory_gib          = null
+    min_network_performance = null
+    min_vcpu                = null
+    root_device_types       = null
+    virtualization_types    = null
+  }
 }
 
 resource "aws_eks_addon" "coredns" {

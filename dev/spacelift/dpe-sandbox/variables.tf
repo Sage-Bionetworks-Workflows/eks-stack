@@ -10,3 +10,8 @@ variable "tags" {
     "CostCenter" = "No Program / 000000"
   }
 }
+
+variable "admin_stack_id" {
+  description = "ID of the admin stack"
+  type        = string
+}

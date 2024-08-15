@@ -201,3 +201,4 @@ This document describes the abbreviated process below:
 }
 ```
 - Add a new `spacelift_aws_integration` resources to the `common-resources/aws-integrations` directory.
+

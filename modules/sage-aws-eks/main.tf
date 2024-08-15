@@ -95,6 +95,7 @@ module "eks" {
         env = {
           ENABLE_POD_ENI                    = "true",
           POD_SECURITY_GROUP_ENFORCING_MODE = var.pod_security_group_enforcing_mode,
+          ENABLE_PREFIX_DELEGATION          = "true",
       } })
     }
   }
