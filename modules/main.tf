@@ -130,11 +130,12 @@ locals {
       name               = "postgres-cloud-native"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.git_branch
-      description        = "Helm chart deployment for postgres-cloud-native."
-      project_root       = "modules/postgres-cloud-native"
-      space_id           = "root"
-      version_number     = "0.2.0"
+      # branch             = var.git_branch
+      branch         = "ibcdpe-1004-airflow-ops"
+      description    = "Helm chart deployment for postgres-cloud-native."
+      project_root   = "modules/postgres-cloud-native"
+      space_id       = "root"
+      version_number = "0.2.0"
     }
 
     private-workerpool = {
