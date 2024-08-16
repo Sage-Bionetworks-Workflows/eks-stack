@@ -368,7 +368,7 @@ data:
   # data:
   #   connection: base64_encoded_connection_string
 
-  metadataSecretName: cluster-pg-app
+  metadataSecretName: pg-user-secret
   # When providing secret names and using the same database for metadata and
   # result backend, for Airflow < 2.4.0 it is necessary to create a separate
   # secret for result backend but with a db+ scheme prefix.
