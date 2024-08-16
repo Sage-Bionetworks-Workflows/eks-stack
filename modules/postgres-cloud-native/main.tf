@@ -3,6 +3,9 @@ locals {
 }
 
 resource "kubectl_manifest" "argo-deployment-database" {
+  depends_on = [
+    kubernetes_secret.connection-secret
+  ]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -65,6 +68,4 @@ resource "kubernetes_secret" "connection-secret" {
     "username"   = "application-database"
     "connection" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
   }
-
-  depends_on = [kubernetes_namespace.cnpg-database]
 }
