@@ -33,7 +33,7 @@ spec:
     helm:
       releaseName: cloudnative-pg
       valueFiles:
-      - $values/modules/postgres-cloud-native/templates/operator-values.yaml
+      - $values/modules/postgres-cloud-native-operator/templates/operator-values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${local.git_revision}
     ref: values
