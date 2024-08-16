@@ -122,6 +122,14 @@ spec:
         - containerPort: 5000
 ```
 
+- Commit the changes and push the changes to github
+- Create a pull request to main
+- In the git checks that run you'll see a section that says something like: `spacelift/dpe-dev-kubernetes-deployments — 2 to add, 6 to change, 0 to destroy`
+
+![Github check](./workshop-resources/github-check.png)
+
+- Click on `Details` and on the next screen `Deploy`
+- A job will be kicked off and run within Spacelift to deploy the resources. This takes a few minutes.
 
 #### Explanation of the above
 
