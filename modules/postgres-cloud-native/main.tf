@@ -23,7 +23,7 @@ spec:
     chart: cluster
     targetRevision: 0.0.9
     helm:
-      releaseName: cluster-pg
+      releaseName: ${var.argo_deployment_name}
       valueFiles:
       - $values/modules/postgres-cloud-native/templates/cluster-values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
@@ -33,4 +33,38 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
 YAML
+}
+
+resource "random_password" "pg-password" {
+  length  = 64
+  special = false
+}
+
+resource "kubernetes_secret" "connection-secret" {
+  metadata {
+    name      = "pg-user-secret"
+    namespace = var.namespace
+    labels = {
+      "cnpg.io/reload" = "true"
+      "cnpg.io/cluster" = ${var.argo_deployment_name}
+    }
+  }
+
+  type = "kubernetes.io/basic-auth"
+
+
+  data = {
+    "dbname" = "application-database"
+    "host" = "cluster-pg-rw"
+    "jdbc-uri" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+    "password" = random_password.pg-password.result
+    "pgpass" = "cluster-pg-rw:5432:application-database:application-database:${random_password.pg-password.result}"
+    "port" = "5432"
+    "uri" = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
+    "user" = "application-database"
+    "username" = "application-database"
+    "connection" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+  }
+
+  depends_on = [kubernetes_namespace.cnpg-database]
 }

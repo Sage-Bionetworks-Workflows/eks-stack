@@ -31,7 +31,7 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
 
 # TODO: Should a long-term deployment use a managed RDS instance?
 # https://github.com/apache/airflow/blob/main/chart/values.yaml#L2321-L2329
-resource "kubectl_manifest" "argo-deployment" {
+resource "kubectl_manifest" "airflow-deployment" {
   depends_on = [kubernetes_namespace.airflow]
 
   yaml_body = <<YAML
