@@ -104,8 +104,8 @@ resource "kubernetes_secret" "airflow-user-secret" {
 
   data = {
     "username" = "apache-airflow"
-    "password" = random_password.airflow.result
+    "password" = random_password.airflow-pg-password.result
   }
 
-  depends_on = [kubernetes_namespace.airflow]
+  depends_on = [kubernetes_namespace.cnpg-database]
 }
