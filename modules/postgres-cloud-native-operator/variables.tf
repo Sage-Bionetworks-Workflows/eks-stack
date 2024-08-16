@@ -15,13 +15,3 @@ variable "git_revision" {
   type        = string
   default     = "main"
 }
-
-variable "argo_deployment_name" {
-  description = "The name of the ArgoCD deployment, must be globally unique"
-  type        = string
-}
-
-variable "namespace" {
-  description = "The namespace to deploy into"
-  type        = string
-}

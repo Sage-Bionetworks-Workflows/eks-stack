@@ -2,12 +2,20 @@ locals {
   git_revision = "ibcdpe-1004-airflow-ops"
 }
 
-resource "kubectl_manifest" "argo-deployment-database" {
+resource "kubernetes_namespace" "cnpg-system" {
+  metadata {
+    name = "cnpg-system"
+  }
+}
+
+resource "kubectl_manifest" "argo-deployment-operator" {
+  depends_on = [kubernetes_namespace.cnpg-system]
+
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${var.argo_deployment_name}
+  name: postgres-cloud-native-operator
   namespace: argocd
 spec:
   project: default
@@ -20,17 +28,17 @@ spec:
     - ServerSideApply=true
   sources:
   - repoURL: 'https://cloudnative-pg.github.io/charts'
-    chart: cluster
-    targetRevision: 0.0.9
+    chart: cloudnative-pg
+    targetRevision: 0.21.6
     helm:
-      releaseName: cluster-pg
+      releaseName: cloudnative-pg
       valueFiles:
-      - $values/modules/postgres-cloud-native/templates/cluster-values.yaml
+      - $values/modules/postgres-cloud-native/templates/operator-values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${local.git_revision}
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: ${var.namespace}
+    namespace: cnpg-system
 YAML
 }
