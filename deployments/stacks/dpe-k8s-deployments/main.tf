@@ -42,3 +42,39 @@ module "argo-cd" {
   source     = "spacelift.io/sagebionetworks/argo-cd/aws"
   version    = "0.3.1"
 }
+
+resource "kubernetes_namespace" "my-cool-resource" {
+  metadata {
+    name = "my-cool-namespace"
+  }
+}
+
+
+resource "kubectl_manifest" "my-deployment" {
+  depends_on = [kubernetes_namespace.my-cool-resource]
+
+  yaml_body = <<YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: ${kubernetes_namespace.my-cool-resource.metadata.0.name}
+  name: flask-dep
+  labels:
+    app: flask-helloworld
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-helloworld
+  template:
+    metadata:
+      labels:
+        app: flask-helloworld
+    spec:
+      containers:
+      - name: flask
+        image: digitalocean/flask-helloworld:latest
+        ports:
+        - containerPort: 5000
+YAML
+}
