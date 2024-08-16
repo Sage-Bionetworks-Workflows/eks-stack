@@ -15,7 +15,7 @@ resource "kubectl_manifest" "argo-deployment-operator" {
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: postgres-cloud-native
+  name: postgres-cloud-native-operator
   namespace: argocd
 spec:
   project: default
@@ -56,7 +56,7 @@ resource "kubectl_manifest" "argo-deployment-database" {
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: postgres-cloud-native
+  name: postgres-cloud-native-database
   namespace: argocd
 spec:
   project: default
