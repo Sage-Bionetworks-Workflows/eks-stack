@@ -45,8 +45,8 @@ resource "kubernetes_secret" "connection-secret" {
     name      = "pg-user-secret"
     namespace = var.namespace
     labels = {
-      "cnpg.io/reload" = "true"
-      "cnpg.io/cluster" = ${var.argo_deployment_name}
+      "cnpg.io/reload"  = "true"
+      "cnpg.io/cluster" = var.argo_deployment_name
     }
   }
 
@@ -54,15 +54,15 @@ resource "kubernetes_secret" "connection-secret" {
 
 
   data = {
-    "dbname" = "application-database"
-    "host" = "cluster-pg-rw"
-    "jdbc-uri" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
-    "password" = random_password.pg-password.result
-    "pgpass" = "cluster-pg-rw:5432:application-database:application-database:${random_password.pg-password.result}"
-    "port" = "5432"
-    "uri" = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
-    "user" = "application-database"
-    "username" = "application-database"
+    "dbname"     = "application-database"
+    "host"       = "cluster-pg-rw"
+    "jdbc-uri"   = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+    "password"   = random_password.pg-password.result
+    "pgpass"     = "cluster-pg-rw:5432:application-database:application-database:${random_password.pg-password.result}"
+    "port"       = "5432"
+    "uri"        = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
+    "user"       = "application-database"
+    "username"   = "application-database"
     "connection" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
   }
 
