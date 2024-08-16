@@ -45,7 +45,7 @@ module "argo-cd" {
 
 
 locals {
-  my_branch_name                = "ibcdpe-1-branch-name"
+  my_branch_name                = "workshop-testing"
   my_namespace_name             = "my-cool-namespace"
   my_application_name_in_argocd = "my-cool-application"
 }
