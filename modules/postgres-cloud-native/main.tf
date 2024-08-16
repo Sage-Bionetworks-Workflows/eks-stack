@@ -86,7 +86,8 @@ YAML
 
 # TODO: Secrets should be moved out to AWS secrets manager
 resource "random_password" "airflow-pg-password" {
-  length = 20
+  length  = 20
+  special = false
 }
 
 # TODO: This will need to be copied over to the airflow NS as well
