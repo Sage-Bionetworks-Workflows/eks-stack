@@ -3,12 +3,16 @@ This is meant to be a small workshop that explores deploying a hello world appli
 to the AWS EKS Kubernetes cluster, as well as exploring a few items available within
 the cluster.
 
-## Pre-Req
+## Pre-Requisites
+- Access to the AWS account that an EKS cluster is deployed to. In this workshop we will assume you are using the `org-sagebase-dnt-dev` account.
+- You will need either `Administrator` or `Developer` access in the related AWS account. Both will have a level of access to the EKS cluster. In this workshop we are assuming the use of `Administrator` access.
 - Install a tool to access the cluster in a user friendly way such as: https://k9scli.io/
 - Set up a SSO login session to access the cluster and login, for example: https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2632286259/AWS+SSM+Session+Manager#%5CuD83D%5CuDCD8-Log-in-to-an-AWS-account
   - `aws sso login --profile dnt-dev-admin`
-- Update your kubeconfig to connect to the cluster:
+  - `aws sso login --profile dnt-dev-developer`
+- Update your [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) to connect to the cluster. The kubeconfig in this case is referring to the authentication mechanism used to access the cluster.:
     - `aws eks update-kubeconfig --region us-east-1 --name dpe-k8-sandbox --profile dnt-dev-admin`
+    - `aws eks update-kubeconfig --region us-east-1 --name dpe-k8-sandbox --profile dnt-dev-developer`
 - In your cli start k9s
     - `k9s`
 
@@ -39,7 +43,7 @@ resource "kubernetes_namespace" "my-cool-resource" {
 
 2) A Deployment: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 
-You'll want to update the reference to your terraform namespace resource here here:
+You'll want to update the reference to your terraform namespace resource here:
 
 - If you updated the terraform identifier `my-cool-resource` to something else, make sure they match
 ```
