@@ -66,6 +66,6 @@ resource "kubernetes_secret" "connection-secret" {
     "uri"        = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
     "user"       = "application-database"
     "username"   = "application-database"
-    "connection" = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+    "connection" = "db+jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
   }
 }
