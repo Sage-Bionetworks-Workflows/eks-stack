@@ -120,6 +120,23 @@ locals {
       version_number     = "0.3.1"
     }
 
+    postgres-cloud-native = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for postgres-cloud-native."
+      project_root       = "modules/postgres-cloud-native"
+      space_id           = "root"
+      version_number     = "0.2.0"
+    }
+
     private-workerpool = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"
