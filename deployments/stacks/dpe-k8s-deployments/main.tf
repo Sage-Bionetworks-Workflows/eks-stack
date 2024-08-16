@@ -57,7 +57,6 @@ resource "kubectl_manifest" "my-deployment" {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ${kubernetes_namespace.my-cool-resource.name}
   name: flask-dep
   labels:
     app: flask-helloworld
