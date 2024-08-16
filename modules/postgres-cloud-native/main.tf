@@ -85,28 +85,28 @@ YAML
 }
 
 # TODO: Secrets should be moved out to AWS secrets manager
-resource "random_password" "airflow-pg-password" {
-  length  = 20
-  special = false
-}
+# resource "random_password" "airflow-pg-password" {
+#   length  = 20
+#   special = false
+# }
 
-# TODO: This will need to be copied over to the airflow NS as well
-resource "kubernetes_secret" "airflow-user-secret" {
-  metadata {
-    name      = "airflow-user-secret"
-    namespace = "cnpg-database"
-    labels = {
-      "cnpg.io/reload" = "true"
-    }
-  }
+# # TODO: This will need to be copied over to the airflow NS as well
+# resource "kubernetes_secret" "airflow-user-secret" {
+#   metadata {
+#     name      = "airflow-user-secret"
+#     namespace = "cnpg-database"
+#     labels = {
+#       "cnpg.io/reload" = "true"
+#     }
+#   }
 
-  type = "kubernetes.io/basic-auth"
+#   type = "kubernetes.io/basic-auth"
 
 
-  data = {
-    "username" = "apache-airflow"
-    "password" = random_password.airflow-pg-password.result
-  }
+#   data = {
+#     "username" = "apache-airflow"
+#     "password" = random_password.airflow-pg-password.result
+#   }
 
-  depends_on = [kubernetes_namespace.cnpg-database]
-}
+#   depends_on = [kubernetes_namespace.cnpg-database]
+# }
