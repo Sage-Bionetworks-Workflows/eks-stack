@@ -30,6 +30,7 @@ for ArgoCD to deploy to the Kubernetes cluster. Once ArgoCD has deployed the res
 you can view the resources in the ArgoCD UI, as well as in the k9s UI.
 
 
+- Clone the `eks-stack` repository
 - Create a new branch in git to push your changes to, for example `ibcdpe-1-branch-name`
 - Open up `deployments/stacks/dpe-k8s-deployments/main.tf`
   - You'll notice a bunch of modules. These are the resources we are already deploying to the kubernetes cluster, wrapped in something called a "module"
@@ -41,8 +42,11 @@ you can view the resources in the ArgoCD UI, as well as in the k9s UI.
 
 ```terraform
 locals {
+  # Rename this to the name of your branch
   my_branch_name = "ibcdpe-1-branch-name"
+  # Set this to a unique name
   my_namespace_name = "my-cool-namespace"
+  # Set this to a unique name
   my_application_name_in_argocd = "my-cool-application"
 }
 ```
@@ -214,6 +218,9 @@ YAML
 - A job will be kicked off and run within Spacelift to deploy the resources. This takes a few minutes.
 
 ### Verifying your deployed resources on the kubernetes cluster
+The following commands to verify deployment are to be executed within the K9S instance you've launched after running the `k9s` command in your terminal.
+
+**Tip:** Within `k9s` use arrow keys to navigate between resources.
 
 - Inside of `k9s` check that your namespace exists `:ns`
 - Check that your deployment is there `:deployments`
