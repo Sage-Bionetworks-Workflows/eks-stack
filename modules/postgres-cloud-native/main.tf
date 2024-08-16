@@ -50,7 +50,7 @@ resource "kubernetes_namespace" "cnpg-database" {
 }
 
 resource "kubectl_manifest" "argo-deployment-database" {
-  depends_on = [kubernetes_namespace.cnpg-database, resource.kubectl_manifest.argo-deployment]
+  depends_on = [kubernetes_namespace.cnpg-database, resource.kubectl_manifest.argo-deployment-operator]
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
