@@ -135,7 +135,7 @@ locals {
       description    = "Helm chart deployment for postgres-cloud-native."
       project_root   = "modules/postgres-cloud-native"
       space_id       = "root"
-      version_number = "0.2.0"
+      version_number = "0.2.1"
     }
 
     private-workerpool = {

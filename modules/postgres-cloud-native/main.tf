@@ -8,7 +8,7 @@ resource "kubernetes_namespace" "cnpg-system" {
   }
 }
 
-resource "kubectl_manifest" "argo-deployment" {
+resource "kubectl_manifest" "argo-deployment-operator" {
   depends_on = [kubernetes_namespace.cnpg-system]
 
   yaml_body = <<YAML
@@ -49,7 +49,7 @@ resource "kubernetes_namespace" "cnpg-database" {
   }
 }
 
-resource "kubectl_manifest" "argo-deployment" {
+resource "kubectl_manifest" "argo-deployment-database" {
   depends_on = [kubernetes_namespace.cnpg-database, resource.kubectl_manifest.argo-deployment]
 
   yaml_body = <<YAML
@@ -84,6 +84,7 @@ spec:
 YAML
 }
 
+# TODO: Secrets should be moved out to AWS secrets manager
 resource "random_password" "airflow-pg-password" {
   length = 20
 }
