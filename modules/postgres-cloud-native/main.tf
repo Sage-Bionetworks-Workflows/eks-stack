@@ -58,14 +58,14 @@ resource "kubernetes_secret" "connection-secret" {
 
   data = {
     "dbname"     = "application-database"
-    "host"       = "cluster-pg-rw"
+    "host"       = "${var.argo_deployment_name}-cluster-rw.${var.namespace}"
     "jdbc-uri"   = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
     "password"   = random_password.pg-password.result
-    "pgpass"     = "cluster-pg-rw:5432:application-database:application-database:${random_password.pg-password.result}"
+    "pgpass"     = "${var.argo_deployment_name}-cluster-rw:5432:application-database:application-database:${random_password.pg-password.result}"
     "port"       = "5432"
-    "uri"        = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
+    "uri"        = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database"
     "user"       = "application-database"
     "username"   = "application-database"
-    "connection" = "postgresql://application-database:${random_password.pg-password.result}@cluster-pg-rw.${var.namespace}:5432/application-database"
+    "connection" = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database"
   }
 }
