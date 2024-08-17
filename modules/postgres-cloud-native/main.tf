@@ -59,7 +59,7 @@ resource "kubernetes_secret" "connection-secret" {
   data = {
     "dbname"     = "application-database"
     "host"       = "${var.argo_deployment_name}-cluster-rw.${var.namespace}"
-    "jdbc-uri"   = "jdbc:postgresql://cluster-pg-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+    "jdbc-uri"   = "jdbc:postgresql://${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
     "password"   = random_password.pg-password.result
     "pgpass"     = "${var.argo_deployment_name}-cluster-rw:5432:application-database:application-database:${random_password.pg-password.result}"
     "port"       = "5432"
