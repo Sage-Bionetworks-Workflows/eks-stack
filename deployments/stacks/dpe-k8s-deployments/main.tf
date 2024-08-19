@@ -13,7 +13,7 @@ module "sage-aws-eks-autoscaler" {
 module "victoria-metrics" {
   depends_on   = [module.argo-cd, module.sage-aws-eks-autoscaler]
   source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version      = "0.4.7"
+  version      = "0.4.8"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision
