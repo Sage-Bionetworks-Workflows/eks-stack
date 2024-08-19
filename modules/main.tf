@@ -127,7 +127,7 @@ locals {
       }
       repository = "eks-stack"
 
-      name               = "postgres-cloud-native"
+      name               = "postgres-cloud-native-database"
       terraform_provider = "aws"
       administrative     = false
       branch             = var.git_branch
@@ -144,7 +144,7 @@ locals {
       }
       repository = "eks-stack"
 
-      name               = "postgres-cloud-native"
+      name               = "postgres-cloud-native-operator"
       terraform_provider = "aws"
       administrative     = false
       branch             = var.git_branch
