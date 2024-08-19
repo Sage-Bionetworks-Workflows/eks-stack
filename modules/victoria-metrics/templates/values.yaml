@@ -798,6 +798,10 @@ grafana:
         gnetId: 17813
         revision: 2
         datasource: VictoriaMetrics
+      cloudnativepg:
+        gnetId: 20417
+        revision: 3
+        datasource: VictoriaMetrics
 
   defaultDashboardsTimezone: utc
 

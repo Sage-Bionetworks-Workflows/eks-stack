@@ -15,3 +15,8 @@ variable "git_revision" {
   type        = string
   default     = "main"
 }
+
+variable "namespace" {
+  description = "The namespace to deploy into"
+  type        = string
+}
