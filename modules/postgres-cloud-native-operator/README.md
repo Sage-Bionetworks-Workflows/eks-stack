@@ -1,6 +1,6 @@
 # Purpose
 The purpose of this module is to deploy the `Cloudnative PG` helm chart <https://github.com/cloudnative-pg/charts/tree/main>.
-This will deploy both the operator.
+This will deploy the operator to the cluster.
 
 The `database` deployment is a part of another module. This allows us to add a single
 operator to a cluster and deploy 1 or more databases to that cluster.
