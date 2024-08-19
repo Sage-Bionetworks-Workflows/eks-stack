@@ -37,9 +37,6 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${local.git_revision}
     ref: values
-  - repoURL: 'https://github.com/prometheus-operator/prometheus-operator.git'
-    targetRevision: v0.76.0
-    path: example/prometheus-operator-crd
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: cnpg-system
