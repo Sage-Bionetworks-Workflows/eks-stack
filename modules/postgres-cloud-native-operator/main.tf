@@ -1,7 +1,3 @@
-locals {
-  git_revision = "ibcdpe-1004-airflow-ops"
-}
-
 resource "kubernetes_namespace" "cnpg-system" {
   metadata {
     name = "cnpg-system"
@@ -35,7 +31,7 @@ spec:
       valueFiles:
       - $values/modules/postgres-cloud-native-operator/templates/operator-values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ${local.git_revision}
+    targetRevision: ${var.git_revision}
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'

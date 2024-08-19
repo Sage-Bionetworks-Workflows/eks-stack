@@ -1,7 +1,3 @@
-locals {
-  git_revision = "ibcdpe-1004-airflow-ops"
-}
-
 resource "kubectl_manifest" "argo-deployment-database" {
   depends_on = [
     kubernetes_secret.connection-secret
@@ -30,7 +26,7 @@ spec:
       valueFiles:
       - $values/modules/postgres-cloud-native/templates/cluster-values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ${local.git_revision}
+    targetRevision: ${var.git_revision}
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
