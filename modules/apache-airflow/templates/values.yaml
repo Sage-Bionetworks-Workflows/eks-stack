@@ -880,7 +880,7 @@ createUserJob:
     - "-r"
     - "{{ .Values.webserver.defaultUser.role }}"
     - "-u"
-    - "$(AIRFLOW_UI_USERNAME)""
+    - "$(AIRFLOW_UI_USERNAME)"
     - "-e"
     - "{{ .Values.webserver.defaultUser.email }}"
     - "-f"
