@@ -40,8 +40,8 @@ resource "kubernetes_secret" "airflow-admin-user-secret" {
   }
 
   data = {
-    "password" = random_password.airflow-admin-user.result
-    "username" = "admin"
+    "AIRFLOW_UI_USERNAME" = random_password.airflow-admin-user.result
+    "AIRFLOW_UI_PASSWORD" = "admin"
   }
 
   depends_on = [kubernetes_namespace.airflow]

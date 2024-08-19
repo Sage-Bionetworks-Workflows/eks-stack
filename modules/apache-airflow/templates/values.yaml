@@ -347,11 +347,11 @@ extraEnv: ~
 
 # Extra envFrom 'items' that will be added to the definition of airflow containers
 # A string is expected (can be templated).
-extraEnvFrom: ~
+# extraEnvFrom: ~
 # eg:
-# extraEnvFrom: |
-#   - secretRef:
-#       name: '{{ .Release.Name }}-airflow-connections'
+extraEnvFrom: |
+  - secretRef:
+      name: 'airflow-admin-user-secret'
 #   - configMapRef:
 #       name: '{{ .Release.Name }}-airflow-variables'
 
@@ -880,7 +880,7 @@ createUserJob:
     - "-r"
     - "{{ .Values.webserver.defaultUser.role }}"
     - "-u"
-    - "${AIRFLOW_USERNAME}"
+    - "${AIRFLOW_UI_USERNAME}"
     - "-e"
     - "{{ .Values.webserver.defaultUser.email }}"
     - "-f"
@@ -888,7 +888,7 @@ createUserJob:
     - "-l"
     - "{{ .Values.webserver.defaultUser.lastName }}"
     - "-p"
-    - "${AIRFLOW_PASSWORD}"
+    - "${AIRFLOW_UI_PASSWORD}"
 
   # Annotations on the create user job pod
   annotations: {}
@@ -952,17 +952,7 @@ createUserJob:
   useHelmHooks: false
   applyCustomEnv: true
 
-  env:
-  - name: AIRFLOW_USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: airflow-admin-user-secret
-        key: username
-  - name: AIRFLOW_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: airflow-admin-user-secret
-        key: password
+  env: []
 
   resources: {}
   #  limits:
@@ -1148,7 +1138,6 @@ webserver:
   #     memory: 128Mi
 
   # Create initial user.
-  # TODO: Create the initial user via a random secret
   defaultUser:
     enabled: true
     role: Admin
@@ -1156,7 +1145,7 @@ webserver:
     email: admin@example.com
     firstName: admin
     lastName: user
-    password: admin
+    password: admin # This is randomized during install
 
   # Launch additional containers into webserver.
   extraContainers: []
