@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "ibcdpe-1004-airflow-ops"
+  git_branch = "main"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
@@ -60,8 +60,9 @@ module "deployments" {
     module.common,
     module.terraform-registry,
   ]
-  parent_space_id                         = spacelift_space.environment.id
-  admin_stack_id                          = spacelift_stack.root_administrative_stack.id
-  org_sagebase_dnt_dev_aws_integration_id = module.common.org_sagebase_dnt_dev_aws_integration_id
-  git_branch                              = local.git_branch
+  parent_space_id                          = spacelift_space.environment.id
+  admin_stack_id                           = spacelift_stack.root_administrative_stack.id
+  org_sagebase_dnt_dev_aws_integration_id  = module.common.org_sagebase_dnt_dev_aws_integration_id
+  org_sagebase_dpe_prod_aws_integration_id = module.common.org_sagebase_dpe_prod_aws_integration_id
+  git_branch                               = local.git_branch
 }
