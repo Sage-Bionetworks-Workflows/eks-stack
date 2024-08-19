@@ -100,7 +100,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.3.4"
+      version_number     = "0.3.5"
     }
 
     argo-cd = {
