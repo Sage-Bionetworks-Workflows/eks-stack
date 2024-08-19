@@ -880,7 +880,7 @@ createUserJob:
     - "-r"
     - "{{ .Values.webserver.defaultUser.role }}"
     - "-u"
-    - "${AIRFLOW_UI_USERNAME}"
+    - "$(AIRFLOW_UI_USERNAME)""
     - "-e"
     - "{{ .Values.webserver.defaultUser.email }}"
     - "-f"
@@ -888,7 +888,7 @@ createUserJob:
     - "-l"
     - "{{ .Values.webserver.defaultUser.lastName }}"
     - "-p"
-    - "${AIRFLOW_UI_PASSWORD}"
+    - "$(AIRFLOW_UI_PASSWORD)"
 
   # Annotations on the create user job pod
   annotations: {}
