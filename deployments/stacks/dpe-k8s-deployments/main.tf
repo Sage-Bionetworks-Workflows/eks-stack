@@ -35,6 +35,7 @@ module "airflow" {
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision
+  namespace    = "airflow"
 }
 
 module "argo-cd" {
