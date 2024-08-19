@@ -120,7 +120,7 @@ locals {
       version_number     = "0.3.1"
     }
 
-    postgres-cloud-native = {
+    postgres-cloud-native-database = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"
         id        = "sage-bionetworks-workflows-gh"
@@ -130,14 +130,29 @@ locals {
       name               = "postgres-cloud-native"
       terraform_provider = "aws"
       administrative     = false
-      # branch             = var.git_branch
-      branch         = "ibcdpe-1004-airflow-ops"
-      description    = "Helm chart deployment for postgres-cloud-native."
-      project_root   = "modules/postgres-cloud-native"
-      space_id       = "root"
-      version_number = "0.2.2"
+      branch             = var.git_branch
+      description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
+      project_root       = "modules/postgres-cloud-native"
+      space_id           = "root"
+      version_number     = "0.3.0"
     }
 
+    postgres-cloud-native-operator = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for postgres-cloud-native operator."
+      project_root       = "modules/postgres-cloud-native-operator"
+      space_id           = "root"
+      version_number     = "0.3.0"
+    }
     private-workerpool = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"
