@@ -29,7 +29,7 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler, module.postgres-cloud-native-database]
+  depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler]
   source       = "spacelift.io/sagebionetworks/airflow/aws"
   version      = "0.3.3"
   auto_deploy  = var.auto_deploy
@@ -53,7 +53,7 @@ module "postgres-cloud-native-operator" {
 }
 
 module "postgres-cloud-native-database" {
-  depends_on           = [module.postgres-cloud-native-operator]
+  depends_on           = [module.postgres-cloud-native-operator, module.airflow]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.3.0"
   auto_deploy          = true
