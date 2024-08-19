@@ -54,3 +54,8 @@ spec:
 YAML
 }
 ```
+
+## Accessing the web UI
+An `admin` user is created for airflow via the `airflow-admin-user-secret` secret that
+is added to the namespace. Decode the base64 encoded password/username and use it for
+the UI.

@@ -66,7 +66,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.4.7"
+      version_number     = "0.4.9"
     }
 
     trivy-operator = {
@@ -100,7 +100,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.3.1"
+      version_number     = "0.3.5"
     }
 
     argo-cd = {
@@ -120,6 +120,39 @@ locals {
       version_number     = "0.3.1"
     }
 
+    postgres-cloud-native-database = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native-database"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
+      project_root       = "modules/postgres-cloud-native"
+      space_id           = "root"
+      version_number     = "0.3.1"
+    }
+
+    postgres-cloud-native-operator = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native-operator"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for postgres-cloud-native operator."
+      project_root       = "modules/postgres-cloud-native-operator"
+      space_id           = "root"
+      version_number     = "0.3.1"
+    }
     private-workerpool = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"
