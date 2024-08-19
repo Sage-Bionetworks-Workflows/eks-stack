@@ -10,7 +10,7 @@
 # }
 
 locals {
-  git_branch = "main"
+  git_branch = "ibcdpe-1004-airflow-ops"
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
