@@ -28,6 +28,24 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
   depends_on = [kubernetes_namespace.airflow]
 }
 
+resource "random_password" "airflow-admin-user" {
+  length  = 32
+  special = false
+}
+
+resource "kubernetes_secret" "airflow-admin-user-secret" {
+  metadata {
+    name      = "airflow-admin-user-secret"
+    namespace = var.namespace
+  }
+
+  data = {
+    "password" = random_password.airflow-admin-user.result
+    "username" = "admin"
+  }
+
+  depends_on = [kubernetes_namespace.airflow]
+}
 
 resource "kubectl_manifest" "airflow-deployment" {
   depends_on = [kubernetes_namespace.airflow]

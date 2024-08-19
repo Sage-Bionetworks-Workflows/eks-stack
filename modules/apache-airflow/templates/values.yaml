@@ -880,7 +880,7 @@ createUserJob:
     - "-r"
     - "{{ .Values.webserver.defaultUser.role }}"
     - "-u"
-    - "{{ .Values.webserver.defaultUser.username }}"
+    - "${AIRFLOW_USERNAME}"
     - "-e"
     - "{{ .Values.webserver.defaultUser.email }}"
     - "-f"
@@ -888,7 +888,7 @@ createUserJob:
     - "-l"
     - "{{ .Values.webserver.defaultUser.lastName }}"
     - "-p"
-    - "{{ .Values.webserver.defaultUser.password }}"
+    - "${AIRFLOW_PASSWORD}"
 
   # Annotations on the create user job pod
   annotations: {}
@@ -952,7 +952,17 @@ createUserJob:
   useHelmHooks: false
   applyCustomEnv: true
 
-  env: []
+  env:
+  - name: AIRFLOW_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: airflow-admin-user-secret
+        key: username
+  - name: AIRFLOW_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: airflow-admin-user-secret
+        key: password
 
   resources: {}
   #  limits:
