@@ -171,7 +171,7 @@ cluster:
       enabled: true
     prometheusRule:
       # -- Whether to enable the PrometheusRule automated alerts
-      enabled: true
+      enabled: false
       # -- Exclude specified rules
       excludeRules: []
         # - CNPGClusterZoneSpreadWarning
