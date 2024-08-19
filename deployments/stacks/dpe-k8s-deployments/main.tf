@@ -28,17 +28,36 @@ module "trivy-operator" {
   git_revision = var.git_revision
 }
 
-# module "airflow" {
-#   depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler]
-#   source       = "spacelift.io/sagebionetworks/airflow/aws"
-#   version      = "0.3.1"
-#   auto_deploy  = var.auto_deploy
-#   auto_prune   = var.auto_prune
-#   git_revision = var.git_revision
-# }
+module "airflow" {
+  depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler, module.postgres-cloud-native-database]
+  source       = "spacelift.io/sagebionetworks/airflow/aws"
+  version      = "0.3.1"
+  auto_deploy  = var.auto_deploy
+  auto_prune   = var.auto_prune
+  git_revision = var.git_revision
+}
 
 module "argo-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
   source     = "spacelift.io/sagebionetworks/argo-cd/aws"
   version    = "0.3.1"
+}
+
+module "postgres-cloud-native-operator" {
+  source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
+  version      = "0.3.0"
+  auto_deploy  = var.auto_deploy
+  auto_prune   = var.auto_prune
+  git_revision = var.git_revision
+}
+
+module "postgres-cloud-native-database" {
+  depends_on           = [module.postgres-cloud-native-operator]
+  source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  version              = "0.3.0"
+  auto_deploy          = true
+  auto_prune           = true
+  git_revision         = var.git_revision
+  namespace            = "airflow"
+  argo_deployment_name = "airflow-postgres-cloud-native"
 }
