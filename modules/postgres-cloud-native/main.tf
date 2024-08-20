@@ -35,7 +35,7 @@ spec:
       patches:
       - target:
           kind: Pooler
-          name: pg-user-secret
+          name: ${var.argo_deployment_name}-cluster
         patch: |-
             - op: replace
               path: /spec/cluster/name
