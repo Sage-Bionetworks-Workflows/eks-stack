@@ -4,7 +4,7 @@ metadata:
   name: replaced-by-kustomize
 spec:
   cluster:
-    name: replaced-by-kustomize
+    name: replaced-by-kustomize-2
 
   instances: 2
   type: rw
