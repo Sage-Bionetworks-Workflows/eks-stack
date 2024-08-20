@@ -34,7 +34,6 @@ spec:
     kustomize:
       patches:
       - target:
-          kind: Pooler
           name: ${var.argo_deployment_name}-cluster
         patch: |-
             - op: replace
