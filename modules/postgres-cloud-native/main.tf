@@ -34,7 +34,7 @@ spec:
     kustomize:
       patches:
       - target:
-          name: ${var.argo_deployment_name}-cluster
+          name: *
         patch: |-
             - op: replace
               path: /spec/cluster/name
