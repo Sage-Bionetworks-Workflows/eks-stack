@@ -45,11 +45,12 @@ locals {
       name               = "sage-aws-eks-autoscaler"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.git_branch
-      description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
-      project_root       = "modules/sage-aws-k8s-node-autoscaler"
-      space_id           = "root"
-      version_number     = "0.7.1"
+      # branch             = var.git_branch
+      branch         = "ibcdpe-1058-new-spot-inst-controller"
+      description    = "Terraform module for creating an EKS cluster autoscaler in AWS"
+      project_root   = "modules/sage-aws-k8s-node-autoscaler"
+      space_id       = "root"
+      version_number = "0.7.2"
     }
 
     victoria-metrics = {
