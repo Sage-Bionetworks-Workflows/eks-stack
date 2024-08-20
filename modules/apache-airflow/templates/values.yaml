@@ -2010,7 +2010,7 @@ limits: []
 
 # This runs as a CronJob to cleanup old pods.
 cleanup:
-  enabled: false
+  enabled: true
   # Run every 15 minutes (templated).
   schedule: "*/15 * * * *"
   # To select a random-ish, deterministic starting minute between 3 and 12 inclusive for each release:
@@ -2037,13 +2037,13 @@ cleanup:
   # Labels specific to cleanup objects and pods
   labels: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 100m
+    memory: 128Mi
+   requests:
+    cpu: 100m
+    memory: 128Mi
 
   # Create ServiceAccount
   serviceAccount:
