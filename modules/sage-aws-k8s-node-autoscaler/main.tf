@@ -77,15 +77,6 @@ resource "aws_eks_access_entry" "example" {
   tags          = var.tags
 }
 
-module "kubernetes-controller" {
-  source  = "spotinst/kubernetes-controller/ocean"
-  version = "0.0.11"
-
-  spotinst_token     = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account   = var.spotinst_account
-  cluster_identifier = var.cluster_name
-}
-
 resource "helm_release" "ocean-kubernetes-controller" {
   name             = "ocean-kubernetes-controller"
   repository       = "https://charts.spot.io"
@@ -95,6 +86,21 @@ resource "helm_release" "ocean-kubernetes-controller" {
   create_namespace = true
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
+
+  set {
+    name  = "spotinst.token"
+    value = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+  }
+
+  set {
+    name  = "spotinst.account"
+    value = var.spotinst_account
+  }
+
+  set {
+    name  = "spotinst.clusterIdentifier"
+    value = var.cluster_name
+  }
 }
 
 
