@@ -34,7 +34,7 @@ spec:
     kustomize:
       patches:
       - target:
-          name: *
+          kind: Pooler
         patch: |-
             - op: replace
               path: /spec/cluster/name
