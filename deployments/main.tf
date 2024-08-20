@@ -13,9 +13,10 @@ resource "spacelift_space" "production" {
 }
 
 module "dpe-sandbox-spacelift-development" {
-  source          = "./spacelift/dpe-k8s"
-  parent_space_id = spacelift_space.development.id
-  admin_stack_id  = var.admin_stack_id
+  source           = "./spacelift/dpe-k8s"
+  parent_space_id  = spacelift_space.development.id
+  admin_stack_id   = var.admin_stack_id
+  spotinst_account = "act-45de6f47"
 
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
   auto_deploy        = true
@@ -43,9 +44,10 @@ module "dpe-sandbox-spacelift-development" {
 }
 
 module "dpe-sandbox-spacelift-production" {
-  source          = "./spacelift/dpe-k8s"
-  parent_space_id = spacelift_space.production.id
-  admin_stack_id  = var.admin_stack_id
+  source           = "./spacelift/dpe-k8s"
+  parent_space_id  = spacelift_space.production.id
+  admin_stack_id   = var.admin_stack_id
+  spotinst_account = "act-ac6522b4"
 
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
   auto_deploy        = false
