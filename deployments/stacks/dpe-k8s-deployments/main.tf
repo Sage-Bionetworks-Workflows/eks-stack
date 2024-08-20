@@ -1,8 +1,6 @@
 module "sage-aws-eks-autoscaler" {
-  # source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
-  # version = "0.7.3"
-  source = "../../../modules/sage-aws-k8s-node-autoscaler"
-
+  source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
+  version                = "0.8.0"
   cluster_name           = var.cluster_name
   private_vpc_subnet_ids = var.private_subnet_ids
   vpc_id                 = var.vpc_id
@@ -12,10 +10,8 @@ module "sage-aws-eks-autoscaler" {
 }
 
 module "sage-aws-eks-addons" {
-  # source  = "spacelift.io/sagebionetworks/sage-aws-eks-addons/aws"
-  # version = "0.7.3"
-  source = "../../../modules/sage-aws-eks-addons"
-
+  source       = "spacelift.io/sagebionetworks/sage-aws-eks-addons/aws"
+  version      = "0.2.0"
   cluster_name = var.cluster_name
 }
 
