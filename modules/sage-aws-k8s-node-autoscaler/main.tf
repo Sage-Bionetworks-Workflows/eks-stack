@@ -154,7 +154,6 @@ resource "aws_eks_addon" "coredns" {
   tags         = var.tags
 
   depends_on = [
-    module.ocean-controller,
     module.ocean-aws-k8s,
   ]
 }
@@ -165,7 +164,6 @@ resource "aws_eks_addon" "ebs-csi-driver" {
   tags         = var.tags
 
   depends_on = [
-    module.ocean-controller,
     module.ocean-aws-k8s,
   ]
 }
