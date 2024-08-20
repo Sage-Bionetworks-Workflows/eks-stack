@@ -1,7 +1,7 @@
 module "sage-aws-eks-autoscaler" {
-  count   = 0
-  source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
-  version = "0.7.3"
+  # source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
+  # version = "0.7.3"
+  source = "../../../modules/sage-aws-k8s-node-autoscaler"
 
   cluster_name           = var.cluster_name
   private_vpc_subnet_ids = var.private_subnet_ids
@@ -9,6 +9,15 @@ module "sage-aws-eks-autoscaler" {
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
   # desired_capacity       = 2
+}
+
+module "sage-aws-eks-addons" {
+  depends_on = [module.sage-aws-eks-autoscaler]
+  # source  = "spacelift.io/sagebionetworks/sage-aws-eks-addons/aws"
+  # version = "0.7.3"
+  source = "../../../modules/sage-aws-eks-addons"
+
+  cluster_name = var.cluster_name
 }
 
 module "victoria-metrics" {
