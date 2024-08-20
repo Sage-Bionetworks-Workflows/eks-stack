@@ -47,7 +47,7 @@ module "vpc-endpoints-guard-duty" {
   vpc_id     = var.vpc_id
 
   endpoints = {
-    guardduty = {
+    guardduty-data = {
       service = "com.amazonaws.us-east-1.guardduty-data"
       policy  = data.aws_iam_policy_document.restrict-vpc-endpoint-usage.json
       tags    = merge({ Name = "com.amazonaws.us-east-1.guardduty-data" }, var.tags)
