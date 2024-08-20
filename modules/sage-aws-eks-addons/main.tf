@@ -35,7 +35,6 @@ module "vpc-endpoints-guard-duty" {
   source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
   version               = "5.13.0"
   create_security_group = true
-  private_dns_enabled   = true
   security_group_name   = "vpc-endpoints-guard-duty-${var.cluster_name}"
   security_group_rules = {
     ingress_https = {
@@ -49,9 +48,10 @@ module "vpc-endpoints-guard-duty" {
 
   endpoints = {
     guardduty-data = {
-      service_name = "com.amazonaws.us-east-1.guardduty-data"
-      policy       = data.aws_iam_policy_document.restrict-vpc-endpoint-usage.json
-      tags         = merge({ Name = "com.amazonaws.us-east-1.guardduty-data" }, var.tags)
+      service_name        = "com.amazonaws.us-east-1.guardduty-data"
+      policy              = data.aws_iam_policy_document.restrict-vpc-endpoint-usage.json
+      private_dns_enabled = true
+      tags                = merge({ Name = "com.amazonaws.us-east-1.guardduty-data" }, var.tags)
     },
   }
 
