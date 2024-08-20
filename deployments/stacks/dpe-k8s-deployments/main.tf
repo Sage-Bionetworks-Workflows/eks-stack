@@ -1,4 +1,5 @@
 module "sage-aws-eks-autoscaler" {
+  count   = 0
   source  = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version = "0.7.1"
 
