@@ -86,6 +86,18 @@ module "kubernetes-controller" {
   cluster_identifier = var.cluster_name
 }
 
+resource "helm_release" "ocean-kubernetes-controller" {
+  name             = "ocean-kubernetes-controller"
+  repository       = "https://charts.spot.io"
+  chart            = "ocean-kubernetes-controller"
+  namespace        = "spot-system"
+  version          = "0.1.52"
+  create_namespace = true
+
+  values = [templatefile("${path.module}/templates/values.yaml", {})]
+}
+
+
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.4.0"
