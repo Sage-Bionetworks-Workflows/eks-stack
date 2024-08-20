@@ -8,4 +8,4 @@ kubernetes cluster that require a node be added and running on the cluster.
 - AWS Addon CoreDNS
 - AWS Addon EBS CSI Driver
 - Default storage class of GP3
-- AWS Guard duty - TODO
+- AWS Guard duty - TODO (ibcdpe-1007)

@@ -50,7 +50,25 @@ locals {
       description    = "Terraform module for creating an EKS cluster autoscaler in AWS"
       project_root   = "modules/sage-aws-k8s-node-autoscaler"
       space_id       = "root"
-      version_number = "0.7.3"
+      version_number = "0.8.0"
+    }
+
+    eks-addons = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "sage-aws-eks-addons"
+      terraform_provider = "aws"
+      administrative     = false
+      # branch             = var.git_branch
+      branch         = "ibcdpe-1058-new-spot-inst-controller"
+      description    = "Terraform module for add-ons for an EKS cluster in AWS"
+      project_root   = "modules/sage-aws-eks-addons"
+      space_id       = "root"
+      version_number = "0.2.0"
     }
 
     victoria-metrics = {
