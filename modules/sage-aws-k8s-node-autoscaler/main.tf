@@ -77,15 +77,12 @@ resource "aws_eks_access_entry" "example" {
   tags          = var.tags
 }
 
-module "ocean-controller" {
-  source  = "spotinst/ocean-controller/spotinst"
-  version = "0.54.0"
+module "kubernetes-controller" {
+  source  = "spotinst/kubernetes-controller/ocean"
+  version = "0.0.11"
 
-  # Credentials.
-  spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account = var.spotinst_account
-
-  # Configuration.
+  spotinst_token     = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+  spotinst_account   = var.spotinst_account
   cluster_identifier = var.cluster_name
 }
 
