@@ -19,8 +19,14 @@ module "sage-aws-eks-addons" {
   cluster_name = var.cluster_name
 }
 
+module "argo-cd" {
+  depends_on = [module.sage-aws-eks-autoscaler]
+  source     = "spacelift.io/sagebionetworks/argo-cd/aws"
+  version    = "0.3.1"
+}
+
 module "victoria-metrics" {
-  depends_on   = [module.argo-cd, module.sage-aws-eks-autoscaler]
+  depends_on   = [module.argo-cd]
   source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
   version      = "0.4.8"
   auto_deploy  = var.auto_deploy
@@ -29,7 +35,7 @@ module "victoria-metrics" {
 }
 
 module "trivy-operator" {
-  depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler]
+  depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
   version      = "0.3.2"
   auto_deploy  = var.auto_deploy
@@ -38,19 +44,13 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  depends_on   = [module.victoria-metrics, module.argo-cd, module.sage-aws-eks-autoscaler]
+  depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "spacelift.io/sagebionetworks/airflow/aws"
   version      = "0.3.5"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision
   namespace    = "airflow"
-}
-
-module "argo-cd" {
-  depends_on = [module.sage-aws-eks-autoscaler]
-  source     = "spacelift.io/sagebionetworks/argo-cd/aws"
-  version    = "0.3.1"
 }
 
 module "postgres-cloud-native-operator" {
