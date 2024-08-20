@@ -36,15 +36,15 @@ spec:
       - target:
           kind: Pooler
         patch: |-
-            - op: replace
-              path: /spec/cluster/name
-              value: ${var.argo_deployment_name}-cluster
-            - op: replace
-              path: /spec/instances
-              value: 2
-            - op: replace
-              path: /metadata/name
-              value: ${var.argo_deployment_name}-pooler-rw
+          - op: replace
+            path: /spec/cluster/name
+            value: ${var.argo_deployment_name}-cluster
+          - op: replace
+            path: /spec/instances
+            value: 2
+          - op: replace
+            path: /metadata/name
+            value: ${var.argo_deployment_name}-pooler-rw
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
