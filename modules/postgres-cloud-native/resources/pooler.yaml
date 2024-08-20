@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: replaced-by-kustomize
+spec:
+  cluster:
+    name: replaced-by-kustomize-2
+
+  instances: 2
+  type: rw
+  pgbouncer:
+    poolMode: session
+    parameters:
+      max_client_conn: "1000"
+      default_pool_size: "20"

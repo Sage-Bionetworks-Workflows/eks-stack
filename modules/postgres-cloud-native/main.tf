@@ -28,6 +28,23 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${var.git_revision}
+    path: modules/postgres-cloud-native/resources
+    kustomize:
+      patches:
+      - target:
+          kind: Pooler
+        patch: |-
+          - op: replace
+            path: /spec/cluster/name
+            value: ${var.argo_deployment_name}-cluster
+          - op: replace
+            path: /spec/instances
+            value: 2
+          - op: replace
+            path: /metadata/name
+            value: ${var.argo_deployment_name}-pooler-rw
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
@@ -54,14 +71,14 @@ resource "kubernetes_secret" "connection-secret" {
 
   data = {
     "dbname"     = "application-database"
-    "host"       = "${var.argo_deployment_name}-cluster-rw.${var.namespace}"
-    "jdbc-uri"   = "jdbc:postgresql://${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
+    "host"       = "${var.argo_deployment_name}-pooler-rw.${var.namespace}"
+    "jdbc-uri"   = "jdbc:postgresql://${var.argo_deployment_name}-pooler-rw.${var.namespace}:5432/application-database?password=${random_password.pg-password.result}&user=application-database"
     "password"   = random_password.pg-password.result
-    "pgpass"     = "${var.argo_deployment_name}-cluster-rw:5432:application-database:application-database:${random_password.pg-password.result}"
+    "pgpass"     = "${var.argo_deployment_name}-pooler-rw:5432:application-database:application-database:${random_password.pg-password.result}"
     "port"       = "5432"
-    "uri"        = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database"
+    "uri"        = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-pooler-rw.${var.namespace}:5432/application-database"
     "user"       = "application-database"
     "username"   = "application-database"
-    "connection" = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-cluster-rw.${var.namespace}:5432/application-database"
+    "connection" = "postgresql://application-database:${random_password.pg-password.result}@${var.argo_deployment_name}-pooler-rw.${var.namespace}:5432/application-database"
   }
 }

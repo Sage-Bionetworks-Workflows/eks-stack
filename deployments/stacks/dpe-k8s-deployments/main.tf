@@ -64,7 +64,7 @@ module "postgres-cloud-native-operator" {
 module "postgres-cloud-native-database" {
   depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  version              = "0.3.1"
+  version              = "0.4.0"
   auto_deploy          = true
   auto_prune           = true
   git_revision         = var.git_revision

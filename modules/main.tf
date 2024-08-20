@@ -151,7 +151,7 @@ locals {
       description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
       project_root       = "modules/postgres-cloud-native"
       space_id           = "root"
-      version_number     = "0.3.1"
+      version_number     = "0.4.0"
     }
 
     postgres-cloud-native-operator = {
