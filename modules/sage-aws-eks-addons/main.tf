@@ -29,3 +29,66 @@ resource "kubernetes_storage_class" "default" {
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = true
 }
+
+# AWS Guard dity
+module "vpc-endpoints-guard-duty" {
+  source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version               = "5.13.0"
+  create_security_group = true
+  security_group_name   = "vpc-endpoints-guard-duty-${var.cluster_name}"
+  security_group_rules = {
+    ingress_https = {
+      description = "HTTPS from VPC"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+  subnet_ids = var.private_subnet_ids
+  tags       = var.tags
+  vpc_id     = var.vpc_id
+
+  endpoints = {
+    guardduty = {
+      service = "com.amazonaws.us-east-1.guardduty-data"
+      policy  = data.aws_iam_policy_document.restrict-vpc-endpoint-usage.json
+      tags    = merge({ Name = "com.amazonaws.us-east-1.guardduty-data" }, var.tags)
+    },
+  }
+
+}
+
+data "aws_iam_policy_document" "restrict-vpc-endpoint-usage" {
+  statement {
+    effect    = "Allow"
+    actions   = ["*"]
+    resources = ["*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+
+  statement {
+    effect    = "Deny"
+    actions   = ["*"]
+    resources = ["*"]
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "aws:Principal"
+      values   = [var.aws_account_id]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+}
+
+
+resource "aws_eks_addon" "aws-guardduty" {
+  cluster_name = var.cluster_name
+  addon_name   = "aws-guardduty-agent"
+  tags         = var.tags
+}

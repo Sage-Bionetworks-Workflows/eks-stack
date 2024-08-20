@@ -18,6 +18,7 @@ locals {
     auto_deploy      = var.auto_deploy
     auto_prune       = var.auto_prune
     git_revision     = var.git_branch
+    aws_account_id   = var.aws_account_id
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
