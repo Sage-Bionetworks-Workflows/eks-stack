@@ -117,7 +117,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.3.5"
+      version_number     = "0.4.0"
     }
 
     argo-cd = {
@@ -151,7 +151,7 @@ locals {
       description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
       project_root       = "modules/postgres-cloud-native"
       space_id           = "root"
-      version_number     = "0.4.0"
+      version_number     = "0.5.0"
     }
 
     postgres-cloud-native-operator = {
@@ -168,7 +168,7 @@ locals {
       description        = "Helm chart deployment for postgres-cloud-native operator."
       project_root       = "modules/postgres-cloud-native-operator"
       space_id           = "root"
-      version_number     = "0.3.1"
+      version_number     = "0.4.0"
     }
     private-workerpool = {
       github_enterprise = {
