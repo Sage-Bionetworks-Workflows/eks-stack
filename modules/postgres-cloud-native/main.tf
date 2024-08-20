@@ -29,7 +29,7 @@ spec:
     targetRevision: ${var.git_revision}
     ref: values
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1004-add-pooler
+    targetRevision: ${var.git_revision}
     path: modules/postgres-cloud-native/resources
     kustomize:
       patches:
