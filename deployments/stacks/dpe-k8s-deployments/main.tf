@@ -12,7 +12,6 @@ module "sage-aws-eks-autoscaler" {
 }
 
 module "sage-aws-eks-addons" {
-  depends_on = [module.sage-aws-eks-autoscaler]
   # source  = "spacelift.io/sagebionetworks/sage-aws-eks-addons/aws"
   # version = "0.7.3"
   source = "../../../modules/sage-aws-eks-addons"
