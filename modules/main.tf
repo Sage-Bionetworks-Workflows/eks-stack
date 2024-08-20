@@ -62,11 +62,12 @@ locals {
       name               = "sage-aws-eks-addons"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.git_branch
-      description        = "Terraform module for add-ons for an EKS cluster in AWS"
-      project_root       = "modules/sage-aws-eks-addons"
-      space_id           = "root"
-      version_number     = "0.2.0"
+      # branch             = var.git_branch
+      branch         = "ibcdpe-1007-manual-guardduty-install"
+      description    = "Terraform module for add-ons for an EKS cluster in AWS"
+      project_root   = "modules/sage-aws-eks-addons"
+      space_id       = "root"
+      version_number = "0.3.0"
     }
 
     victoria-metrics = {

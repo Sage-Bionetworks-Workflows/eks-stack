@@ -30,7 +30,6 @@ resource "kubernetes_storage_class" "default" {
   allow_volume_expansion = true
 }
 
-# AWS Guard dity
 module "vpc-endpoints-guard-duty" {
   source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
   version               = "5.13.0"
