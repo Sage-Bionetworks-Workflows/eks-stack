@@ -147,11 +147,12 @@ locals {
       name               = "postgres-cloud-native-database"
       terraform_provider = "aws"
       administrative     = false
-      branch             = var.git_branch
-      description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
-      project_root       = "modules/postgres-cloud-native"
-      space_id           = "root"
-      version_number     = "0.3.1"
+      # branch             = var.git_branch
+      branch         = "ibcdpe-1004-add-pooler"
+      description    = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
+      project_root   = "modules/postgres-cloud-native"
+      space_id       = "root"
+      version_number = "0.4.0"
     }
 
     postgres-cloud-native-operator = {
