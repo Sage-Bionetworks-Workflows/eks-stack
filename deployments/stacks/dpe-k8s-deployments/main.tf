@@ -72,3 +72,4 @@ module "postgres-cloud-native-database" {
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
 }
+
