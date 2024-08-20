@@ -54,6 +54,7 @@ module "argo-cd" {
 }
 
 module "postgres-cloud-native-operator" {
+  depends_on   = [module.argo-cd]
   source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
   version      = "0.3.1"
   auto_deploy  = var.auto_deploy
@@ -62,7 +63,7 @@ module "postgres-cloud-native-operator" {
 }
 
 module "postgres-cloud-native-database" {
-  depends_on           = [module.postgres-cloud-native-operator, module.airflow]
+  depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.3.1"
   auto_deploy          = true
