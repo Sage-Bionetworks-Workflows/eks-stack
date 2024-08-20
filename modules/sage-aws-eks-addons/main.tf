@@ -35,6 +35,7 @@ module "vpc-endpoints-guard-duty" {
   source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
   version               = "5.13.0"
   create_security_group = true
+  private_dns_enabled   = true
   security_group_name   = "vpc-endpoints-guard-duty-${var.cluster_name}"
   security_group_rules = {
     ingress_https = {
