@@ -1055,14 +1055,14 @@ webserver:
   #      - "foo.remote"
   allowPodLogReading: true
   livenessProbe:
-    initialDelaySeconds: 60
+    initialDelaySeconds: 120
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
     scheme: HTTP
 
   readinessProbe:
-    initialDelaySeconds: 60
+    initialDelaySeconds: 120
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
@@ -2153,6 +2153,10 @@ config:
     worker_container_repository: '{{ .Values.images.airflow.repository | default .Values.defaultAirflowRepository }}'
     worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
     multi_namespace_mode: '{{ ternary "True" "False" .Values.multiNamespaceMode }}'
+    git_repo: 'https://github.com/Sage-Bionetworks-Workflows/orca-recipes'
+    git_branch: 'test-deserialization'
+    git_subpath: 'dags'
+    git_sync_rev: 'HEAD'
   # The `kubernetes_executor` section duplicates the `kubernetes` section in Airflow >= 2.5.0 due to an airflow.cfg schema change.
   kubernetes_executor:
     namespace: '{{ .Release.Namespace }}'
