@@ -2296,7 +2296,7 @@ dags:
 logs:
   persistence:
     # Enable persistent volume for storing logs
-    enabled: true
+    enabled: false
     # Volume size for logs
     size: 50Gi
     # Annotations for the logs PVC
