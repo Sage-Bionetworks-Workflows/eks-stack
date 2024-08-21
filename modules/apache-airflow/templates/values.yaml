@@ -250,9 +250,9 @@ executor: "CeleryExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env: []
-# - name: ""
-#   value: ""
+env:
+- name: "AIRFLOW__CORE__ALLOWED_DESERIALIZATION_CLASSES"
+  value: "airflow.* DownloadMetric SnapshotMetrics LENSDataset Dataset Syn.*"
 
 # Volumes for all airflow containers
 volumes: []
