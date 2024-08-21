@@ -250,9 +250,7 @@ executor: "CeleryExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env:
-- name: "AIRFLOW__CORE__ALLOWED_DESERIALIZATION_CLASSES"
-  value: "airflow.* DownloadMetric SnapshotMetrics LENSDataset Dataset Syn.*"
+env: []
 
 # Volumes for all airflow containers
 volumes: []
@@ -2105,6 +2103,7 @@ config:
     # For Airflow 1.10, backward compatibility; moved to [logging] in 2.0
     colored_console_log: 'False'
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+    allowed_deserialization_classes: "airflow.* DownloadMetric SnapshotMetrics LENSDataset Dataset Syn.*"
   logging:
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
     colored_console_log: 'False'
