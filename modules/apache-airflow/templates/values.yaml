@@ -486,7 +486,7 @@ workers:
   # worker and let Kubernetes restart it
   livenessProbe:
     enabled: true
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
@@ -714,7 +714,7 @@ scheduler:
   # If the scheduler stops heartbeating for 5 minutes (5*60s) kill the
   # scheduler and let Kubernetes restart it
   livenessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
@@ -1055,14 +1055,14 @@ webserver:
   #      - "foo.remote"
   allowPodLogReading: true
   livenessProbe:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 60
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
     scheme: HTTP
 
   readinessProbe:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 60
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
@@ -1268,7 +1268,7 @@ triggerer:
   # If the triggerer stops heartbeating for 5 minutes (5*60s) kill the
   # triggerer and let Kubernetes restart it
   livenessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
