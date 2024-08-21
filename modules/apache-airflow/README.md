@@ -1,6 +1,13 @@
 # Purpose
 The purpose of this module is to deploy the `Apache Airflow` helm chart <https://github.com/apache/airflow/tree/main/chart>.
 
+## WARNING
+**When upgrading the apache airflow instance that is deployed to kubernetes you will need
+to manually kill the `airflow-redis` pod.** Why? There is a helm hook that set the
+password to connect to `redis` when helm sees a change, however, the `redis` pod is not
+automatically restarted. If you do not do this change all airflow components that
+connect to the `redis` pod will be connecting with a new password, but `redis` is still
+expecting the old password.
 
 ## What resources are being deployed through this module
 
