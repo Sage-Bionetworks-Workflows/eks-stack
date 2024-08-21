@@ -2162,8 +2162,8 @@ config:
     worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
     multi_namespace_mode: '{{ ternary "True" "False" .Values.multiNamespaceMode }}'
   secrets:
-      backend: airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend 
-      backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
+    backend: airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend 
+    backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
 # yamllint enable rule:line-length
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
