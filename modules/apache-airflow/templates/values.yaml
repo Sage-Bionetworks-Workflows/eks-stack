@@ -2010,7 +2010,7 @@ limits: []
 
 # This runs as a CronJob to cleanup old pods.
 cleanup:
-  enabled: true
+  enabled: false
   # Run every 15 minutes (templated).
   schedule: "*/60 * * * *"
   # To select a random-ish, deterministic starting minute between 3 and 12 inclusive for each release:
