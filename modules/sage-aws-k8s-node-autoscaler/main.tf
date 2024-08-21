@@ -140,9 +140,9 @@ module "ocean-aws-k8s" {
     max_vcpu                = null
     min_enis                = null
     min_gpu                 = null
-    min_memory_gib          = null
+    min_memory_gib          = 8
     min_network_performance = null
-    min_vcpu                = null
+    min_vcpu                = 2
     root_device_types       = null
     virtualization_types    = null
   }
