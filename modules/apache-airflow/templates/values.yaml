@@ -469,7 +469,7 @@ kerberos:
 # Airflow Worker Config
 workers:
   # Number of airflow celery workers in StatefulSet
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -641,16 +641,16 @@ workers:
   nodeSelector: {}
   runtimeClassName: ~
   priorityClassName: ~
-  affinity: {}
+  affinity:
   # default worker affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: worker
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: worker
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
   # hostAliases to use in worker pods.
@@ -723,7 +723,7 @@ scheduler:
     command: ~
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -809,16 +809,16 @@ scheduler:
 
   # Select certain nodes for airflow scheduler pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default scheduler affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: scheduler
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: scheduler
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -1250,7 +1250,7 @@ webserver:
 triggerer:
   enabled: true
   # Number of airflow triggerers in the deployment
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -1351,16 +1351,16 @@ triggerer:
 
   # Select certain nodes for airflow triggerer pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default triggerer affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: triggerer
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: triggerer
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -1661,7 +1661,7 @@ flower:
 
 # StatsD settings
 statsd:
-  enabled: true
+  enabled: false
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
