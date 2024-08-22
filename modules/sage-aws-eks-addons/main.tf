@@ -10,6 +10,12 @@ resource "aws_eks_addon" "ebs-csi-driver" {
   tags         = var.tags
 }
 
+resource "aws_eks_addon" "efs-csi-driver" {
+  cluster_name = var.cluster_name
+  addon_name   = "aws-efs-csi-driver"
+  tags         = var.tags
+}
+
 resource "kubernetes_storage_class" "default" {
   depends_on = [aws_eks_addon.ebs-csi-driver]
 
@@ -29,6 +35,26 @@ resource "kubernetes_storage_class" "default" {
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = true
 }
+
+# resource "kubernetes_storage_class" "efs" {
+#   depends_on = [aws_eks_addon.efs-csi-driver]
+
+#   metadata {
+#     name = "efs"
+#     annotations = {
+#       "storageclass.kubernetes.io/is-default-class" = "false"
+#     }
+#   }
+
+#   storage_provisioner = "efs.csi.aws.com"
+#   reclaim_policy      = "Delete"
+#   parameters = {
+#     "fsType" = "ext4"
+#     "type"   = "gp3"
+#   }
+#   volume_binding_mode    = "WaitForFirstConsumer"
+#   allow_volume_expansion = true
+# }
 
 module "vpc-endpoints-guard-duty" {
   source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"

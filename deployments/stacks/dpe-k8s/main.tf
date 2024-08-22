@@ -14,8 +14,9 @@ module "sage-aws-vpc" {
 }
 
 module "sage-aws-eks" {
-  source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  version = "0.5.7"
+  # source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
+  # version = "0.5.7"
+  source = "../../../modules/sage-aws-eks"
 
   cluster_name                      = var.cluster_name
   private_vpc_subnet_ids            = module.sage-aws-vpc.private_subnet_ids

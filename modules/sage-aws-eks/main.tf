@@ -105,6 +105,7 @@ module "eks" {
 
   iam_role_additional_policies = {
     AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+    AmazonEFSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy",
     SecretsManagerReadWrite  = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
     WorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
     VPCResourceController    = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
