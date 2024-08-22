@@ -297,7 +297,7 @@ pooler:
   # -- PgBouncer configuration parameters
   parameters:
     max_client_conn: "1000"
-    default_pool_size: "25"
+    default_pool_size: "100"
 
   monitoring:
     # -- Whether to enable monitoring
