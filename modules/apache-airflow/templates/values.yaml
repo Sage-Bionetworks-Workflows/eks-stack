@@ -587,13 +587,13 @@ workers:
   kerberosSidecar:
     # Enable kerberos sidecar
     enabled: false
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+     requests:
+      cpu: 100m
+      memory: 128Mi
     # Detailed default security context for kerberosSidecar for container level
     securityContexts:
       container: {}
@@ -2200,7 +2200,7 @@ dags:
     # Annotations for dags PVC
     annotations: {}
     # Enable persistent volume for storing dags
-    enabled: false
+    enabled: true
     # Volume size for dags
     size: 1Gi
     # If using a custom storageClass, pass name here
