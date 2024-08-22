@@ -36,6 +36,21 @@ resource "kubernetes_storage_class" "default" {
   allow_volume_expansion = true
 }
 
+resource "aws_security_group" "inbound efs" {
+  name        = "${var.cluster_name}-inbound-efs"
+  description = "Security group for EFS traffic"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "TCP"
+    cidr_blocks = [var.vpc_cidr_block]
+    description = "Allow inbound NFS traffic from CIDR to cluster VPC"
+  }
+
+}
+
 # resource "kubernetes_storage_class" "efs" {
 #   depends_on = [aws_eks_addon.efs-csi-driver]
 
