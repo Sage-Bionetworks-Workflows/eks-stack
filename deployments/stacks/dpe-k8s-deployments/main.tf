@@ -36,19 +36,20 @@ module "victoria-metrics" {
 }
 
 module "trivy-operator" {
-  depends_on   = [module.victoria-metrics, module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version      = "0.3.2"
+  depends_on = [module.victoria-metrics, module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  # version      = "0.3.2"
+  source       = "../../../modules/trivy-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision
 }
 
 module "airflow" {
-  depends_on   = [module.victoria-metrics, module.argo-cd]
+  depends_on = [module.victoria-metrics, module.argo-cd]
   # source       = "spacelift.io/sagebionetworks/airflow/aws"
   # version      = "0.4.0"
-  source = "../../../modules/apache-airflow"
+  source       = "../../../modules/apache-airflow"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision

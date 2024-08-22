@@ -78,7 +78,7 @@ spec:
       valueFiles:
       - $values/modules/apache-airflow/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1004-set-deserialization-classes
+    targetRevision: move-to-efs-storage
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
