@@ -1,6 +1,6 @@
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
-  version                = "0.8.2"
+  version                = "0.9.0"
   cluster_name           = var.cluster_name
   private_vpc_subnet_ids = var.private_subnet_ids
   vpc_id                 = var.vpc_id
