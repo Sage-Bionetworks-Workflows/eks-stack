@@ -51,25 +51,31 @@ resource "aws_security_group" "inbound_efs" {
 
 }
 
-# resource "kubernetes_storage_class" "efs" {
-#   depends_on = [aws_eks_addon.efs-csi-driver]
+# TODO: Later on we should swap this to conditional creation, and only create if needed
+# for the cluster the addon is being installed to.
+resource "aws_efs_file_system" "efs-file-system" {
+  creation_token = "${var.cluster_name}-efs"
 
-#   metadata {
-#     name = "efs"
-#     annotations = {
-#       "storageclass.kubernetes.io/is-default-class" = "false"
-#     }
-#   }
+  tags = var.tags
+}
 
-#   storage_provisioner = "efs.csi.aws.com"
-#   reclaim_policy      = "Delete"
-#   parameters = {
-#     "fsType" = "ext4"
-#     "type"   = "gp3"
-#   }
-#   volume_binding_mode    = "WaitForFirstConsumer"
-#   allow_volume_expansion = true
-# }
+resource "kubernetes_storage_class" "efs" {
+  depends_on = [aws_eks_addon.efs-csi-driver]
+
+  metadata {
+    name = "efs-sc"
+  }
+
+  storage_provisioner    = "efs.csi.aws.com"
+  reclaim_policy         = "Delete"
+  allow_volume_expansion = true
+
+  parameters = {
+    provisioningMode = "efs-ap"
+    fileSystemId     = aws_efs_file_system.efs-file-system.id
+    directoryPerms   = "700"
+  }
+}
 
 module "vpc-endpoints-guard-duty" {
   source                = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
