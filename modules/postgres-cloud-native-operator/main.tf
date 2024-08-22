@@ -15,13 +15,13 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  syncPolicy:
   %{if var.auto_deploy}
+  syncPolicy:
     automated:
       prune: ${var.auto_prune}
-  %{endif}
     syncOptions:
     - ServerSideApply=true
+  %{endif}
   sources:
   - repoURL: 'https://cloudnative-pg.github.io/charts'
     chart: cloudnative-pg

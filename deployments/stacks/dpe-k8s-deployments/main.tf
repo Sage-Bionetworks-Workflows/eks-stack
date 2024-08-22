@@ -7,7 +7,7 @@ module "sage-aws-eks-autoscaler" {
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
   single_az              = true
-  # desired_capacity       = 2
+  desired_capacity       = 3
 }
 
 module "sage-aws-eks-addons" {
