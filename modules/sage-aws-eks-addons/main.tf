@@ -54,8 +54,9 @@ resource "aws_security_group" "inbound_efs" {
 # TODO: Later on we should swap this to conditional creation, and only create if needed
 # for the cluster the addon is being installed to.
 resource "aws_efs_file_system" "efs-file-system" {
-  creation_token = "${var.cluster_name}-efs"
-  encrypted      = true
+  creation_token  = "${var.cluster_name}-efs"
+  encrypted       = true
+  throughput_mode = "elastic"
 
   tags = var.tags
 }
