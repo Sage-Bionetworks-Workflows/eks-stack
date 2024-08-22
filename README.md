@@ -218,6 +218,14 @@ log into the tool. Examples:
 - ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
 - Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
 
+## Tear down of EKS stacks
+If you need to fully tear down all of the infra start at the smallest point and work
+outwards. Destroy items in this order:
+
+- Go into the argoCD UI and delete all applications
+- Run `tofu destroy --auto-approve` as a task in spacelift for the Kubernetes Deployments stack
+- Run `tofu destroy --auto-approve` as a task in spacelift for the infrastructure deployment stack
+
 ## Spacelift
 Here are some instructions on setting up spacelift.
 

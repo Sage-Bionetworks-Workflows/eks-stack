@@ -19,7 +19,7 @@ module "dpe-sandbox-spacelift-development" {
   spotinst_account = "act-45de6f47"
 
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
-  auto_deploy        = true
+  auto_deploy        = false
   auto_prune         = true
   git_branch         = var.git_branch
 
