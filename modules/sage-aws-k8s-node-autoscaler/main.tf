@@ -64,6 +64,11 @@ resource "aws_iam_role_policy_attachment" "a5" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
 
+resource "aws_iam_role_policy_attachment" "a6" {
+  role       = aws_iam_role.work_profile_iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
+}
+
 resource "aws_iam_instance_profile" "profile" {
   name = "eks_profile_${var.cluster_name}"
   role = aws_iam_role.work_profile_iam_role.name
