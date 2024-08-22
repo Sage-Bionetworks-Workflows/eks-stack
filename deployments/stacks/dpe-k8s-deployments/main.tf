@@ -46,8 +46,9 @@ module "trivy-operator" {
 
 module "airflow" {
   depends_on   = [module.victoria-metrics, module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/airflow/aws"
-  version      = "0.4.0"
+  # source       = "spacelift.io/sagebionetworks/airflow/aws"
+  # version      = "0.4.0"
+  source = "../../../modules/apache-airflow"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision

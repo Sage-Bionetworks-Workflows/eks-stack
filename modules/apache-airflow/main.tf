@@ -9,6 +9,12 @@ resource "kubernetes_namespace" "airflow" {
   }
 }
 
+resource "kubernetes_namespace" "airflow-worker" {
+  metadata {
+    name = "${var.namespace}-worker"
+  }
+}
+
 resource "random_password" "airflow" {
   length           = 16
   special          = true
@@ -72,7 +78,7 @@ spec:
       valueFiles:
       - $values/modules/apache-airflow/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ${var.git_revision}
+    targetRevision: ibcdpe-1004-set-deserialization-classes
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
