@@ -571,7 +571,7 @@ workers:
     # Enable persistent volumes
     enabled: true
     # Volume size for worker StatefulSet
-    size: 100Gi
+    size: 30Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
     storageClassName:
     # Execute init container to chown log directory.
@@ -639,16 +639,16 @@ workers:
   nodeSelector: {}
   runtimeClassName: ~
   priorityClassName: ~
-  affinity: {}
+  affinity:
   # default worker affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: worker
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: worker
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
   # hostAliases to use in worker pods.
@@ -807,16 +807,16 @@ scheduler:
 
   # Select certain nodes for airflow scheduler pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default scheduler affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: scheduler
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: scheduler
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -1302,7 +1302,7 @@ triggerer:
     # Enable persistent volumes
     enabled: true
     # Volume size for triggerer StatefulSet
-    size: 100Gi
+    size: 30Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
     storageClassName:
     # Execute init container to chown log directory.
@@ -1349,16 +1349,16 @@ triggerer:
 
   # Select certain nodes for airflow triggerer pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default triggerer affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: triggerer
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: triggerer
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -2300,7 +2300,7 @@ logs:
     # Enable persistent volume for storing logs
     enabled: false
     # Volume size for logs
-    size: 50Gi
+    size: 30Gi
     # Annotations for the logs PVC
     annotations: {}
     # If using a custom storageClass, pass name here

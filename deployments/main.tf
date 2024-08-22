@@ -37,10 +37,16 @@ module "dpe-sandbox-spacelift-development" {
   cluster_name = "dpe-k8-sandbox"
   vpc_name     = "dpe-sandbox"
 
-  vpc_cidr_block       = "10.51.0.0/16"
-  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
-  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  vpc_cidr_block = "10.51.0.0/16"
+  # public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
+  # private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
+  # azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  # For now, we are only using one public and one private subnet. This is due to how
+  # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
+  # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
+  public_subnet_cidrs  = ["10.51.1.0/24"]
+  private_subnet_cidrs = ["10.51.4.0/24"]
+  azs                  = ["us-east-1a"]
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -67,8 +73,14 @@ module "dpe-sandbox-spacelift-production" {
   cluster_name = "dpe-k8"
   vpc_name     = "dpe-k8"
 
-  vpc_cidr_block       = "10.52.0.0/16"
-  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24", "10.52.3.0/24"]
-  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24", "10.52.6.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  vpc_cidr_block = "10.52.0.0/16"
+  # public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24", "10.52.3.0/24"]
+  # private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24", "10.52.6.0/24"]
+  # azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  # For now, we are only using one public and one private subnet. This is due to how
+  # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
+  # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
+  public_subnet_cidrs  = ["10.52.1.0/24"]
+  private_subnet_cidrs = ["10.52.4.0/24"]
+  azs                  = ["us-east-1a"]
 }
