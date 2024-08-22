@@ -17,6 +17,7 @@ module "sage-aws-eks-addons" {
   aws_account_id     = var.aws_account_id
   vpc_id             = var.vpc_id
   private_subnet_ids = var.private_subnet_ids
+  vpc_cidr_block     = var.vpc_cidr_block
 }
 
 module "argo-cd" {

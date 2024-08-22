@@ -36,7 +36,7 @@ resource "kubernetes_storage_class" "default" {
   allow_volume_expansion = true
 }
 
-resource "aws_security_group" "inbound efs" {
+resource "aws_security_group" "inbound_efs" {
   name        = "${var.cluster_name}-inbound-efs"
   description = "Security group for EFS traffic"
   vpc_id      = var.vpc_id
