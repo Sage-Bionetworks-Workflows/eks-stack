@@ -44,9 +44,11 @@ module "dpe-sandbox-spacelift-development" {
   # For now, we are only using one public and one private subnet. This is due to how
   # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
   # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
-  public_subnet_cidrs  = ["10.51.1.0/24"]
-  private_subnet_cidrs = ["10.51.4.0/24"]
-  azs                  = ["us-east-1a"]
+  # Note: EKS requires at least two subnets in different AZs. However, we are only using
+  # a single subnet for node deployment.
+  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24"]
+  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -80,7 +82,9 @@ module "dpe-sandbox-spacelift-production" {
   # For now, we are only using one public and one private subnet. This is due to how
   # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
   # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
-  public_subnet_cidrs  = ["10.52.1.0/24"]
-  private_subnet_cidrs = ["10.52.4.0/24"]
-  azs                  = ["us-east-1a"]
+  # Note: EKS requires at least two subnets in different AZs. However, we are only using
+  # a single subnet for node deployment.
+  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24"]
+  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
 }
