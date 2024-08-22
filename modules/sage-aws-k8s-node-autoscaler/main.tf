@@ -117,6 +117,7 @@ module "ocean-aws-k8s" {
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
+  auto_headroom_percentage         = 30
   # TODO: Fix this it does not seem to work
   # `desired_capacity` does not seem to force the number of nodes to increase. Look
   # through the documentation to determine how we might manually scale up the number
