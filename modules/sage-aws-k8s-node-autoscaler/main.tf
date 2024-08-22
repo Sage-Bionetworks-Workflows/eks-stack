@@ -111,7 +111,7 @@ module "ocean-aws-k8s" {
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = var.private_vpc_subnet_ids
+  subnet_ids                       = var.single_az ? [var.private_vpc_subnet_ids[0]] : var.private_vpc_subnet_ids
   worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
   security_groups                  = [var.node_security_group_id]
   is_aggressive_scale_down_enabled = true

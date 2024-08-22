@@ -49,7 +49,7 @@ locals {
       description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
       project_root       = "modules/sage-aws-k8s-node-autoscaler"
       space_id           = "root"
-      version_number     = "0.8.1"
+      version_number     = "0.8.2"
     }
 
     eks-addons = {
