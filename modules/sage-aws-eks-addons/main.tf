@@ -55,6 +55,7 @@ resource "aws_security_group" "inbound_efs" {
 # for the cluster the addon is being installed to.
 resource "aws_efs_file_system" "efs-file-system" {
   creation_token = "${var.cluster_name}-efs"
+  encrypted      = true
 
   tags = var.tags
 }
