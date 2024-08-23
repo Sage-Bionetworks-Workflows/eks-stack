@@ -241,7 +241,7 @@ rbac:
 
 # Airflow executor
 # One of: LocalExecutor, LocalKubernetesExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: "KubernetesExecutor"
+executor: "CeleryExecutor"
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -251,8 +251,6 @@ allowPodLaunching: true
 
 # Environment variables for all airflow containers
 env: []
-# - name: ""
-#   value: ""
 
 # Volumes for all airflow containers
 volumes: []
@@ -347,11 +345,11 @@ extraEnv: ~
 
 # Extra envFrom 'items' that will be added to the definition of airflow containers
 # A string is expected (can be templated).
-extraEnvFrom: ~
+# extraEnvFrom: ~
 # eg:
-# extraEnvFrom: |
-#   - secretRef:
-#       name: '{{ .Release.Name }}-airflow-connections'
+extraEnvFrom: |
+  - secretRef:
+      name: 'airflow-admin-user-secret'
 #   - configMapRef:
 #       name: '{{ .Release.Name }}-airflow-variables'
 
@@ -368,7 +366,7 @@ data:
   # data:
   #   connection: base64_encoded_connection_string
 
-  metadataSecretName: ~
+  metadataSecretName: pg-user-secret
   # When providing secret names and using the same database for metadata and
   # result backend, for Airflow < 2.4.0 it is necessary to create a separate
   # secret for result backend but with a db+ scheme prefix.
@@ -469,7 +467,7 @@ kerberos:
 # Airflow Worker Config
 workers:
   # Number of airflow celery workers in StatefulSet
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -488,7 +486,7 @@ workers:
   # worker and let Kubernetes restart it
   livenessProbe:
     enabled: true
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
@@ -573,7 +571,7 @@ workers:
     # Enable persistent volumes
     enabled: true
     # Volume size for worker StatefulSet
-    size: 100Gi
+    size: 30Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
     storageClassName:
     # Execute init container to chown log directory.
@@ -589,13 +587,13 @@ workers:
   kerberosSidecar:
     # Enable kerberos sidecar
     enabled: false
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+     requests:
+      cpu: 100m
+      memory: 128Mi
     # Detailed default security context for kerberosSidecar for container level
     securityContexts:
       container: {}
@@ -641,16 +639,16 @@ workers:
   nodeSelector: {}
   runtimeClassName: ~
   priorityClassName: ~
-  affinity: {}
+  affinity:
   # default worker affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: worker
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: worker
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
   # hostAliases to use in worker pods.
@@ -716,14 +714,14 @@ scheduler:
   # If the scheduler stops heartbeating for 5 minutes (5*60s) kill the
   # scheduler and let Kubernetes restart it
   livenessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
     command: ~
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -809,16 +807,16 @@ scheduler:
 
   # Select certain nodes for airflow scheduler pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default scheduler affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: scheduler
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: scheduler
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -880,7 +878,7 @@ createUserJob:
     - "-r"
     - "{{ .Values.webserver.defaultUser.role }}"
     - "-u"
-    - "{{ .Values.webserver.defaultUser.username }}"
+    - "$(AIRFLOW_UI_USERNAME)"
     - "-e"
     - "{{ .Values.webserver.defaultUser.email }}"
     - "-f"
@@ -888,7 +886,7 @@ createUserJob:
     - "-l"
     - "{{ .Values.webserver.defaultUser.lastName }}"
     - "-p"
-    - "{{ .Values.webserver.defaultUser.password }}"
+    - "$(AIRFLOW_UI_PASSWORD)"
 
   # Annotations on the create user job pod
   annotations: {}
@@ -1057,14 +1055,14 @@ webserver:
   #      - "foo.remote"
   allowPodLogReading: true
   livenessProbe:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 120
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
     scheme: HTTP
 
   readinessProbe:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 120
     timeoutSeconds: 5
     failureThreshold: 5
     periodSeconds: 10
@@ -1145,7 +1143,7 @@ webserver:
     email: admin@example.com
     firstName: admin
     lastName: user
-    password: admin
+    password: admin # This is randomized during install
 
   # Launch additional containers into webserver.
   extraContainers: []
@@ -1250,7 +1248,7 @@ webserver:
 triggerer:
   enabled: true
   # Number of airflow triggerers in the deployment
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -1270,7 +1268,7 @@ triggerer:
   # If the triggerer stops heartbeating for 5 minutes (5*60s) kill the
   # triggerer and let Kubernetes restart it
   livenessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
     timeoutSeconds: 20
     failureThreshold: 5
     periodSeconds: 60
@@ -1304,7 +1302,7 @@ triggerer:
     # Enable persistent volumes
     enabled: true
     # Volume size for triggerer StatefulSet
-    size: 100Gi
+    size: 30Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
     storageClassName:
     # Execute init container to chown log directory.
@@ -1351,16 +1349,16 @@ triggerer:
 
   # Select certain nodes for airflow triggerer pods.
   nodeSelector: {}
-  affinity: {}
+  affinity:
   # default triggerer affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: triggerer
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: triggerer
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -1661,7 +1659,7 @@ flower:
 
 # StatsD settings
 statsd:
-  enabled: true
+  enabled: false
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -2012,7 +2010,7 @@ limits: []
 cleanup:
   enabled: false
   # Run every 15 minutes (templated).
-  schedule: "*/15 * * * *"
+  schedule: "*/60 * * * *"
   # To select a random-ish, deterministic starting minute between 3 and 12 inclusive for each release:
   #     '{{- add 3 (regexFind ".$" (adler32sum .Release.Name)) -}}-59/15 * * * *'
   # To select the last digit of unix epoch time as the starting minute on each deploy:
@@ -2037,13 +2035,13 @@ cleanup:
   # Labels specific to cleanup objects and pods
   labels: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 1000m
+    memory: 512Mi
+   requests:
+    cpu: 100m
+    memory: 128Mi
 
   # Create ServiceAccount
   serviceAccount:
@@ -2077,7 +2075,7 @@ cleanup:
 # Configuration for postgresql subchart
 # Not recommended for production
 postgresql:
-  enabled: true
+  enabled: false
   image:
     tag: "11"
   auth:
@@ -2105,6 +2103,7 @@ config:
     # For Airflow 1.10, backward compatibility; moved to [logging] in 2.0
     colored_console_log: 'False'
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+    allowed_deserialization_classes: ".*"
   logging:
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
     colored_console_log: 'False'
@@ -2161,6 +2160,9 @@ config:
     worker_container_repository: '{{ .Values.images.airflow.repository | default .Values.defaultAirflowRepository }}'
     worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
     multi_namespace_mode: '{{ ternary "True" "False" .Values.multiNamespaceMode }}'
+  secrets:
+    backend: airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend 
+    backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
 # yamllint enable rule:line-length
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
@@ -2262,7 +2264,7 @@ dags:
     # interval between git sync attempts in seconds
     # high values are more likely to cause DAGs to become out of sync between different components
     # low values cause more traffic to the remote git repository
-    wait: 5
+    wait: 600
     containerName: git-sync
     uid: 65533
 
@@ -2298,10 +2300,10 @@ logs:
     # Enable persistent volume for storing logs
     enabled: false
     # Volume size for logs
-    size: 100Gi
+    size: 30Gi
     # Annotations for the logs PVC
     annotations: {}
     # If using a custom storageClass, pass name here
-    storageClassName:
+    storageClassName: gp3
     ## the name of an existing PVC to use
     existingClaim:

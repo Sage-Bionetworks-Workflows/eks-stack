@@ -1,1 +1,0 @@
-This directory is not actively used and will be removed in the future

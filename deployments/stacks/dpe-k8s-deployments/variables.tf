@@ -60,3 +60,8 @@ variable "git_revision" {
   type        = string
   default     = "main"
 }
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+}

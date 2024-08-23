@@ -77,17 +77,32 @@ resource "aws_eks_access_entry" "example" {
   tags          = var.tags
 }
 
-module "ocean-controller" {
-  source  = "spotinst/ocean-controller/spotinst"
-  version = "0.54.0"
+resource "helm_release" "ocean-kubernetes-controller" {
+  name             = "ocean-kubernetes-controller"
+  repository       = "https://charts.spot.io"
+  chart            = "ocean-kubernetes-controller"
+  namespace        = "spot-system"
+  version          = "0.1.52"
+  create_namespace = true
 
-  # Credentials.
-  spotinst_token   = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
-  spotinst_account = var.spotinst_account
+  values = [templatefile("${path.module}/templates/values.yaml", {})]
 
-  # Configuration.
-  cluster_identifier = var.cluster_name
+  set {
+    name  = "spotinst.token"
+    value = data.aws_secretsmanager_secret_version.secret_credentials.secret_string
+  }
+
+  set {
+    name  = "spotinst.account"
+    value = var.spotinst_account
+  }
+
+  set {
+    name  = "spotinst.clusterIdentifier"
+    value = var.cluster_name
+  }
 }
+
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
@@ -96,12 +111,13 @@ module "ocean-aws-k8s" {
   # Configuration
   cluster_name                     = var.cluster_name
   region                           = var.region
-  subnet_ids                       = var.private_vpc_subnet_ids
+  subnet_ids                       = var.single_az ? [var.private_vpc_subnet_ids[0]] : var.private_vpc_subnet_ids
   worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
   security_groups                  = [var.node_security_group_id]
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
+  auto_headroom_percentage         = 30
   # TODO: Fix this it does not seem to work
   # `desired_capacity` does not seem to force the number of nodes to increase. Look
   # through the documentation to determine how we might manually scale up the number
@@ -125,52 +141,10 @@ module "ocean-aws-k8s" {
     max_vcpu                = null
     min_enis                = null
     min_gpu                 = null
-    min_memory_gib          = null
+    min_memory_gib          = 8
     min_network_performance = null
-    min_vcpu                = null
+    min_vcpu                = 2
     root_device_types       = null
     virtualization_types    = null
   }
-}
-
-resource "aws_eks_addon" "coredns" {
-  cluster_name = var.cluster_name
-  addon_name   = "coredns"
-  tags         = var.tags
-
-  depends_on = [
-    module.ocean-controller,
-    module.ocean-aws-k8s,
-  ]
-}
-
-resource "aws_eks_addon" "ebs-csi-driver" {
-  cluster_name = var.cluster_name
-  addon_name   = "aws-ebs-csi-driver"
-  tags         = var.tags
-
-  depends_on = [
-    module.ocean-controller,
-    module.ocean-aws-k8s,
-  ]
-}
-
-resource "kubernetes_storage_class" "default" {
-  depends_on = [aws_eks_addon.ebs-csi-driver]
-
-  metadata {
-    name = "gp3"
-    annotations = {
-      "storageclass.kubernetes.io/is-default-class" = "true"
-    }
-  }
-
-  storage_provisioner = "kubernetes.io/aws-ebs"
-  reclaim_policy      = "Delete"
-  parameters = {
-    "fsType" = "ext4"
-    "type"   = "gp3"
-  }
-  volume_binding_mode    = "WaitForFirstConsumer"
-  allow_volume_expansion = true
 }

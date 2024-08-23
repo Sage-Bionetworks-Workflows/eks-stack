@@ -111,7 +111,6 @@ variable "kube_config_path" {
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
-  default     = "act-45de6f47"
 }
 
 variable "public_subnet_cidrs" {

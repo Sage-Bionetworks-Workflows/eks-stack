@@ -5,7 +5,7 @@
 
 resource "kubernetes_namespace" "airflow" {
   metadata {
-    name = "airflow"
+    name = var.namespace
   }
 }
 
@@ -18,7 +18,7 @@ resource "random_password" "airflow" {
 resource "kubernetes_secret" "airflow_webserver_secret" {
   metadata {
     name      = "airflow-webserver-secret"
-    namespace = "airflow"
+    namespace = var.namespace
   }
 
   data = {
@@ -28,10 +28,26 @@ resource "kubernetes_secret" "airflow_webserver_secret" {
   depends_on = [kubernetes_namespace.airflow]
 }
 
+resource "random_password" "airflow-admin-user" {
+  length  = 32
+  special = false
+}
 
-# TODO: Should a long-term deployment use a managed RDS instance?
-# https://github.com/apache/airflow/blob/main/chart/values.yaml#L2321-L2329
-resource "kubectl_manifest" "argo-deployment" {
+resource "kubernetes_secret" "airflow-admin-user-secret" {
+  metadata {
+    name      = "airflow-admin-user-secret"
+    namespace = var.namespace
+  }
+
+  data = {
+    "AIRFLOW_UI_USERNAME" = "admin"
+    "AIRFLOW_UI_PASSWORD" = random_password.airflow-admin-user.result
+  }
+
+  depends_on = [kubernetes_namespace.airflow]
+}
+
+resource "kubectl_manifest" "airflow-deployment" {
   depends_on = [kubernetes_namespace.airflow]
 
   yaml_body = <<YAML
@@ -60,6 +76,6 @@ spec:
     ref: values
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: airflow
+    namespace: ${var.namespace}
 YAML
 }

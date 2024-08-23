@@ -1,0 +1,267 @@
+# Default values for ocean-kubernetes-controller.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Spot Configuration.
+spotinst:
+  # -- Spot Token. (Required)
+  # Ref: https://docs.spot.io/administration/api/create-api-token
+  token: ""
+  # -- Spot Account. (Required)
+  # Ref: https://docs.spot.io/administration/organizations?id=account
+  account: ""
+  # -- Unique identifier used by the Ocean Controller to connect (Required)
+  # between the Ocean backend and the Kubernetes cluster.
+  # Ref: https://docs.spot.io/ocean/tutorials/spot-kubernetes-controller/
+  clusterIdentifier: ""
+  # -- Base URL. (Optional)
+  baseUrl: ""
+  # -- Proxy URL. (Optional)
+  proxyUrl: ""
+  # -- Disable auto update. (Optional)
+  disableAutoUpdate: true
+  # -- Enable CSR approval. (Optional)
+  enableCsrApproval: true
+  # -- Disable automatic RightSizing. (Optional)
+  disableAutomaticRightSizing: false
+
+# -- Configure the amount of replicas for the controller (Optional)
+replicas: 2
+
+image:
+  repository: us-docker.pkg.dev/spotit-today/container-labs/spotinst-kubernetes-controller
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use. (Optional)
+  name: ""
+
+secret:
+  # -- Controls whether a Secret should be created. (Optional)
+  create: true
+  # -- Secret name. (Optional)
+  name: ""
+
+# CA bundle.
+# Ref: https://kubernetes.io/docs/concepts/configuration/secret/
+caBundleSecret:
+  # -- CA bundle Secret name. (Optional)
+  name: ""
+  # -- Key inside the secret to inject the CA bundle from
+  key: "userEnvCertificates.pem"
+  # -- Controls whether a CA bundle secret should be created.
+  create: false
+  # -- Must contain the CA bundle data in case `caBundleSecret.create` is true.
+  # For example by using `--set caBundleSecret.data="$(cat ./ca.pem)"`
+  data: ""
+
+# Config Map.
+# Ref: https://kubernetes.io/docs/concepts/configuration/configmap/
+configMap:
+  create: true
+  # -- ConfigMap name. (Optional)
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+commonLabels: {}
+
+# Pod Security Context
+# Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+# -- Priority class name for the controller pod.
+priorityClassName: system-node-critical
+
+# -- Resource Quota configuration. Required when running in a namespace other than kube-system in GKE.
+# Ref: https://kubernetes.io/docs/concepts/policy/resource-quotas/
+resourceQuota:
+  enabled: true
+
+# Container Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop:
+    - ALL
+
+args: []
+#  - --test
+
+extraEnv: []
+# - name: KEY
+#   value: VALUE
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: readiness
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: readiness
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Controller pod resources. (Optional)
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+nodeSelector: {}
+
+# -- Tolerations for nodes that have taints on them. (Optional)
+# Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations:
+# - key: node.kubernetes.io/not-ready
+#   effect: NoExecute
+#   operator: Exists
+#   tolerationSeconds: 150
+
+# Pod scheduling preferences.
+# Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity:
+#   podAntiAffinity:
+#     preferredDuringSchedulingIgnoredDuringExecution:
+#     - weight: 50
+#       podAffinityTerm:
+#         labelSelector:
+#           matchExpressions:
+#           - key: app.kubernetes.io/name
+#             operator: In
+#             values:
+#             - spotinst-kubernetes-cluster-controller
+#         topologyKey: kubernetes.io/hostname
+
+topologySpreadConstraints:
+# - maxSkew: 1
+#   topologyKey: kubernetes.io/hostname
+#   whenUnsatisfiable: ScheduleAnyway
+#   labelSelector:
+#     app: test
+
+extraVolumeMounts: []
+
+extraVolumes: []
+
+schedulerName: ""
+
+# Annotations to add to the deployment
+deploymentAnnotations: {}
+
+# Deployment update strategy
+updateStrategy: {}
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxSurge: 0
+#     maxUnavailable: 1
+
+# Metrics Server configuration.
+metrics-server:
+  # -- Specifies whether the metrics-server chart should be deployed. (Optional)
+  deployChart: true
+
+  # Overrides the image
+  image:
+    repository: registry.k8s.io/metrics-server/metrics-server
+    tag: ""
+    pullPolicy: IfNotPresent
+
+  # -- Arguments to pass to metrics-server on start up. (Optional)
+  args:
+  - --logtostderr
+  # enable this if you have self-signed certificates, see: https://github.com/kubernetes-incubator/metrics-server
+  #  - --kubelet-insecure-tls
+
+# -- Log Shipping configuration.
+logShipping:
+  # -- Specifies whether to send the controller logs to Spot for analysis. (Optional)
+  enabled: false
+
+  # -- Specifies the log shipping container image. (Optional)
+  image:
+    repository: ghcr.io/fluent/fluent-bit
+    tag: "3.0.7"
+    pullPolicy: IfNotPresent
+
+  # -- Log shipping destination configuration.
+  destination:
+    host: api.spotinst.io
+    port: 443
+    tls: true
+
+# Auto Update process configuration.
+autoUpdate:
+  # -- Configures the image for the auto-updater job. (Optional)
+  image:
+    # -- Image repository. (Optional)
+    repository: us-docker.pkg.dev/spotit-today/container-labs/auto-updater
+    # -- Overrides the image tag. (Optional)
+    tag: "latest"
+    # -- Image pull policy. (Optional)
+    pullPolicy: Always
+
+  # -- Image pull secrets. (Optional)
+  imagePullSecrets: []
+
+  # -- Pod Security Context for the auto-updater job. (Optional)
+  # Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+
+  # -- Security Context for the auto-updater container. (Optional)
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+      - ALL
+
+  # -- Resource requests and limits for the auto-updater job.
+  # Defaults to 100m CPU and 256Mi memory to make the job run with 'Guranteed' QoS. (Optional)
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+  # -- Priority class name for the auto-updater job.
+  # Defaults to the same priority class as the controller to prevent eviction. (Optional)
+  priorityClassName: system-cluster-critical
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use. (Optional)
+    name: ""
+

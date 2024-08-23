@@ -13,12 +13,13 @@ resource "spacelift_space" "production" {
 }
 
 module "dpe-sandbox-spacelift-development" {
-  source          = "./spacelift/dpe-k8s"
-  parent_space_id = spacelift_space.development.id
-  admin_stack_id  = var.admin_stack_id
+  source           = "./spacelift/dpe-k8s"
+  parent_space_id  = spacelift_space.development.id
+  admin_stack_id   = var.admin_stack_id
+  spotinst_account = "act-45de6f47"
 
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
-  auto_deploy        = true
+  auto_deploy        = false
   auto_prune         = true
   git_branch         = var.git_branch
 
@@ -36,39 +37,54 @@ module "dpe-sandbox-spacelift-development" {
   cluster_name = "dpe-k8-sandbox"
   vpc_name     = "dpe-sandbox"
 
-  vpc_cidr_block       = "10.51.0.0/16"
-  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
-  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  vpc_cidr_block = "10.51.0.0/16"
+  # public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
+  # private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
+  # azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  # For now, we are only using one public and one private subnet. This is due to how
+  # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
+  # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
+  # Note: EKS requires at least two subnets in different AZs. However, we are only using
+  # a single subnet for node deployment.
+  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24"]
+  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
 }
 
-# TODO: Fill this out with production specific values when we are ready
+module "dpe-sandbox-spacelift-production" {
+  source           = "./spacelift/dpe-k8s"
+  parent_space_id  = spacelift_space.production.id
+  admin_stack_id   = var.admin_stack_id
+  spotinst_account = "act-ac6522b4"
 
-# module "dpe-sandbox-spacelift-development" {
-#   source          = "./spacelift/dpe-k8s"
-#   parent_space_id = spacelift_space.development.id
-#   admin_stack_id  = var.admin_stack_id
+  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
 
-#   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
-#   auto_deploy        = true
-#   git_branch         = var.git_branch
+  space_name = "dpe-k8s"
 
-#   space_name = "dpe-sandbox"
+  k8s_stack_name         = "DPE Kubernetes Infrastructure"
+  k8s_stack_project_root = "deployments/stacks/dpe-k8s"
 
-#   k8s_stack_name         = "DPE DEV Kubernetes Infrastructure"
-#   k8s_stack_project_root = "deployments/stacks/dpe-k8s"
+  k8s_stack_deployments_name         = "DPE Kubernetes Deployments"
+  k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
-#   k8s_stack_deployments_name         = "DPE DEV Kubernetes Deployments"
-#   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
+  aws_account_id = "766808016710"
+  region         = "us-east-1"
 
-#   aws_account_id = "631692904429"
-#   region         = "us-east-1"
+  cluster_name = "dpe-k8"
+  vpc_name     = "dpe-k8"
 
-#   cluster_name = "dpe-k8-sandbox"
-#   vpc_name     = "dpe-sandbox"
-
-#   vpc_cidr_block       = "10.51.0.0/16"
-#   public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
-#   private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
-#   azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
-# }
+  vpc_cidr_block = "10.52.0.0/16"
+  # public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24", "10.52.3.0/24"]
+  # private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24", "10.52.6.0/24"]
+  # azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  # For now, we are only using one public and one private subnet. This is due to how
+  # EBS can only be mounted to a single AZ. We will need to revisit this if we want to
+  # allow usage of EFS ($$$$), or add some kind of EBS volume replication.
+  # Note: EKS requires at least two subnets in different AZs. However, we are only using
+  # a single subnet for node deployment.
+  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24"]
+  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
+}

@@ -49,7 +49,24 @@ locals {
       description        = "Terraform module for creating an EKS cluster autoscaler in AWS"
       project_root       = "modules/sage-aws-k8s-node-autoscaler"
       space_id           = "root"
-      version_number     = "0.5.0"
+      version_number     = "0.9.0"
+    }
+
+    eks-addons = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "sage-aws-eks-addons"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Terraform module for add-ons for an EKS cluster in AWS"
+      project_root       = "modules/sage-aws-eks-addons"
+      space_id           = "root"
+      version_number     = "0.3.0"
     }
 
     victoria-metrics = {
@@ -66,7 +83,7 @@ locals {
       description        = "Helm chart deployment for a single node Victoria Metrics instance"
       project_root       = "modules/victoria-metrics"
       space_id           = "root"
-      version_number     = "0.4.7"
+      version_number     = "0.4.9"
     }
 
     trivy-operator = {
@@ -100,7 +117,7 @@ locals {
       description        = "Helm chart deployment for apache airflow."
       project_root       = "modules/apache-airflow"
       space_id           = "root"
-      version_number     = "0.3.1"
+      version_number     = "0.4.0"
     }
 
     argo-cd = {
@@ -120,6 +137,39 @@ locals {
       version_number     = "0.3.1"
     }
 
+    postgres-cloud-native-database = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native-database"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for a postgres database instance using the postgres-cloud-native-operator."
+      project_root       = "modules/postgres-cloud-native"
+      space_id           = "root"
+      version_number     = "0.5.0"
+    }
+
+    postgres-cloud-native-operator = {
+      github_enterprise = {
+        namespace = "Sage-Bionetworks-Workflows"
+        id        = "sage-bionetworks-workflows-gh"
+      }
+      repository = "eks-stack"
+
+      name               = "postgres-cloud-native-operator"
+      terraform_provider = "aws"
+      administrative     = false
+      branch             = var.git_branch
+      description        = "Helm chart deployment for postgres-cloud-native operator."
+      project_root       = "modules/postgres-cloud-native-operator"
+      space_id           = "root"
+      version_number     = "0.4.0"
+    }
     private-workerpool = {
       github_enterprise = {
         namespace = "Sage-Bionetworks-Workflows"

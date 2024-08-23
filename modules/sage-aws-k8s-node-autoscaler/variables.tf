@@ -49,3 +49,8 @@ variable "desired_capacity" {
   type        = number
   default     = 1
 }
+
+variable "single_az" {
+  description = "Single AZ"
+  type        = bool
+}
