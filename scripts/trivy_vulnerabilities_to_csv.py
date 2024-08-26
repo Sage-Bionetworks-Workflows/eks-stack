@@ -1,22 +1,4 @@
 # This script is intended to be used to convert a Trivy Vulnerabilities report into a CSV.
-# Using this script will require a couple of setup steps first. You will need to:
-# 1. Authenticate with AWS with the credentials you are using for the appropriate AWS account that k8s is deployed to.
-# ```
-# export AWS_PROFILE=<my-aws-profile>
-# aws sso login
-# ```
-# 2. Update your kube-config with eks.
-# ```
-# aws eks update-kubeconfig --region us-east-1 --name dpe-k8
-# ```
-# 3. Extract the Trivy reports that you are interested in.
-# ```
-# kubectl get Vulnerabilityassessmentreports -A -o yaml > vulnerability_reports.yaml
-# ```
-# 4. Then, you can execute this script.
-# ```
-# python trivy_vulnerabilities_to_csv.py vulnerability_reports.yaml vulnerability_reports.csv
-# ```
 
 import yaml
 import csv
