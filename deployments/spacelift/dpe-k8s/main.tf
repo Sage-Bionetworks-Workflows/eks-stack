@@ -139,6 +139,8 @@ resource "spacelift_stack_dependency_reference" "dependency-references" {
   stack_dependency_id = spacelift_stack_dependency.k8s-stack-to-deployments.id
   output_name         = each.key
   input_name          = each.value
+  # See https://github.com/spacelift-io/terraform-provider-spacelift/issues/565
+  trigger_always = true
 }
 
 resource "spacelift_stack_dependency_reference" "region-name" {
