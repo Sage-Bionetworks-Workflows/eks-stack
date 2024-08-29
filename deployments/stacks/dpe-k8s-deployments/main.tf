@@ -81,8 +81,6 @@ module "postgres-cloud-native-database" {
 
 
 module "signoz" {
-  # TODO: This is temporary
-  count = 0
   depends_on           = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
