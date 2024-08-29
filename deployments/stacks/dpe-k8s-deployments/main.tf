@@ -44,6 +44,8 @@ module "trivy-operator" {
 }
 
 module "airflow" {
+  # TODO: This is temporary
+  count = 0
   depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "spacelift.io/sagebionetworks/airflow/aws"
   version      = "0.4.0"
@@ -54,6 +56,8 @@ module "airflow" {
 }
 
 module "postgres-cloud-native-operator" {
+  # TODO: This is temporary
+  count = 0
   depends_on   = [module.argo-cd]
   source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
   version      = "0.4.0"
@@ -63,13 +67,30 @@ module "postgres-cloud-native-operator" {
 }
 
 module "postgres-cloud-native-database" {
+  # TODO: This is temporary
+  count = 0
   depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.5.0"
-  auto_deploy          = true
-  auto_prune           = true
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
   git_revision         = var.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
+}
+
+
+module "signoz" {
+  # TODO: This is temporary
+  count = 0
+  depends_on           = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source = "../../../modules/signoz"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "signoz"
+  argo_deployment_name = "signoz"
 }
 
