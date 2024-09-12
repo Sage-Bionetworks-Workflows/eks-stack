@@ -1540,7 +1540,7 @@ otelCollector:
       protocol: UDP
     jaeger-thrift:
       # -- Whether to enable service port for Jaeger Thrift HTTP
-      enabled: true
+      enabled: false
       # -- Container port for Jaeger Thrift
       containerPort: 14268
       # -- Service port for Jaeger Thrift
@@ -1551,7 +1551,7 @@ otelCollector:
       protocol: TCP
     jaeger-grpc:
       # -- Whether to enable service port for Jaeger gRPC
-      enabled: true
+      enabled: false
       # -- Container port for Jaeger gRPC
       containerPort: 14250
       # -- Service port for Jaeger gRPC
@@ -1617,7 +1617,7 @@ otelCollector:
       protocol: TCP
     logsheroku:
       # -- Whether to enable service port for logsheroku
-      enabled: true
+      enabled: false
       # -- Container port for logsheroku
       containerPort: 8081
       # -- Service port for logsheroku
@@ -1628,7 +1628,7 @@ otelCollector:
       protocol: TCP
     logsjson:
       # -- Whether to enable service port for logsjson
-      enabled: true
+      enabled: false
       # -- Container port for logsjson
       containerPort: 8082
       # -- Service port for logsjson
@@ -2007,7 +2007,7 @@ otelCollector:
 
 # Default values for OtelCollectorMetrics
 otelCollectorMetrics:
-  enabled: true
+  enabled: false
   name: "otel-collector-metrics"
   image:
     registry: docker.io
