@@ -32,6 +32,12 @@ locals {
             type = "cluster"
           }
         }
+        eks_developer_edit_role = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
       }
     }
   }
