@@ -53,7 +53,19 @@ configSecret:
 
 # -- Application configuration.
 # See the [official documentation](https://dexidp.io/docs/).
-config: {}
+config:
+  connectors:
+  - type: google
+    id: google
+    name: Google
+    config:
+
+      # Connector config values starting with a "$" will read from the environment.
+      clientID: $GOOGLE_CLIENT_ID
+      clientSecret: $GOOGLE_CLIENT_SECRET
+
+      # Dex's issuer URL + "/callback"
+      redirectURI: http://127.0.0.1:5556/callback
 
 # -- Additional storage [volumes](https://kubernetes.io/docs/concepts/storage/volumes/).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#volumes-1) for details.
@@ -73,14 +85,19 @@ env: {}
 
 # -- Similar to env but with support for all possible configurations.
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables) for details.
-envVars: []
+envVars:
 # - name: SOME_ENV_VAR
 #   value: value
-# - name: SOME_ENV_VAR2
-#   valueFrom:
-#     secretKeyRef:
-#       name: secret-name
-#       key: secret-key
+- name: GOOGLE_CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: google-oauth
+      key: client-id
+- name: GOOGLE_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: google-oauth
+      key: client-secret
 # - name: SOME_ENV_VAR3
 #   valueFrom:
 #     configMapKeyRef:
