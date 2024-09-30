@@ -5,6 +5,7 @@ resource "kubernetes_namespace" "kong-ingress" {
   }
 }
 
+# TODO: Using kustomize in this fashion prints out the secret in the spacelift UI when terraform is running
 resource "kubectl_manifest" "kong-ingress" {
   depends_on = [kubernetes_namespace.kong-ingress]
 
@@ -33,7 +34,7 @@ spec:
     targetRevision: signoz-testing
     ref: values
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ${var.git_revision}
+    targetRevision: signoz-testing
     path: modules/kong-ingress/resources
     kustomize:
       patches:
