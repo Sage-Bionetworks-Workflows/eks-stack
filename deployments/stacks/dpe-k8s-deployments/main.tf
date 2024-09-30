@@ -21,8 +21,9 @@ module "sage-aws-eks-addons" {
 
 module "argo-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
-  source     = "spacelift.io/sagebionetworks/argo-cd/aws"
-  version    = "0.3.1"
+  # source     = "spacelift.io/sagebionetworks/argo-cd/aws"
+  # version    = "0.3.1"
+  source = "../../../modules/argo-cd"
 }
 
 module "victoria-metrics" {
