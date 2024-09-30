@@ -116,3 +116,15 @@ module "cert-manager" {
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
 }
+
+module "dex-idp" {
+  depends_on           = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source = "../../../modules/dex-idp"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "dex-idp"
+  argo_deployment_name = "dex-idp"
+}
