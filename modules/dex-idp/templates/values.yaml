@@ -54,6 +54,7 @@ configSecret:
 # -- Application configuration.
 # See the [official documentation](https://dexidp.io/docs/).
 config:
+  issuer: http://a471b28f92d654dba8455f1712544444-1736471731.us-east-1.elb.amazonaws.com
   storage:
     type: kubernetes
     config:
