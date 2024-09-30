@@ -23,8 +23,8 @@ spec:
       prune: ${var.auto_prune}
   %{endif}
   sources:
-  - repoURL: 'oci://docker.io/envoyproxy/gateway-helm'
-    chart: envoyproxy
+  - repoURL: registry-1.docker.io
+    chart: envoyproxy/gateway-helm
     targetRevision: v1.1.2
     helm:
       releaseName: gateway-helm
