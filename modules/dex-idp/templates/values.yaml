@@ -63,6 +63,8 @@ config:
       database: application-database
       user: $DB_USER
       password: $DB_PASSWORD
+    ssl:
+      mode: disable
   connectors:
   - type: google
     id: google
