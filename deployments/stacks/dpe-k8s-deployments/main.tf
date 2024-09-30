@@ -92,3 +92,14 @@ module "signoz" {
   argo_deployment_name = "signoz"
 }
 
+module "kong-ingress" {
+  depends_on           = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source = "../../../modules/kong-ingress"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "kong-ingress"
+  argo_deployment_name = "kong-ingress"
+}
