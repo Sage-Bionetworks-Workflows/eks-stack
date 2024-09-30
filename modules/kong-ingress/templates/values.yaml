@@ -45,3 +45,8 @@ gateway:
     role: traditional
     database: "off"
 
+  plugins:
+  - pluginName: oauth2
+    name: oauth2
+
+
