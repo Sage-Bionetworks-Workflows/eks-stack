@@ -466,6 +466,7 @@ enableServiceLinks: false
 
 # +docs:section=Prometheus
 
+# TODO: Convert these over to trivy style monitors
 prometheus:
   # Enable Prometheus monitoring for the cert-manager controller to use with the
   # Prometheus Operator. If this option is enabled without enabling `prometheus.servicemonitor.enabled` or
@@ -473,7 +474,7 @@ prometheus:
   # resources. Additionally, a service is created which can be used together
   # with your own ServiceMonitor (managed outside of this Helm chart).
   # Otherwise, a ServiceMonitor/ PodMonitor is created.
-  enabled: true
+  enabled: false
 
   servicemonitor:
     # Create a ServiceMonitor to add cert-manager to Prometheus.
