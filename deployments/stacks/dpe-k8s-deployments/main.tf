@@ -103,3 +103,15 @@ module "kong-ingress" {
   namespace            = "kong-ingress"
   argo_deployment_name = "kong-ingress"
 }
+
+module "cert-manager" {
+  depends_on           = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source = "../../../modules/cert-manager"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "cert-manager"
+  argo_deployment_name = "cert-manager"
+}
