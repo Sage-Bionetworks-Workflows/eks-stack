@@ -92,16 +92,16 @@ module "signoz" {
   argo_deployment_name = "signoz"
 }
 
-module "kong-ingress" {
+module "envoy-gateway" {
   depends_on           = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source = "../../../modules/kong-ingress"
+  source = "../../../modules/envoy-gateway"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
-  namespace            = "kong-ingress"
-  argo_deployment_name = "kong-ingress"
+  namespace            = "envoy-gateway"
+  argo_deployment_name = "envoy-gateway"
 }
 
 module "cert-manager" {
