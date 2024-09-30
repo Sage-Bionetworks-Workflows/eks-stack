@@ -54,6 +54,10 @@ configSecret:
 # -- Application configuration.
 # See the [official documentation](https://dexidp.io/docs/).
 config:
+  storage:
+    type: kubernetes
+    config:
+      inCluster: true
   connectors:
   - type: google
     id: google
