@@ -128,3 +128,16 @@ module "dex-idp" {
   namespace            = "dex-idp"
   argo_deployment_name = "dex-idp"
 }
+
+module "dex-idp-postgres-db" {
+  depends_on           = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source = "../../../modules/postgres-cloud-native"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  deploy_pooler = false
+  namespace            = "dex-idp"
+  argo_deployment_name = "dex-idp-database"
+}
