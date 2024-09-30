@@ -46,7 +46,8 @@ gateway:
     database: "off"
 
   plugins:
-  - pluginName: oauth2
-    name: oauth2
+    configMaps:
+    - pluginName: oauth2
+      name: oauth2
 
 
