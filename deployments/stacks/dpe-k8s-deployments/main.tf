@@ -57,8 +57,6 @@ module "airflow" {
 }
 
 module "postgres-cloud-native-operator" {
-  # TODO: This is temporary
-  count = 0
   depends_on   = [module.argo-cd]
   source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
   version      = "0.4.0"
