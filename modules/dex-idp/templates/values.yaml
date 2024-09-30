@@ -56,9 +56,13 @@ configSecret:
 config:
   issuer: http://a471b28f92d654dba8455f1712544444-1736471731.us-east-1.elb.amazonaws.com
   storage:
-    type: kubernetes
+    type: postgres
     config:
-      inCluster: true
+      host: dex-idp-database-cluster-rw.dex-idp
+      port: 5432
+      database: application-database
+      user: $DB_USER
+      password: $DB_PASSWORD
   connectors:
   - type: google
     id: google
@@ -103,6 +107,16 @@ envVars:
     secretKeyRef:
       name: google-oauth
       key: client-secret
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: pg-user-secret
+      key: username
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: pg-user-secret
+      key: password
 # - name: SOME_ENV_VAR3
 #   valueFrom:
 #     configMapKeyRef:
