@@ -23,7 +23,7 @@ spec:
   %{endif}
   sources:
   - repoURL: 'https://charts.konghq.com'
-    chart: kong/ingress
+    chart: ingress
     targetRevision: 0.14.1
     helm:
       releaseName: kong-ingress
