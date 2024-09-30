@@ -12,7 +12,7 @@ resource "kubectl_manifest" "kong-ingress" {
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kong-ingress
+  name: kong
   namespace: argocd
 spec:
   project: default
@@ -26,7 +26,7 @@ spec:
     chart: ingress
     targetRevision: 0.14.1
     helm:
-      releaseName: kong-ingress
+      releaseName: kong
       valueFiles:
       - $values/modules/kong-ingress/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
