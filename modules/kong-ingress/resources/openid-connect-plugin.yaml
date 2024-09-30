@@ -10,7 +10,7 @@ config:
  auth_methods:
  - authorization_code
  - session
- issuer: http://example.org
+ issuer: https://repo-prod.prod.sagebase.org/auth/v1
  client_id:
  - "<client-id>"
  client_secret:
