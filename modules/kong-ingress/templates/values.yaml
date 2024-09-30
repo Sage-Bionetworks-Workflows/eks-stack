@@ -44,10 +44,6 @@ gateway:
   env:
     role: traditional
     database: "off"
-
-  plugins:
-    configMaps:
-    - pluginName: oauth2
-      name: oauth2
+    plugins: bundled,openid-connect
 
 
