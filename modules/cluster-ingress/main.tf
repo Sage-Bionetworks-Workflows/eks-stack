@@ -15,7 +15,7 @@ spec:
   sources:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: signoz-testing
-    path: modules/postgres-cloud-native/resources
+    path: modules/cluster-ingress/resources
     kustomize:
       patches:
       - target:
