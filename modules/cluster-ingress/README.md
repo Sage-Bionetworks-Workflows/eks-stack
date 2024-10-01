@@ -14,8 +14,8 @@ metadata:
 spec:
   targetRef:
     group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    name: backend
+    kind: Gateway
+    name: eg
   jwt:
     providers:
     - name: auth0

@@ -45,8 +45,6 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  # TODO: This is temporary
-  count        = 0
   depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "spacelift.io/sagebionetworks/airflow/aws"
   version      = "0.4.0"
@@ -66,8 +64,6 @@ module "postgres-cloud-native-operator" {
 }
 
 module "postgres-cloud-native-database" {
-  # TODO: This is temporary
-  count                = 0
   depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.5.0"
@@ -92,6 +88,8 @@ module "signoz" {
 }
 
 module "envoy-gateway" {
+  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
+  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -104,6 +102,8 @@ module "envoy-gateway" {
 }
 
 module "cert-manager" {
+  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
+  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -116,6 +116,8 @@ module "cert-manager" {
 }
 
 module "cluster-ingress" {
+  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
+  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -126,7 +128,8 @@ module "cluster-ingress" {
   namespace            = "envoy-gateway"
   argo_deployment_name = "cluster-ingress"
 
-  # To determine more elegant ways to fill in these values
+  # To determine more elegant ways to fill in these values, for example, if we have
+  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
   ssl_hostname        = "unknown-to-fill-in"
   cluster_issuer_name = "selfsigned"
 }
