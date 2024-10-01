@@ -7,13 +7,10 @@ source Application Performance Monitoring (APM) & Observability tool.
 
 
 ## This module is a work in progress
-This was hastly thrown together to get a tool available to ingest telemetry data in.
 A number of items are needed:
 
-- Updating the clickhouse install to cluster mode, and potentially this operator: https://github.com/Altinity/clickhouse-operator
-- Setting up backups and data retention
-- Trim down the number of ports available in the service
-- Double check the entire `values.yaml` file
+- Setting up backups and data retention: https://sagebionetworks.jira.com/browse/IBCDPE-1094
+- Set up ingress to the cluster/collector to send data to: https://sagebionetworks.jira.com/browse/IBCDPE-1095
 - Set up accounts and access to the service decleratively
 
 ## Accessing signoz
