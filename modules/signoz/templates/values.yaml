@@ -1469,7 +1469,7 @@ otelCollector:
 
   minReadySeconds: 5
   progressDeadlineSeconds: 120
-  replicaCount: 1
+  replicaCount: 2
 
   # OtelCollector RBAC config
   clusterRole:
@@ -1741,8 +1741,8 @@ otelCollector:
     # runAsUser: 1000
 
   autoscaling:
-    enabled: true
-    minReplicas: 2
+    enabled: false
+    minReplicas: 1
     maxReplicas: 11
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 50
