@@ -14,7 +14,7 @@ spec:
   %{endif}
   sources:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: signoz-testing
+    targetRevision: ${var.git_revision}
     path: modules/cluster-ingress/resources
     kustomize:
       patches:
