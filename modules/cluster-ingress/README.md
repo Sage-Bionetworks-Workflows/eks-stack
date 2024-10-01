@@ -4,7 +4,7 @@ the cluster. Along with the ingress we will also deploy out the related SSL cert
 
 ## To implemement
 The Envoy Gateway can secure ingress by verifying JWT. It can be applied to a specific
-target, for example this applies it to an HTTPRoute called `backend`:
+target, for example this applies it to all requests going through a `Gateway` called `eg`
 
 ```
 apiVersion: gateway.envoyproxy.io/v1alpha1
