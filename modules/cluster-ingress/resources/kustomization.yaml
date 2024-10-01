@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - gateway.yaml
 - cert-issuer.yaml
+- gateway-class.yaml
