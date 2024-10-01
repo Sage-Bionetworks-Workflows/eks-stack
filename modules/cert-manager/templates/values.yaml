@@ -229,7 +229,10 @@ enableCertificateOwnerRef: false
 #        - cert-manager-metrics
 #        - cert-manager-metrics.cert-manager
 #        - cert-manager-metrics.cert-manager.svc
-config: {}
+config:
+  apiVersion: controller.config.cert-manager.io/v1alpha1
+  kind: ControllerConfiguration
+  enableGatewayAPI: true
 
 # Setting Nameservers for DNS01 Self Check.
 # For more information, see the [cert-manager documentation](https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check).
