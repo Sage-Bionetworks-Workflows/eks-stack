@@ -469,7 +469,7 @@ kerberos:
 # Airflow Worker Config
 workers:
   # Number of airflow celery workers in StatefulSet
-  replicas: 2
+  replicas: 1
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -638,7 +638,9 @@ workers:
   extraVolumeMounts: []
 
   # Select certain nodes for airflow worker pods.
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   runtimeClassName: ~
   priorityClassName: ~
   affinity:
@@ -723,7 +725,7 @@ scheduler:
     command: ~
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 2
+  replicas: 1
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -808,7 +810,9 @@ scheduler:
   extraVolumeMounts: []
 
   # Select certain nodes for airflow scheduler pods.
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   affinity:
   # default scheduler affinity is:
    podAntiAffinity:
@@ -1250,7 +1254,7 @@ webserver:
 triggerer:
   enabled: true
   # Number of airflow triggerers in the deployment
-  replicas: 2
+  replicas: 1
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -1350,7 +1354,9 @@ triggerer:
   extraVolumeMounts: []
 
   # Select certain nodes for airflow triggerer pods.
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   affinity:
   # default triggerer affinity is:
    podAntiAffinity:
@@ -1944,7 +1950,9 @@ redis:
   safeToEvict: true
 
   # Select certain nodes for redis pods.
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   affinity: {}
   tolerations: []
   topologySpreadConstraints: []
