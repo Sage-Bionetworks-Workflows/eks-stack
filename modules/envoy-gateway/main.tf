@@ -4,8 +4,6 @@ resource "kubernetes_namespace" "envoy-gateway" {
     name = var.namespace
   }
 }
-
-# TODO: Using kustomize in this fashion prints out the secret in the spacelift UI when terraform is running
 resource "kubectl_manifest" "envoy-gateway" {
   depends_on = [kubernetes_namespace.envoy-gateway]
 
