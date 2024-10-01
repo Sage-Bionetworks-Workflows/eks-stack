@@ -38,9 +38,9 @@ module "dpe-sandbox-spacelift-development" {
   vpc_name     = "dpe-sandbox"
 
   vpc_cidr_block       = "10.51.0.0/16"
-  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24", "10.51.3.0/24"]
-  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24", "10.51.6.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24"]
+  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -68,7 +68,7 @@ module "dpe-sandbox-spacelift-production" {
   vpc_name     = "dpe-k8"
 
   vpc_cidr_block       = "10.52.0.0/16"
-  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24", "10.52.3.0/24"]
-  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24", "10.52.6.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24"]
+  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24"]
+  azs                  = ["us-east-1a", "us-east-1b"]
 }
