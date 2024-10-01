@@ -183,7 +183,9 @@ clickhouse:
     #   port: 2181
 
   # -- Node selector for settings for clickhouse pod
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
   # -- Affinity settings for clickhouse pod
@@ -1131,7 +1133,9 @@ alertmanager:
   # -- Alertmanager priority class name
   priorityClassName: ""
   # -- Node selector for settings for Alertmanager pod
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   # -- Toleration labels for Alertmanager pod assignment
   tolerations: []
   # -- Affinity settings for Alertmanager pod
@@ -1709,7 +1713,9 @@ otelCollector:
   # -- OtelCollector priority class name
   priorityClassName: ""
   # -- Node selector for settings for OtelCollector pod
-  nodeSelector: {}
+  nodeSelector: {
+    spotinst.io/node-lifecycle: "od"
+  }
   # -- Toleration labels for OtelCollector pod assignment
   tolerations: []
   # -- Affinity settings for OtelCollector pod
@@ -1735,8 +1741,8 @@ otelCollector:
     # runAsUser: 1000
 
   autoscaling:
-    enabled: false
-    minReplicas: 1
+    enabled: true
+    minReplicas: 2
     maxReplicas: 11
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 50
