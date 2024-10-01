@@ -307,7 +307,7 @@ clickhouse:
   #
   layout:
     shardsCount: 1
-    replicasCount: 1
+    replicasCount: 2
 
   # -- ClickHouse settings configuration.
   # You can use this to override settings, for example `prometheus/port: 9363`
@@ -346,6 +346,7 @@ clickhouse:
     #   number: 2
     #   topologyKey: kubernetes.io/hostname
 
+  # TODO: Enable cold storage: https://sagebionetworks.jira.com/browse/IBCDPE-1094
   # Cold storage configuration
   coldStorage:
     # -- Whether to enable S3 cold storage
@@ -566,8 +567,6 @@ clickhouse:
 
 ## External clickhouse configuration
 ## This is required when clickhouse.enabled is false
-##
-# TODO: Implement external clickhouse configuration
 externalClickhouse:
   # -- Host of the external cluster.
   host:

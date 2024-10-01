@@ -108,7 +108,9 @@ images:
     pullPolicy: IfNotPresent
 
 # Select certain nodes for airflow pods.
-nodeSelector: {}
+nodeSelector: {
+  failure-domain.beta.kubernetes.io/zone: us-east-1a
+}
 affinity: {}
 tolerations: []
 topologySpreadConstraints: []

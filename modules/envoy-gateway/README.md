@@ -1,65 +1,63 @@
 # Purpose
-The purpose of this module is to deploy the `Signoz` helm chart <https://github.com/SigNoz/charts/tree/main/charts/signoz>.
-
-SigNoz is an open-source APM. It helps developers monitor their applications 
-& troubleshoot problems, an open-source alternative to DataDog, NewRelic, etc. Open 
-source Application Performance Monitoring (APM) & Observability tool.
+Create/handle ingress for the kubernetes cluster
 
 
-## This module is a work in progress
-This was hastly thrown together to get a tool available to ingest telemetry data in.
-A number of items are needed:
+# Integration with Auth0
+Auth0 handles provisioning JWT to authenticate with the envoy gateway.
 
-- Updating the clickhouse install to cluster mode, and potentially this operator: https://github.com/Altinity/clickhouse-operator
-- Setting up backups and data retention
-- Trim down the number of ports available in the service
-- Double check the entire `values.yaml` file
-- Set up accounts and access to the service decleratively
-
-## Accessing signoz
-
-### Pre-req
-This assumes that you have accessed the k8s cluster before using `k9s` or another tool.
-If you have not, read over this documentation:
-
-- <https://sagebionetworks.jira.com/wiki/spaces/DPE/pages/3389325317/Connecting+to+AWS+EKS+Kubernetes+K8s+cluster>
-- Description of port-forwarding via `k9s`: <https://github.com/Sage-Bionetworks-Workflows/eks-stack/blob/main/docs/workshop-hello-world.md#verifying-your-deployed-resources-on-the-kubernetes-cluster>
-
-### Connecting to signoz
-After signoz has been deployed to the k8s cluster you will need to port-forward to 2
-pods/services:
-
-- `signoz-frontend`
-- `signoz-otel-collector`
-
-The frontend is how you'll access all of the data contained within signoz. Once you
-port forward and access it via your web-browser you'll need to signup and login. 
-TODO: The steps on this are not fleshed out, this is going to be a manual step that the
-admin of the server will need to help you with.
+## Creating credential:
+`openssl genrsa -out test_key.pem 2048`
+`openssl rsa -in test_key.pem -outform PEM -pubout -out test_key.pem.pub`
 
 
-#### Sending data into signoz
-Once you find the `signoz-otel-collector` you'll need to start a port-forward session in
-order to pass data along to it from your local machine. Here are the settings you'll use
-for the port-forward:
 
-Windows/Linux:
+Creating gateway resources:
 ```
-Container Port: collector/otlp:4317,collector/otlp-http:4318
-Local Port:     4317,4318
-```
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: "bryan.fauble@sagebase.org"
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+    - http01:
+        gatewayHTTPRoute:
+          parentRefs:
+          - kind: Gateway
+            name: eg
+            namespace: envoy-gateway
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  gatewayClassName: eg
+  listeners:
+  - name: https
+    protocol: HTTPS
+    hostname: aff3f8141f88b4f958400fc7bab55329-385678462.us-east-1.elb.amazonaws.com
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - kind: Secret
+        name: eg-https
+  - name: http
+    protocol: HTTP
+    port: 80
 
-Mac:
 ```
-Container Port: collector::4317,collector::4318
-Local Port:     4317,4318
-```
-
-Some data will be present in those fields by default, delete was is there and copy the
-above data into it.
-
-### Application side
-Once you're connected via a port-forward session the next item is to make sure that the
-application you're sending data from is instrumented with open-telemetry. This is going
-to be application specific so instructions will need to live within the application
-you are using.

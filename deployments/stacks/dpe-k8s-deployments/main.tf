@@ -6,7 +6,7 @@ module "sage-aws-eks-autoscaler" {
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
-  single_az              = true
+  single_az              = false
   desired_capacity       = 3
 }
 
@@ -46,7 +46,7 @@ module "trivy-operator" {
 
 module "airflow" {
   # TODO: This is temporary
-  count = 0
+  count        = 0
   depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "spacelift.io/sagebionetworks/airflow/aws"
   version      = "0.4.0"
@@ -67,7 +67,7 @@ module "postgres-cloud-native-operator" {
 
 module "postgres-cloud-native-database" {
   # TODO: This is temporary
-  count = 0
+  count                = 0
   depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.5.0"
@@ -80,10 +80,10 @@ module "postgres-cloud-native-database" {
 
 
 module "signoz" {
-  depends_on           = [module.argo-cd]
+  depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source = "../../../modules/signoz"
+  source               = "../../../modules/signoz"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
@@ -92,10 +92,10 @@ module "signoz" {
 }
 
 module "envoy-gateway" {
-  depends_on           = [module.argo-cd]
+  depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source = "../../../modules/envoy-gateway"
+  source               = "../../../modules/envoy-gateway"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
@@ -104,10 +104,10 @@ module "envoy-gateway" {
 }
 
 module "cert-manager" {
-  depends_on           = [module.argo-cd]
+  depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source = "../../../modules/cert-manager"
+  source               = "../../../modules/cert-manager"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
@@ -115,27 +115,18 @@ module "cert-manager" {
   argo_deployment_name = "cert-manager"
 }
 
-module "dex-idp" {
-  depends_on           = [module.argo-cd]
+module "cluster-ingress" {
+  depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source = "../../../modules/dex-idp"
+  source               = "../../../modules/cluster-ingress"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
-  namespace            = "dex-idp"
-  argo_deployment_name = "dex-idp"
-}
+  namespace            = "envoy-gateway"
+  argo_deployment_name = "cluster-ingress"
 
-module "dex-idp-postgres-db" {
-  depends_on           = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
-  source = "../../../modules/postgres-cloud-native"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  deploy_pooler = false
-  namespace            = "dex-idp"
-  argo_deployment_name = "dex-idp-database"
+  # To determine more elegant ways to fill in these values
+  ssl_hostname        = "unknown-to-fill-in"
+  cluster_issuer_name = "selfsigned"
 }

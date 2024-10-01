@@ -3,9 +3,9 @@ import json
 syn = synapseclient.login()
 
 client_meta_data = {
-    'client_name': 'dpe-dev-k8s-cluster',
+    'client_name': '',
     'redirect_uris': [
-        'https://a9a60607095304dec9cd248ef7bd64ea-1681374179.us-east-1.elb.amazonaws.com/testing'
+        ''
     ],
     # 'client_uri': 'https://yourhost.com/index.html',
     # 'policy_uri': 'https://yourhost.com/policy',

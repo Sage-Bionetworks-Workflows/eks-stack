@@ -67,7 +67,7 @@ resource "kubernetes_secret" "connection-secret" {
 
   type = "kubernetes.io/basic-auth"
 
-
+  # TODO: Need to provide an updated connection is not using the pooler
   data = {
     "dbname"     = "application-database"
     "host"       = "${var.argo_deployment_name}-pooler-rw.${var.namespace}"
