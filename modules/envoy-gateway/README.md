@@ -1,17 +1,12 @@
 # Purpose
-Create/handle ingress for the kubernetes cluster
+Create/handle ingress (aka north/south traffic) for the kubernetes cluster. Using
+kubernetes resources we can define how to handle traffic.
 
+## Components
+The following show some example components for creating a GatewayClass/Gateway to
+handle ingress for the kubernetes cluster. This is set to use letsencrypt staging, but
+it is subject to change:
 
-# Integration with Auth0
-Auth0 handles provisioning JWT to authenticate with the envoy gateway.
-
-## Creating credential:
-`openssl genrsa -out test_key.pem 2048`
-`openssl rsa -in test_key.pem -outform PEM -pubout -out test_key.pem.pub`
-
-
-
-Creating gateway resources:
 ```
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
