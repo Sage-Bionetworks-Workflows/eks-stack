@@ -32,7 +32,10 @@ spec:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
       valueFiles:
-      - ./templates/values.yaml
+      - $values/modules/signoz/templates/values.yaml
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${var.git_revision}
+    ref: values
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
