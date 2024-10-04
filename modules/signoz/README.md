@@ -52,7 +52,7 @@ Container Port: collector::4317,collector::4318
 Local Port:     4317,4318
 ```
 
-Some data will be present in those fields by default, delete was is there and copy the
+Some data will be present in those fields by default, delete what is there and copy the
 above data into it.
 
 ### Application side
