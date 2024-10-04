@@ -27,6 +27,10 @@ spec:
     targetRevision: 0.50.0
     helm:
       releaseName: signoz
+      # Extra parameters to set (same as setting through values.yaml, but these take precedence)
+      parameters:
+      - name: "clickhouse.password"
+        value: ${random_password.clickhouse-admin-password.result}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
@@ -36,4 +40,23 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
 YAML
+}
+
+
+resource "random_password" "clickhouse-admin-password" {
+  length  = 32
+  special = false
+}
+
+resource "kubernetes_secret" "clickhouse-admin-password" {
+  metadata {
+    name      = "clickhouse-admin-password"
+    namespace = var.namespace
+  }
+
+  data = {
+    "password" = random_password.clickhouse-admin-password.result
+  }
+
+  depends_on = [kubernetes_namespace.signoz]
 }
