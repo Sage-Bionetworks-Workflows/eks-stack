@@ -8,3 +8,4 @@ spec:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
     name: minimum-tls
+    namespace: <replaced-by-kustomize>

@@ -33,6 +33,12 @@ spec:
           - op: replace
             path: /metadata/name
             value: ${var.cluster_issuer_name}
+      - target:
+          kind: GatewayClass
+        patch: |-
+          - op: replace
+            path: /spec/parametersRef/namespace
+            value: ${var.namespace}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
