@@ -130,6 +130,6 @@ module "cluster-ingress" {
 
   # To determine more elegant ways to fill in these values, for example, if we have
   # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname        = "unknown-to-fill-in"
+  ssl_hostname        = "a5dec82aabc5749ff8034e3a6167e08a-755132748.us-east-1.elb.amazonaws.com"
   cluster_issuer_name = "selfsigned"
 }
