@@ -4,4 +4,4 @@ resources:
 - gateway.yaml
 - cert-issuer.yaml
 - gateway-class.yaml
-- envoy-proxy.yaml
+- traffic-policy.yaml
