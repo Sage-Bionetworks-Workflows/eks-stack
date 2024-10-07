@@ -1,0 +1,8 @@
+# Holds configuration for the envoy gateway
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: minimum-tls
+spec:
+  backendTLS:
+    MinVersion: "1.3"
