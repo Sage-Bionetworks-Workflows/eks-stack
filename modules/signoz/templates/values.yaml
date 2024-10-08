@@ -308,7 +308,7 @@ clickhouse:
   #
   layout:
     shardsCount: 1
-    replicasCount: 1
+    replicasCount: 2
 
   # -- ClickHouse settings configuration.
   # You can use this to override settings, for example `prometheus/port: 9363`
