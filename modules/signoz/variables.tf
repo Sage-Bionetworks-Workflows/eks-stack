@@ -26,6 +26,7 @@ variable "namespace" {
   type        = string
 }
 
+
 variable "enable_otel_ingress" {
   description = "Enable OpenTelemetry ingress"
   type        = bool
