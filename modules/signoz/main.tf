@@ -31,6 +31,8 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
+        value: ${data.aws_secretsmanager_secret_version.smtp_password.secret_string}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'

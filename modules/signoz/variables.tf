@@ -25,3 +25,8 @@ variable "namespace" {
   description = "The namespace to deploy into"
   type        = string
 }
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}

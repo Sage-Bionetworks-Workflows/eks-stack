@@ -13,6 +13,15 @@ A number of items are needed:
 - Set up ingress to the cluster/collector to send data to: https://sagebionetworks.jira.com/browse/IBCDPE-1095
 - Set up accounts and access to the service decleratively
 
+## Setting up SMTP for alertmanager
+Alertmanager is an additional tool that is deployed to the kubernetes cluster that
+handles forwarding an alert out to 1 or more streams that will recieve the alert.
+The first stream setup is SMTP (Email) through gmail. In order to accomplish this
+the following tasks need to be completed:
+
+1) Create an [App Password](https://support.google.com/accounts/answer/185833?hl=en)
+2) In the account where this application is deployed create an AWS secretmanager secret named: `{cluster_name}/alertmanager_smtp_password` Example: `dpe-sandbox/alertmanager_smtp_password`
+
 ## Accessing signoz
 
 ### Pre-req

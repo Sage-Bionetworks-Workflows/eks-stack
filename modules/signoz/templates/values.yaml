@@ -990,7 +990,7 @@ frontend:
 
 # Default values for Alertmanager
 alertmanager:
-  enabled: false
+  enabled: true
   name: "alertmanager"
   replicaCount: 1
 
@@ -1036,8 +1036,13 @@ alertmanager:
     nodePort: null
 
   # -- Additional environments to set for Alertmanager
-  additionalEnvs: {}
-    # env_key: env_value
+  additionalEnvs:
+  # TODO: Create a service account to send emails
+    ALERTMANAGER_SMTP_FROM: bryan.fauble@sagebase.org
+    ALERTMANAGER_SMTP_HOST: smtp.gmail.com
+    ALERTMANAGER_SMTP_PORT: 465
+    ALERTMANAGER_SMTP_AUTH_USERNAME: bryan.fauble@sagebase.org
+    ALERTMANAGER_SMTP_AUTH_PASSWORD: <retrieved from aws secret manager>
 
   initContainers:
     init:
