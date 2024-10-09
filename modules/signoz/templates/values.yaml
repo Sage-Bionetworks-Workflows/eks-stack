@@ -990,7 +990,8 @@ frontend:
 
 # Default values for Alertmanager
 alertmanager:
-  enabled: true
+  # TODO: Enable when we have a google service account to use
+  enabled: false
   name: "alertmanager"
   replicaCount: 1
 
@@ -1037,11 +1038,10 @@ alertmanager:
 
   # -- Additional environments to set for Alertmanager
   additionalEnvs:
-  # TODO: Create a service account to send emails
-    ALERTMANAGER_SMTP_FROM: bryan.fauble@sagebase.org
+    ALERTMANAGER_SMTP_FROM: <Set during helm install>
     ALERTMANAGER_SMTP_HOST: smtp.gmail.com
     ALERTMANAGER_SMTP_PORT: "587"
-    ALERTMANAGER_SMTP_AUTH_USERNAME: bryan.fauble@sagebase.org
+    ALERTMANAGER_SMTP_AUTH_USERNAME: <Set during helm install>
     ALERTMANAGER_SMTP_AUTH_PASSWORD: <retrieved from aws secret manager>
 
   initContainers:
