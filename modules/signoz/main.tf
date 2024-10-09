@@ -31,6 +31,10 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
+        value: TO-FILL-OUT-IT-TICKET
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
+        value: TO-FILL-OUT-IT-TICKET
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
         value: ${data.aws_secretsmanager_secret_version.smtp_password.secret_string}
       valueFiles:
