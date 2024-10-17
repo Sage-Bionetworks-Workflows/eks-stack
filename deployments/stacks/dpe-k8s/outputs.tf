@@ -14,8 +14,8 @@ output "vpc_private_subnet_cidrs" {
   value = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
 
-output "private_subnet_ids" {
-  value = module.sage-aws-vpc.private_subnet_ids
+output "private_subnet_ids_eks_worker_nodes" {
+  value = module.sage-aws-vpc.private_subnet_ids_eks_worker_nodes
 }
 
 output "vpc_security_group_id" {

@@ -1,14 +1,16 @@
 locals {
   k8s_stack_environment_variables = {
-    aws_account_id                    = var.aws_account_id
-    region                            = var.region
-    pod_security_group_enforcing_mode = var.pod_security_group_enforcing_mode
-    cluster_name                      = var.cluster_name
-    vpc_name                          = var.vpc_name
-    vpc_cidr_block                    = var.vpc_cidr_block
-    public_subnet_cidrs               = var.public_subnet_cidrs
-    private_subnet_cidrs              = var.private_subnet_cidrs
-    azs                               = var.azs
+    aws_account_id                         = var.aws_account_id
+    region                                 = var.region
+    pod_security_group_enforcing_mode      = var.pod_security_group_enforcing_mode
+    cluster_name                           = var.cluster_name
+    vpc_name                               = var.vpc_name
+    vpc_cidr_block                         = var.vpc_cidr_block
+    public_subnet_cidrs                    = var.public_subnet_cidrs
+    private_subnet_cidrs_eks_control_plane = var.private_subnet_cidrs_eks_control_plane
+    private_subnet_cidrs_eks_worker_nodes  = var.private_subnet_cidrs_eks_worker_nodes
+    azs_eks_control_plane                  = var.azs_eks_control_plane
+    azs_eks_worker_nodes                   = var.azs_eks_worker_nodes
   }
 
   k8s_stack_deployments_variables = {
@@ -23,10 +25,10 @@ locals {
 
   # Variables to be passed from the k8s stack to the deployments stack
   k8s_stack_to_deployment_variables = {
-    vpc_id                 = "TF_VAR_vpc_id"
-    private_subnet_ids     = "TF_VAR_private_subnet_ids"
-    node_security_group_id = "TF_VAR_node_security_group_id"
-    pod_to_node_dns_sg_id  = "TF_VAR_pod_to_node_dns_sg_id"
+    vpc_id                              = "TF_VAR_vpc_id"
+    private_subnet_ids_eks_worker_nodes = "TF_VAR_private_subnet_ids_eks_worker_nodes"
+    node_security_group_id              = "TF_VAR_node_security_group_id"
+    pod_to_node_dns_sg_id               = "TF_VAR_pod_to_node_dns_sg_id"
   }
 }
 
