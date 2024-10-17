@@ -71,10 +71,10 @@ module "dpe-sandbox-spacelift-production" {
   vpc_name     = "dpe-k8"
 
   vpc_cidr_block                         = "10.52.0.0/20"
-  public_subnet_cidrs                    = ["10.52.1.0/24", "10.52.2.0/24"]
-  private_subnet_cidrs_eks_control_plane = ["10.52.4.0/24", "10.52.5.0/24"]
+  public_subnet_cidrs                    = ["10.52.0.0/24", "10.52.1.0/24"]
+  private_subnet_cidrs_eks_control_plane = ["10.52.2.0/24", "10.52.3.0/24"]
   azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
 
-  private_subnet_cidrs_eks_worker_nodes = ["10.52.6.0/22", "10.52.10.0/22", "10.52.14.0/22"]
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.4.0/22", "10.52.8.0/22", "10.52.12.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
