@@ -42,7 +42,7 @@ module "dpe-sandbox-spacelift-development" {
   private_subnet_cidrs_eks_control_plane = ["10.52.18.0/24", "10.52.19.0/24"]
   azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
 
-  private_subnet_cidrs_eks_worker_nodes = ["10.52.20.0/22", "10.52.24.0/22", "10.52.26.0/22"]
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.20.0/22", "10.52.24.0/22", "10.52.28.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
