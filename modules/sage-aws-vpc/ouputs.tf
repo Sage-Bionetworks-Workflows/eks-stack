@@ -22,6 +22,10 @@ output "vpc_public_subnet_cidrs" {
   value = var.public_subnet_cidrs
 }
 
+output "vpc_private_subnet_cidrs" {
+  value = concat(var.private_subnet_cidrs_eks_control_plane, var.private_subnet_cidrs_eks_worker_nodes)
+}
+
 output "private_subnet_ids_eks_control_plane" {
   value = slice(module.vpc.private_subnets, 0, length(var.private_subnet_cidrs_eks_control_plane))
 }
