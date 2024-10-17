@@ -104,9 +104,10 @@ module "eks" {
     }
   }
 
-  vpc_id                    = var.vpc_id
-  subnet_ids                = var.private_vpc_subnet_ids
-  control_plane_subnet_ids  = var.private_vpc_subnet_ids
+  vpc_id = var.vpc_id
+  # A list of subnet IDs where the nodes/node groups will be provisioned.
+  subnet_ids                = var.private_subnet_ids_eks_worker_nodes
+  control_plane_subnet_ids  = var.private_subnet_ids_eks_control_plane
   cluster_security_group_id = var.vpc_security_group_id
 
   iam_role_additional_policies = {

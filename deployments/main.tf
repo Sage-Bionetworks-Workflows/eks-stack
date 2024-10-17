@@ -37,10 +37,13 @@ module "dpe-sandbox-spacelift-development" {
   cluster_name = "dpe-k8-sandbox"
   vpc_name     = "dpe-sandbox"
 
-  vpc_cidr_block       = "10.51.0.0/16"
-  public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24"]
-  private_subnet_cidrs = ["10.51.4.0/24", "10.51.5.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b"]
+  vpc_cidr_block                         = "10.52.16.0/20"
+  public_subnet_cidrs                    = ["10.52.16.0/24", "10.52.17.0/24"]
+  private_subnet_cidrs_eks_control_plane = ["10.52.18.0/24", "10.52.19.0/24"]
+  azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
+
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.20.0/22", "10.52.24.0/22", "10.52.26.0/22"]
+  azs_eks_worker_nodes                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -67,8 +70,11 @@ module "dpe-sandbox-spacelift-production" {
   cluster_name = "dpe-k8"
   vpc_name     = "dpe-k8"
 
-  vpc_cidr_block       = "10.52.0.0/16"
-  public_subnet_cidrs  = ["10.52.1.0/24", "10.52.2.0/24"]
-  private_subnet_cidrs = ["10.52.4.0/24", "10.52.5.0/24"]
-  azs                  = ["us-east-1a", "us-east-1b"]
+  vpc_cidr_block                         = "10.52.0.0/20"
+  public_subnet_cidrs                    = ["10.52.1.0/24", "10.52.2.0/24"]
+  private_subnet_cidrs_eks_control_plane = ["10.52.4.0/24", "10.52.5.0/24"]
+  azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
+
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.6.0/22", "10.52.10.0/22", "10.52.14.0/22"]
+  azs_eks_worker_nodes                  = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
