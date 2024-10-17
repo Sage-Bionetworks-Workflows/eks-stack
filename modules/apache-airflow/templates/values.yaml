@@ -109,7 +109,7 @@ images:
 
 # Select certain nodes for airflow pods.
 nodeSelector: {
-  failure-domain.beta.kubernetes.io/zone: us-east-1a
+  topology.kubernetes.io/zone: us-east-1a
 }
 affinity: {}
 tolerations: []
