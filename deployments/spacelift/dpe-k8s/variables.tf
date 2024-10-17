@@ -118,12 +118,22 @@ variable "public_subnet_cidrs" {
   description = "Public Subnet CIDR values"
 }
 
-variable "private_subnet_cidrs" {
+variable "private_subnet_cidrs_eks_control_plane" {
   type        = list(string)
-  description = "Private Subnet CIDR values"
+  description = "Private Subnet CIDR values for the EKS control plane"
 }
 
-variable "azs" {
+variable "private_subnet_cidrs_eks_worker_nodes" {
   type        = list(string)
-  description = "Availability Zones"
+  description = "Private Subnet CIDR values for the EKS worker nodes"
+}
+
+variable "azs_eks_control_plane" {
+  type        = list(string)
+  description = "Availability Zones for the EKS control plane"
+}
+
+variable "azs_eks_worker_nodes" {
+  type        = list(string)
+  description = "Availability Zones for the EKS worker nodes"
 }
