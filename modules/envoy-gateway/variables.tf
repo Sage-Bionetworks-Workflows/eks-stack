@@ -25,8 +25,3 @@ variable "namespace" {
   description = "The namespace to deploy into"
   type        = string
 }
-
-variable "deploy_pooler" {
-  description = "Deploy the connection pooler"
-  type        = bool
-}
