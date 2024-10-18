@@ -31,5 +31,5 @@ output "private_subnet_ids_eks_control_plane" {
 }
 
 output "private_subnet_ids_eks_worker_nodes" {
-  value = slice(module.vpc.private_subnets, length(var.private_subnet_cidrs_eks_control_plane) - 1, length(var.private_subnet_cidrs_eks_worker_nodes) + 1)
+  value = slice(module.vpc.private_subnets, length(var.private_subnet_cidrs_eks_control_plane), length(module.vpc.private_subnets) + 1)
 }
