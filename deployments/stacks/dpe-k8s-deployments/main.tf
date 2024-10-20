@@ -85,6 +85,7 @@ module "signoz" {
   git_revision         = var.git_revision
   namespace            = "signoz"
   argo_deployment_name = "signoz"
+  cluster_name         = var.cluster_name
 }
 
 module "envoy-gateway" {

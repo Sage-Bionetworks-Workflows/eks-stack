@@ -990,6 +990,7 @@ frontend:
 
 # Default values for Alertmanager
 alertmanager:
+  # TODO: Enable when we have a google service account to use
   enabled: false
   name: "alertmanager"
   replicaCount: 1
@@ -1036,8 +1037,12 @@ alertmanager:
     nodePort: null
 
   # -- Additional environments to set for Alertmanager
-  additionalEnvs: {}
-    # env_key: env_value
+  additionalEnvs:
+    ALERTMANAGER_SMTP_FROM: <Set during helm install>
+    ALERTMANAGER_SMTP_HOST: smtp.gmail.com
+    ALERTMANAGER_SMTP_PORT: "587"
+    ALERTMANAGER_SMTP_AUTH_USERNAME: <Set during helm install>
+    ALERTMANAGER_SMTP_AUTH_PASSWORD: <retrieved from aws secret manager>
 
   initContainers:
     init:
