@@ -2,7 +2,7 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
-  name: allow-access-to-echo-server
+  name: allow-access-to-service
 spec:
   from:
   - group: gateway.networking.k8s.io

@@ -16,10 +16,16 @@ spec:
       matches:
         - path:
             type: PathPrefix
-            value: /telemetry
-      filters:
-      - type: URLRewrite
-        urlRewrite:
-          path:
-            type: ReplacePrefixMatch
-            replacePrefixMatch: /
+            value: /v1/traces
+        - path:
+            type: PathPrefix
+            value: /v1/metrics
+        - path:
+            type: PathPrefix
+            value: /v1/logs
+      # filters:
+      # - type: URLRewrite
+      #   urlRewrite:
+      #     path:
+      #       type: ReplacePrefixMatch
+      #       replacePrefixMatch: /
