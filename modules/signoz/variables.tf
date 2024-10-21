@@ -26,10 +26,6 @@ variable "namespace" {
   type        = string
 }
 
-variable "cluster_name" {
-  description = "EKS cluster name"
-  type        = string
-}
 
 variable "enable_otel_ingress" {
   description = "Enable OpenTelemetry ingress"
