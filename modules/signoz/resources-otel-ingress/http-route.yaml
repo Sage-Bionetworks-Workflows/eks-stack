@@ -15,14 +15,24 @@ spec:
           weight: 1
       matches:
         - path:
-            type: PathPrefix
+            type: Exact
             value: /v1/traces
         - path:
-            type: PathPrefix
+            type: Exact
             value: /v1/metrics
         - path:
-            type: PathPrefix
+            type: Exact
             value: /v1/logs
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: signoz-otel-collector
+          port: 8888
+          weight: 1
+      matches:
+        - path:
+            type: Exact
+            value: /metrics
       # filters:
       # - type: URLRewrite
       #   urlRewrite:
