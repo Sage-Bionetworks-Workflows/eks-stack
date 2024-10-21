@@ -86,11 +86,10 @@ module "signoz" {
   namespace            = "signoz"
   argo_deployment_name = "signoz"
   cluster_name         = var.cluster_name
+  enable_otel_ingress  = true
 }
 
 module "envoy-gateway" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -103,8 +102,6 @@ module "envoy-gateway" {
 }
 
 module "cert-manager" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -117,8 +114,6 @@ module "cert-manager" {
 }
 
 module "cluster-ingress" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"

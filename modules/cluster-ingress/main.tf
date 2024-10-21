@@ -14,7 +14,7 @@ spec:
   %{endif}
   sources:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ${var.git_revision}
+    targetRevision: ibcdpe-1095-cluster-ingress-signoz
     path: modules/cluster-ingress/resources
     kustomize:
       patches:
@@ -33,6 +33,15 @@ spec:
           - op: replace
             path: /metadata/name
             value: ${var.cluster_issuer_name}
+      - target:
+          kind: SecurityPolicy
+        patch: |-
+          - op: replace
+            path: /spec/jwt/providers
+            value:
+              - name: auth0
+                remoteJWKS:
+                  uri: https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}

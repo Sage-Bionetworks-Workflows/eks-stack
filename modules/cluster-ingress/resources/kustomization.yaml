@@ -5,3 +5,4 @@ resources:
 - cert-issuer.yaml
 - gateway-class.yaml
 - traffic-policy.yaml
+- security-policy.yaml
