@@ -11,4 +11,4 @@ spec:
   to:
   - group: ""
     kind: Service
-    name: backend
+    name: signoz-otel-collector
