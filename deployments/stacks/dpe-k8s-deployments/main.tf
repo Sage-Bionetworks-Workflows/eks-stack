@@ -2,7 +2,7 @@ module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
   cluster_name           = var.cluster_name
-  private_vpc_subnet_ids = var.private_subnet_ids
+  private_vpc_subnet_ids = var.private_subnet_ids_eks_worker_nodes
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
@@ -16,7 +16,7 @@ module "sage-aws-eks-addons" {
   cluster_name       = var.cluster_name
   aws_account_id     = var.aws_account_id
   vpc_id             = var.vpc_id
-  private_subnet_ids = var.private_subnet_ids
+  private_subnet_ids = var.private_subnet_ids_eks_worker_nodes
 }
 
 module "argo-cd" {

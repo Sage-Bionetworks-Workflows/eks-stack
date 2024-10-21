@@ -5,8 +5,8 @@ module "vpc" {
   name = var.vpc_name
   cidr = var.vpc_cidr_block
 
-  azs             = var.azs
-  private_subnets = var.private_subnet_cidrs
+  azs             = concat(var.azs_eks_control_plane, var.azs_eks_worker_nodes)
+  private_subnets = concat(var.private_subnet_cidrs_eks_control_plane, var.private_subnet_cidrs_eks_worker_nodes)
   public_subnets  = var.public_subnet_cidrs
 
 
