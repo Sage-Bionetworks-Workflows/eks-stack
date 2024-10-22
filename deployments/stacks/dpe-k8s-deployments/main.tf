@@ -172,7 +172,7 @@ resource "auth0_resource_server_scopes" "k8s-cluster-scopes" {
   resource_server_identifier = auth0_resource_server.k8s-cluster.identifier
 
   scopes {
-    value       = "write:telemetry"
+    name       = "write:telemetry"
     description = "Grants write access to telemetry data"
   }
 
