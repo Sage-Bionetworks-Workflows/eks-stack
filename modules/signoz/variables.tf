@@ -31,3 +31,8 @@ variable "enable_otel_ingress" {
   type        = bool
   default     = false
 }
+
+variable "gateway_namespace" {
+  description = "The namespace of the gateway"
+  type        = string
+}
