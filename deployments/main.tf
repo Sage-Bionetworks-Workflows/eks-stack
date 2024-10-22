@@ -43,7 +43,7 @@ module "dpe-sandbox-spacelift-development" {
   private_subnet_cidrs_eks_control_plane = ["10.52.18.0/28", "10.52.18.16/28"]
   azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
 
-  private_subnet_cidrs_eks_worker_nodes = ["10.52.20.0/22", "10.52.24.0/22", "10.52.28.0/22"]
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.28.0/22", "10.52.24.0/22", "10.52.20.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1c", "us-east-1b", "us-east-1a"]
 }
 
@@ -77,6 +77,6 @@ module "dpe-sandbox-spacelift-production" {
   private_subnet_cidrs_eks_control_plane = ["10.52.2.0/28", "10.52.2.16/28"]
   azs_eks_control_plane                  = ["us-east-1a", "us-east-1b"]
 
-  private_subnet_cidrs_eks_worker_nodes = ["10.52.4.0/22", "10.52.8.0/22", "10.52.12.0/22"]
+  private_subnet_cidrs_eks_worker_nodes = ["10.52.12.0/22", "10.52.8.0/22", "10.52.4.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1c", "us-east-1b", "us-east-1a"]
 }
