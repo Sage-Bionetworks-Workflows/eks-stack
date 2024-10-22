@@ -86,7 +86,7 @@ module "signoz" {
   namespace            = "signoz"
   argo_deployment_name = "signoz"
   cluster_name         = var.cluster_name
-  enable_otel_ingress  = var.enable_otel_ingress
+  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
   gateway_namespace    = "envoy-gateway"
 }
 
@@ -109,6 +109,7 @@ module "envoy-gateway" {
 }
 
 module "cert-manager" {
+  count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
