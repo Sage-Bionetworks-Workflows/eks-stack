@@ -8,5 +8,4 @@ spec:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
     name: custom-proxy-config
-    # namespace: envoy-gateway
-# Not a namespace-scoped resource
+    namespace: envoy-gateway
