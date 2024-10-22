@@ -1,11 +1,11 @@
 import {
   to = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
-  id = "arn:aws:ec2:us-east-1:631692904429:subnet/subnet-09b517a93fa33d7b2"
+  id = "subnet-09b517a93fa33d7b2"
 }
 
 import {
   to = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
-  id = "arn:aws:ec2:us-east-1:631692904429:subnet/subnet-0163cf7a8b19e5850"
+  id = "subnet-0163cf7a8b19e5850"
 }
 
 import {
