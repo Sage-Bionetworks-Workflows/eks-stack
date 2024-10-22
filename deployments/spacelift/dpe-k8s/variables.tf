@@ -137,3 +137,23 @@ variable "azs_eks_worker_nodes" {
   type        = list(string)
   description = "Availability Zones for the EKS worker nodes"
 }
+
+variable "enable_cluster_ingress" {
+  description = "Enable cluster ingress"
+  type        = bool
+}
+
+variable "enable_otel_ingress" {
+  description = "Enable OpenTelemetry ingress, used to send traces to SigNoz"
+  type        = bool
+}
+
+variable "ssl_hostname" {
+  description = "The hostname to use for the SSL certificate"
+  type        = string
+}
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}

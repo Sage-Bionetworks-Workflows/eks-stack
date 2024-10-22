@@ -17,8 +17,14 @@ spec:
       matches:
         - path:
             type: Exact
-            # value: /telemetry/v1/traces
-            value: /v1/traces
+            value: /telemetry/v1/traces
+            # value: /v1/traces
+          filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplaceFullPath
+                replacePrefixMatch: /v1/traces
         - path:
             type: Exact
             value: /telemetry/v1/metrics
