@@ -121,13 +121,10 @@ module "cert-manager" {
   argo_deployment_name = "cert-manager"
 }
 
-resource "auth0_client" "oidc_client" {
-  name                = "MyCoolApp"
-  description         = "My Cool App Client Created Through Terraform"
-  app_type            = "regular_web"
-  callbacks           = ["http://localhost:8080/callback"]
-  allowed_logout_urls = ["http://localhost:8080"]
-  oidc_conformant     = true
+resource "auth0_client" "bfauble-oauth2-client" {
+  name                = "bfauble - signoz - testing"
+  description         = "App for testing signoz"
+  app_type            = "non_interactive"
 
   jwt_configuration {
     alg = "RS256"
