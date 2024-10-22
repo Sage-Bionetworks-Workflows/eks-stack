@@ -71,7 +71,7 @@ spec:
             value:
               - name: auth0
                 remoteJWKS:
-                  uri: https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json
+                  uri: ${var.auth0_jwks_uri}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
