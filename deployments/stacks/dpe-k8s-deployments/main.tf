@@ -122,7 +122,6 @@ module "cert-manager" {
 }
 
 resource "auth0_resource_server" "k8s-cluster" {
-  count      = var.enable_cluster_ingress ? 1 : 0
   name        = "${var.cluster_name}-api"
   identifier  = var.cluster_name
   signing_alg = "RS256"
@@ -137,14 +136,12 @@ resource "auth0_resource_server" "k8s-cluster" {
 }
 
 resource "auth0_client_grant" "access-to-k8s-cluster" {
-  count      = var.enable_cluster_ingress ? 1 : 0
   client_id = auth0_client.bfauble-oauth2-client.id
   audience  = auth0_resource_server.my_resource_server.identifier
   scopes    = ["write:telemetry"]
 }
 
 resource "auth0_client" "bfauble-oauth2-client" {
-  count      = var.enable_cluster_ingress ? 1 : 0
   name                = "bfauble - signoz - testing"
   description         = "App for testing signoz"
   app_type            = "non_interactive"
