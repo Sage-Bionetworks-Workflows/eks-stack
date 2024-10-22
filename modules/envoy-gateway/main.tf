@@ -31,6 +31,17 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ibcdpe-1095-cluster-ingress-signoz
     ref: values
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ibcdpe-1095-cluster-ingress-signoz
+    path: modules/envoy-gateway/resources
+    kustomize:
+      patches:
+      - target:
+          kind: ClusterIssuer
+        patch: |-
+          - op: replace
+            path: /metadata/name
+            value: ${var.cluster_issuer_name}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
