@@ -8,6 +8,15 @@ import {
   id = "subnet-0163cf7a8b19e5850"
 }
 
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
+  id = "subnet-09b517a93fa33d7b2/rtb-021bd3b745c8aaf1b"
+}
+
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
+  id = "subnet-0163cf7a8b19e5850/rtb-021bd3b745c8aaf1b"
+}
 
 module "sage-aws-vpc" {
   # source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
