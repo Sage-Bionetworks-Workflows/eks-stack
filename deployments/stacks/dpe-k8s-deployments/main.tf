@@ -99,6 +99,7 @@ module "envoy-gateway" {
   git_revision         = var.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
+  cluster_issuer_name  = "selfsigned"
 }
 
 module "cert-manager" {
