@@ -57,10 +57,8 @@ spec:
 
 ```
 
-## Merged gateways deployment
 
-> By default, each Gateway has its own dedicated set of Envoy Proxy and its configurations. However, for some deployments, it may be more convenient to merge listeners across multiple Gateways and deploy a single Envoy Proxy fleet.
 
-> This can help to efficiently utilize the infra resources in the cluster and manage them in a centralized manner, or have a single IP address for all of the listeners. Setting the mergeGateways field in the EnvoyProxy resource linked to GatewayClass will result in merging all Gateway listeners under one GatewayClass resource.
 
-- <https://gateway.envoyproxy.io/docs/tasks/operations/deployment-mode/#merged-gateways-deployment>
+
+

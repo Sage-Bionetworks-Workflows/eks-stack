@@ -3,4 +3,4 @@ kind: EnvoyProxy
 metadata:
   name: custom-proxy-config
 spec:
-  mergeGateways: true
+  mergeGateways: false

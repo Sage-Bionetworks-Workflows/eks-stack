@@ -1,0 +1,14 @@
+# Description of what this is: https://gateway-api.sigs.k8s.io/api-types/referencegrant/
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-access-to-service
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: envoy-gateway
+  to:
+  - group: ""
+    kind: Service
+    name: signoz-otel-collector
