@@ -29,10 +29,10 @@ spec:
       valueFiles:
       - $values/modules/envoy-gateway/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1095-cluster-ingress-signoz
+    targetRevision: ${var.git_revision}
     ref: values
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1095-cluster-ingress-signoz
+    targetRevision: ${var.git_revision}
     path: modules/envoy-gateway/resources
     kustomize:
       patches:
