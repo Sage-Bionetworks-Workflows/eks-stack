@@ -161,6 +161,7 @@ resource "auth0_client" "bfauble-oauth2-client" {
   name                = "bfauble - signoz - testing"
   description         = "App for testing signoz"
   app_type            = "non_interactive"
+  allowed_clients = ["testing-k8s"]
 
   jwt_configuration {
     alg = "RS256"
