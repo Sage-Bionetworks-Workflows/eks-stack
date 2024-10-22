@@ -121,6 +121,16 @@ module "cert-manager" {
   argo_deployment_name = "cert-manager"
 }
 
+resource "auth0_resource_server" "my_resource_server" {
+  name        = "sandbox-k8s-api"
+  identifier  = var.cluster_name
+  signing_alg = "RS256"
+
+  allow_offline_access                            = false
+  token_lifetime                                  = 86400
+  skip_consent_for_verifiable_first_party_clients = true
+}
+
 resource "auth0_client" "bfauble-oauth2-client" {
   name                = "bfauble - signoz - testing"
   description         = "App for testing signoz"
