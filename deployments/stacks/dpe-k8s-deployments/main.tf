@@ -129,15 +129,22 @@ resource "auth0_resource_server" "k8s-cluster" {
   allow_offline_access                            = false
   token_lifetime                                  = 86400
   skip_consent_for_verifiable_first_party_clients = true
+
+}
+
+resource "auth0_resource_server_scopes" "k8s-cluster-scopes" {
+  resource_server_identifier = auth0_resource_server.k8s-cluster.identifier
+
   scopes {
     value       = "write:telemetry"
     description = "Grants write access to telemetry data"
   }
+
 }
 
 resource "auth0_client_grant" "access-to-k8s-cluster" {
   client_id = auth0_client.bfauble-oauth2-client.id
-  audience  = auth0_resource_server.my_resource_server.identifier
+  audience  = auth0_resource_server.k8s-cluster.identifier
   scopes    = ["write:telemetry"]
 }
 
