@@ -114,7 +114,7 @@ module "cert-manager" {
   argo_deployment_name = "cert-manager"
 }
 
-module "cluster-ingress" {
+module "cluster-ingress-signoz" {
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -122,8 +122,8 @@ module "cluster-ingress" {
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = var.git_revision
-  namespace            = "envoy-gateway"
-  argo_deployment_name = "cluster-ingress"
+  namespace            = "signoz"
+  argo_deployment_name = "signoz-cluster-ingress"
 
   # To determine more elegant ways to fill in these values, for example, if we have
   # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
