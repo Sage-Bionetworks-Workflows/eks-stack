@@ -48,6 +48,30 @@ spec:
           - op: replace
             path: /spec/parametersRef/namespace
             value: ${var.namespace}
+      - target:
+          kind: Gateway
+        patch: |-
+          - op: replace
+            path: /metadata/annotations/cert-manager.io~1cluster-issuer
+            value: ${var.cluster_issuer_name}
+          - op: replace
+            path: /spec/listeners/0/hostname
+            value: ${var.ssl_hostname}
+      - target:
+          kind: ClusterIssuer
+        patch: |-
+          - op: replace
+            path: /metadata/name
+            value: ${var.cluster_issuer_name}
+      - target:
+          kind: SecurityPolicy
+        patch: |-
+          - op: replace
+            path: /spec/jwt/providers
+            value:
+              - name: auth0
+                remoteJWKS:
+                  uri: https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}

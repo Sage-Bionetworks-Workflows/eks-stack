@@ -53,7 +53,7 @@ spec:
         patch: |-
           - op: replace
             path: /spec/from/0/namespace
-            value: ${var.gateway-namespace}
+            value: ${var.gateway_namespace}
       - target:
           kind: HTTPRoute
         patch: |-
