@@ -1,3 +1,23 @@
+moved {
+  from = module.cert-manager.kubectl_manifest.cert-manager
+  to = module.cert-manager[0].kubectl_manifest.cert-manager
+}
+
+moved {
+  from = module.cert-manager.kubernetes_namespace.cert-manager
+  to = module.cert-manager[0].kubernetes_namespace.cert-manager
+}
+
+moved {
+  from = module.envoy-gateway.kubectl_manifest.envoy-gateway
+  to = module.envoy-gateway[0].kubectl_manifest.envoy-gateway
+}
+
+moved {
+  from = module.envoy-gateway.kubernetes_namespace.envoy-gateway
+  to = module.envoy-gateway[0].kubernetes_namespace.envoy-gateway
+}
+
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
