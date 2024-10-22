@@ -1,20 +1,21 @@
-moved {
-  from = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
-  to   = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
-}
-moved {
-  from = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
-  to   = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
+  id = "arn:aws:ec2:us-east-1:631692904429:subnet/subnet-09b517a93fa33d7b2"
 }
 
-moved {
-  from = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
-  to   = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
+  id = "arn:aws:ec2:us-east-1:631692904429:subnet/subnet-0163cf7a8b19e5850"
 }
 
-moved {
-  from = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
-  to   = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
+  id = "rtbassoc-0174b84ac82ec5ad9"
+}
+
+import {
+  to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
+  id = "rtbassoc-0187c934dfe1f3e57"
 }
 
 module "sage-aws-vpc" {
