@@ -23,3 +23,4 @@ metadata:
   name: selfsigned
 spec:
   selfSigned: {}
+# Not a namespace-scoped resource
