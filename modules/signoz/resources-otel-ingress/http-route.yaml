@@ -14,26 +14,13 @@ spec:
           namespace: signoz
           port: 4318
           weight: 1
+      filters:
+      - type: URLRewrite
+        urlRewrite:
+          path:
+            type: ReplacePrefixMatch
+            replacePrefixMatch: /v1
       matches:
         - path:
-            type: Exact
-            value: /telemetry/v1/traces
-            # value: /v1/traces
-          filters:
-          - type: URLRewrite
-            urlRewrite:
-              path:
-                type: ReplaceFullPath
-                replacePrefixMatch: /v1/traces
-        - path:
-            type: Exact
-            value: /telemetry/v1/metrics
-        - path:
-            type: Exact
-            value: /telemetry/v1/logs
-      # filters:
-      #   - type: URLRewrite
-      #     urlRewrite:
-      #       path:
-      #         type: ReplacePrefixMatch
-      #         replacePrefixMatch: /
+            type: PathPrefix
+            value: /telemetry/v1
