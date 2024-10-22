@@ -88,6 +88,23 @@ module "signoz" {
   enable_otel_ingress  = true
 }
 
+module "cluster-ingress-signoz" {
+  depends_on = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/cluster-ingress"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "signoz"
+  argo_deployment_name = "signoz-cluster-ingress"
+
+  # To determine more elegant ways to fill in these values, for example, if we have
+  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
+  ssl_hostname        = "a32fb47f968e042fb938ac236202042a-1918252937.us-east-1.elb.amazonaws.com"
+  cluster_issuer_name = "selfsigned"
+}
+
 module "envoy-gateway" {
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
@@ -111,21 +128,4 @@ module "cert-manager" {
   git_revision         = var.git_revision
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
-}
-
-module "cluster-ingress-signoz" {
-  depends_on = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
-  source               = "../../../modules/cluster-ingress"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  namespace            = "signoz"
-  argo_deployment_name = "signoz-cluster-ingress"
-
-  # To determine more elegant ways to fill in these values, for example, if we have
-  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname        = "a7772aa1ca0094110b714909388f040e-1258926247.us-east-1.elb.amazonaws.com"
-  cluster_issuer_name = "selfsigned"
 }
