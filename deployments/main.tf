@@ -45,6 +45,11 @@ module "dpe-sandbox-spacelift-development" {
 
   private_subnet_cidrs_eks_worker_nodes = ["10.52.28.0/22", "10.52.24.0/22", "10.52.20.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1c", "us-east-1b", "us-east-1a"]
+
+  enable_cluster_ingress = true
+  enable_otel_ingress    = true
+  ssl_hostname           = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
+  auth0_jwks_uri         = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -79,4 +84,9 @@ module "dpe-sandbox-spacelift-production" {
 
   private_subnet_cidrs_eks_worker_nodes = ["10.52.12.0/22", "10.52.8.0/22", "10.52.4.0/22"]
   azs_eks_worker_nodes                  = ["us-east-1c", "us-east-1b", "us-east-1a"]
+
+  enable_cluster_ingress = false
+  enable_otel_ingress    = false
+  ssl_hostname           = ""
+  auth0_jwks_uri         = ""
 }

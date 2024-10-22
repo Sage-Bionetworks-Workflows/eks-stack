@@ -22,7 +22,49 @@ the following tasks need to be completed:
 1) Create an [App Password](https://support.google.com/accounts/answer/185833?hl=en)
 2) In the account where this application is deployed create an AWS secretmanager secret named: `{cluster_name}/alertmanager_smtp_password` Example: `dpe-sandbox/alertmanager_smtp_password`
 
-## Accessing signoz
+
+## Accessing signoz (Internet)
+
+#### Sending data into signoz (From internet)
+When SigNoz is deployed with the terraform variables `enable_otel_ingress` and `gateway_namespace`
+set, an HTTP route to the openTelemetry collector will be exposed out to the internet.
+Using the defined URL a user may send telemetry data via HTTPS and a Bearer auth token
+into the cluster. To accomplish this the sender of the data will need to configure
+the sending application with the appropriate HTTPS url and authentication (Different 
+depending on the sender). The paths to send data to will be as follows:
+
+- `/telemetry/v1/traces`
+- `/telemetry/v1/metrics`
+- `/telemetry/v1/logs`
+
+
+Un-authenticated requests will be rejected with an HTTP 401.
+
+#### Authentication
+Authentication for data being sent into the cluster will occur via a JWT Bearer token.
+As the sender, you will be required to ensure that every request sent has an unexpired
+and valid token. The exact mechanism for attaching this authentication will change
+depending on how data is forwarded into the cluster. For example if using an
+open-telemetry collector you may use this oauth2 extension:
+<https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/oauth2clientauthextension>.
+
+##### Authentication from Python application directly
+If you are sending data directly from an application into the cluster you may specify
+an environment variable with headers to attach to the requests by setting:
+`OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer ...`
+
+> [!NOTE]
+> This method is only a temporary solution as Bearer tokens will expire and need to be rotated.
+
+Future work would be to determine if we may be able to implement the usage of 
+<https://pypi.org/project/requests-oauth2client/> to handle automatic token fetching
+using a client ID/Client secret using Auth0 (Or related IDP).
+
+
+## Accessing signoz (Port-forwarding)
+This guide is for those that have access to the kubernetes cluster and are using 
+port-fowarding to access the data in the cluster.
+>>>>>>> 8e3cbbe (url rewrite, moving configuration up, adding to readme)
 
 ### Pre-req
 This assumes that you have accessed the k8s cluster before using `k9s` or another tool.
