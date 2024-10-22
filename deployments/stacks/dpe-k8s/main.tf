@@ -1,3 +1,22 @@
+moved {
+  from = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
+  to   = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
+}
+moved {
+  from = module.sage-aws-vpc.module.vpc.aws_subnet.private[2]
+  to   = module.sage-aws-vpc.module.vpc.aws_subnet.private[4]
+}
+
+moved {
+  from = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
+  to   = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
+}
+
+moved {
+  from = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
+  to   = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
+}
+
 module "sage-aws-vpc" {
   # source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
   # version  = "0.4.2"
