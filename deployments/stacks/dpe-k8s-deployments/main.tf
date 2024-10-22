@@ -123,7 +123,25 @@ module "cluster-ingress" {
 
   # To determine more elegant ways to fill in these values, for example, if we have
   # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname = "a19f6741979b84da680e1ca1665887c9-516297634.us-east-1.elb.amazonaws.com"
+  ssl_hostname   = var.ssl_hostname
+  auth0_jwks_uri = var.auth0_jwks_uri
+}
+
+module "cluster-ingress" {
+  depends_on = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/cluster-ingress"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "envoy-gateway"
+  argo_deployment_name = "envoy-gateway-cluster-ingress"
+
+  # To determine more elegant ways to fill in these values, for example, if we have
+  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
+  ssl_hostname   = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
+  auth0_jwks_uri = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
 }
 
 module "cert-manager" {
