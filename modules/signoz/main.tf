@@ -34,11 +34,11 @@ spec:
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1095-cluster-ingress-signoz
+    targetRevision: ${var.git_revision}
     ref: values
   %{if var.enable_otel_ingress}
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
-    targetRevision: ibcdpe-1095-cluster-ingress-signoz
+    targetRevision: ${var.git_revision}
     path: modules/signoz/resources-otel-ingress
     kustomize:
       patches:

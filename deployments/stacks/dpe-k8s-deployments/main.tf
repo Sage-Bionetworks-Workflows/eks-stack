@@ -103,8 +103,7 @@ module "envoy-gateway" {
   cluster_issuer_name  = "selfsigned"
   # To determine more elegant ways to fill in these values, for example, if we have
   # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname = var.ssl_hostname
-  # auth0_jwks_uri = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
+  ssl_hostname   = var.ssl_hostname
   auth0_jwks_uri = var.auth0_jwks_uri
 }
 
