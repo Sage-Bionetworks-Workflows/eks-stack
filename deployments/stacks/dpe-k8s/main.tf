@@ -10,12 +10,12 @@ import {
 
 import {
   to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[4]
-  id = "rtbassoc-0174b84ac82ec5ad9"
+  id = "subnet-0163cf7a8b19e5850/rtbassoc-0174b84ac82ec5ad9"
 }
 
 import {
   to = module.sage-aws-vpc.module.vpc.aws_route_table_association.private[2]
-  id = "rtbassoc-0187c934dfe1f3e57"
+  id = "subnet-0163cf7a8b19e5850/rtbassoc-0187c934dfe1f3e57"
 }
 
 module "sage-aws-vpc" {
