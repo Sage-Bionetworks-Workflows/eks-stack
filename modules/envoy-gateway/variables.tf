@@ -35,3 +35,8 @@ variable "ssl_hostname" {
   description = "The hostname to use for the SSL certificate"
   type        = string
 }
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}
