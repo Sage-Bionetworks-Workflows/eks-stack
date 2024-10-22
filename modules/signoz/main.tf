@@ -40,6 +40,20 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ibcdpe-1095-cluster-ingress-signoz
     path: modules/signoz/resources-otel-ingress
+    kustomize:
+      patches:
+      - target:
+          kind: ReferenceGrant
+        patch: |-
+          - op: replace
+            path: /spec/from/0/namespace
+            value: ${var.gateway-namespace}
+      - target:
+          kind: HTTPRoute
+        patch: |-
+          - op: replace
+            path: /spec/rules/0/backendRefs/0/namespace
+            value: ${var.namespace}
   %{endif}
   destination:
     server: 'https://kubernetes.default.svc'

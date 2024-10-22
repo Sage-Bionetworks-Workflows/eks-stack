@@ -11,6 +11,7 @@ spec:
         - group: ""
           kind: Service
           name: signoz-otel-collector
+          namespace: signoz
           port: 4318
           weight: 1
       matches:
