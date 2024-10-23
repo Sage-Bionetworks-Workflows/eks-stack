@@ -1,7 +1,7 @@
 # Used to create the Auth0 resources for the DPE stack
-resource "auth0_resource_server" "k8s-cluster" {
-  name        = "${var.cluster_name}-api"
-  identifier  = var.cluster_name
+resource "auth0_resource_server" "k8s-cluster-telemetry" {
+  name        = "${var.cluster_name}-telemetry"
+  identifier  = "${var.cluster_name}-telemetry"
   signing_alg = "RS256"
 
   allow_offline_access                            = false
@@ -13,16 +13,6 @@ resource "auth0_resource_server" "k8s-cluster" {
   # lifecycle {
   #   ignore_changes = [scopes]
   # }
-}
-
-resource "auth0_resource_server_scopes" "k8s-cluster-scopes" {
-  resource_server_identifier = auth0_resource_server.k8s-cluster.identifier
-
-  scopes {
-    name       = "write:telemetry"
-    description = "Grants write access to telemetry data"
-  }
-
 }
 
 resource "auth0_client" "oauth2_clients" {
@@ -41,6 +31,6 @@ resource "auth0_client_grant" "access_to_k8s_cluster" {
   for_each = { for client in var.auth0_clients : client.name => client }
 
   client_id = auth0_client.oauth2_clients[each.key].id
-  audience  = auth0_resource_server.k8s-cluster.identifier
-  scopes    = each.value.scopes
+  audience  = auth0_resource_server.k8s-cluster-telemetry.identifier
+  scopes    = []
 }

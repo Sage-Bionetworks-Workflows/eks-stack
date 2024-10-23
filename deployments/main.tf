@@ -33,13 +33,12 @@ module "dpe-sandbox-spacelift-development" {
 
   auth0_stack_name         = "DPE DEV Auth0"
   auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain = "dev-57n3awu5je6q653y.us.auth0.com"
+  auth0_domain             = "dev-57n3awu5je6q653y.us.auth0.com"
   auth0_clients = [
     {
       name        = "bfauble - signoz - testing"
       description = "App for testing signoz"
       app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
     },
   ]
 
@@ -84,8 +83,8 @@ module "dpe-sandbox-spacelift-production" {
 
   auth0_stack_name         = "DPE Auth0"
   auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain = ""
-  auth0_clients = []
+  auth0_domain             = ""
+  auth0_clients            = []
 
   aws_account_id = "766808016710"
   region         = "us-east-1"

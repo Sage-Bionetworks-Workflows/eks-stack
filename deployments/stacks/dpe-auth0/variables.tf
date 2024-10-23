@@ -19,11 +19,10 @@ variable "auth0_client_secret" {
 }
 
 variable "auth0_clients" {
-  description = "List of clients to create in Auth0 and grant the scopes defined"
+  description = "List of clients to create in Auth0."
   type = list(object({
     name        = string
     description = string
     app_type    = string
-    scopes      = list(string)
   }))
 }
