@@ -157,3 +157,28 @@ variable "auth0_jwks_uri" {
   description = "The JWKS URI for Auth0"
   type        = string
 }
+
+variable "auth0_stack_name" {
+  description = "Name of the auth0 stack"
+  type        = string
+}
+
+variable "auth0_stack_project_root" {
+  description = "Project root of the auth0 stack"
+  type        = string
+}
+
+variable "auth0_domain" {
+  description = "Auth0 domain"
+  type        = string
+}
+
+variable "auth0_clients" {
+  description = "List of clients to create in Auth0 and grant the scopes defined"
+  type = list(object({
+    name        = string
+    description = string
+    app_type    = string
+    scopes      = list(string)
+  }))
+}

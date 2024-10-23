@@ -31,6 +31,17 @@ module "dpe-sandbox-spacelift-development" {
   k8s_stack_deployments_name         = "DPE DEV Kubernetes Deployments"
   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
+  auth0_stack_name         = "DPE DEV Auth0"
+  auth0_stack_project_root = "deployments/stacks/dpe-auth0"
+  auth0_domain = "dev-57n3awu5je6q653y.us.auth0.com"
+  auth0_clients = [
+    {
+      name        = "bfauble - signoz - testing"
+      description = "App for testing signoz"
+      app_type    = "non_interactive"
+    },
+  ]
+
   aws_account_id = "631692904429"
   region         = "us-east-1"
 
@@ -69,6 +80,11 @@ module "dpe-sandbox-spacelift-production" {
 
   k8s_stack_deployments_name         = "DPE Kubernetes Deployments"
   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
+
+  auth0_stack_name         = "DPE Auth0"
+  auth0_stack_project_root = "deployments/stacks/dpe-auth0"
+  auth0_domain = ""
+  auth0_clients = []
 
   aws_account_id = "766808016710"
   region         = "us-east-1"
