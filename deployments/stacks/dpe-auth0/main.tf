@@ -7,9 +7,12 @@ resource "auth0_resource_server" "k8s-cluster" {
   allow_offline_access                            = false
   token_lifetime                                  = 86400
   skip_consent_for_verifiable_first_party_clients = true
-  lifecycle {
-    ignore_changes = [scopes]
-  }
+  # https://registry.terraform.io/providers/auth0/auth0/latest/docs/resources/resource_server_scopes
+  # Says to use the following, however it errors out:
+  # This object has no argument, nested block, or exported attribute named "scopes".
+  # lifecycle {
+  #   ignore_changes = [scopes]
+  # }
 }
 
 resource "auth0_resource_server_scopes" "k8s-cluster-scopes" {
