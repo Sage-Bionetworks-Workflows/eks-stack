@@ -174,7 +174,7 @@ variable "auth0_domain" {
 }
 
 variable "auth0_clients" {
-  description = "List of clients to create in Auth0.
+  description = "List of clients to create in Auth0."
   type = list(object({
     name        = string
     description = string
