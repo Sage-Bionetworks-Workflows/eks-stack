@@ -1,0 +1,27 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: require-scopes-for-authorization
+  namespace: envoy-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: eg
+  jwt:
+    providers:
+    - name: auth0
+      remoteJWKS:
+        uri: https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json
+      issuer: https://dev-57n3awu5je6q653y.us.auth0.com
+      audiences:
+      - dpe-k8-sandbox
+  authorization:
+    defaultAction: Deny
+    rules:
+    - name: Require scopes to write telemetry data
+      action: Allow
+      principal:
+        provider: auth0
+        scopes:
+        - write:telemetry
