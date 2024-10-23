@@ -246,7 +246,7 @@ resource "spacelift_stack_destructor" "auth0-stack-destructor" {
 resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
   for_each = local.auth0_stack_variables
 
-  stack_id   = spacelift_stack.k8s-stack-deployments.id
+  stack_id   = spacelift_stack.auth0.id
   name       = "TF_VAR_${each.key}"
   value      = try(tostring(each.value), jsonencode(each.value))
   write_only = false
