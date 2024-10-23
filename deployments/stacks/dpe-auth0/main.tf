@@ -42,5 +42,5 @@ resource "auth0_client_grant" "access_to_k8s_cluster" {
 
   client_id = auth0_client.oauth2_clients[each.key].id
   audience  = auth0_resource_server.k8s-cluster.identifier
-  scopes    = [each.value.scopes]
+  scopes    = each.value.scopes
 }
