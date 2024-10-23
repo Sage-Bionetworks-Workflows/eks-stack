@@ -39,7 +39,6 @@ module "dpe-sandbox-spacelift-development" {
       name        = "bfauble - automation"
       description = "App for testing signoz"
       app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
     },
     {
       name        = "schematic - Github Actions"
