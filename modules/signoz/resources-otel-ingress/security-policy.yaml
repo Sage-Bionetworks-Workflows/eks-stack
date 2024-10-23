@@ -22,8 +22,6 @@ spec:
     - name: Require scopes to write telemetry data
       action: Allow
       principal:
-        clientCIDRs:
-        - 0.0.0.0/0
         provider: auth0
         scopes:
         - write:telemetry
