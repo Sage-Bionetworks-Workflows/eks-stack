@@ -36,8 +36,18 @@ module "dpe-sandbox-spacelift-development" {
   auth0_domain             = "dev-57n3awu5je6q653y.us.auth0.com"
   auth0_clients = [
     {
-      name        = "bfauble - signoz - testing"
+      name        = "bfauble - automation"
       description = "App for testing signoz"
+      app_type    = "non_interactive"
+    },
+    {
+      name        = "schematic - Github Actions"
+      description = "Client for Github Actions to export telemetry data"
+      app_type    = "non_interactive"
+    },
+    {
+      name        = "schematic - Dev"
+      description = "Client for schematic deployed to AWS DEV to export telemetry data"
       app_type    = "non_interactive"
     },
   ]
