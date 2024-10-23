@@ -36,3 +36,8 @@ variable "gateway_namespace" {
   description = "The namespace of the gateway"
   type        = string
 }
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}

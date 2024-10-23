@@ -87,6 +87,7 @@ module "signoz" {
   argo_deployment_name = "signoz"
   enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
   gateway_namespace    = "envoy-gateway"
+  cluster_name         = var.cluster_name
 }
 
 module "envoy-gateway" {

@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - http-route.yaml
 - reference-grant-signoz.yaml
+- security-policy.yaml

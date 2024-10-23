@@ -52,8 +52,25 @@ spec:
           kind: HTTPRoute
         patch: |-
           - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
             path: /spec/rules/0/backendRefs/0/namespace
             value: ${var.namespace}
+      - target:
+          kind: SecurityPolicy
+        patch: |-
+          - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
+            path: /spec/jwt/providers
+            value:
+              - name: auth0
+                remoteJWKS:
+                  uri: ${var.auth0_jwks_uri}
+                audiences:
+                  - ${var.cluster_name}-telemetry
   %{endif}
   destination:
     server: 'https://kubernetes.default.svc'
