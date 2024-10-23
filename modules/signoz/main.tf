@@ -60,15 +60,6 @@ spec:
           - op: replace
             path: /spec/rules/0/backendRefs/0/namespace
             value: ${var.namespace}
-          - op: replace
-            path: /metadata/namespace
-            value: ${var.gateway_namespace}
-      - target:
-          kind: SecurityPolicy
-        patch: |-
-          - op: replace
-            path: /metadata/namespace
-            value: ${var.gateway_namespace}
   %{endif}
   destination:
     server: 'https://kubernetes.default.svc'
