@@ -89,6 +89,7 @@ module "signoz" {
   enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
   gateway_namespace    = "envoy-gateway"
   cluster_name         = var.cluster_name
+  auth0_jwks_uri       = var.auth0_jwks_uri
 }
 
 module "envoy-gateway" {

@@ -46,3 +46,8 @@ variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
 }
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}
