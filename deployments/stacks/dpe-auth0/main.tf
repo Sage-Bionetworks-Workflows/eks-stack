@@ -37,7 +37,7 @@ resource "auth0_client" "oauth2_clients" {
 resource "auth0_client_grant" "access_to_k8s_cluster" {
   for_each = { for client in var.auth0_clients : client.name => client }
 
-  client_id = auth0_client.bfauble_oauth2_client[each.key].id
+  client_id = auth0_client.oauth2_clients[each.key].id
   audience  = auth0_resource_server.k8s_cluster.identifier
   scopes    = [each.value.scopes]
 }
