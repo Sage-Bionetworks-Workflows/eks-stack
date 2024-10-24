@@ -25,3 +25,24 @@ variable "namespace" {
   description = "The namespace to deploy into"
   type        = string
 }
+
+variable "enable_otel_ingress" {
+  description = "Enable OpenTelemetry ingress"
+  type        = bool
+  default     = false
+}
+
+variable "gateway_namespace" {
+  description = "The namespace of the gateway"
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}

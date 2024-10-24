@@ -14,13 +14,23 @@ locals {
   }
 
   k8s_stack_deployments_variables = {
-    spotinst_account = var.spotinst_account
-    vpc_cidr_block   = var.vpc_cidr_block
-    cluster_name     = var.cluster_name
-    auto_deploy      = var.auto_deploy
-    auto_prune       = var.auto_prune
-    git_revision     = var.git_branch
-    aws_account_id   = var.aws_account_id
+    spotinst_account       = var.spotinst_account
+    vpc_cidr_block         = var.vpc_cidr_block
+    cluster_name           = var.cluster_name
+    auto_deploy            = var.auto_deploy
+    auto_prune             = var.auto_prune
+    git_revision           = var.git_branch
+    aws_account_id         = var.aws_account_id
+    enable_cluster_ingress = var.enable_cluster_ingress
+    enable_otel_ingress    = var.enable_otel_ingress
+    ssl_hostname           = var.ssl_hostname
+    auth0_jwks_uri         = var.auth0_jwks_uri
+  }
+
+  auth0_stack_variables = {
+    cluster_name         = var.cluster_name
+    auth0_domain         = var.auth0_domain
+    auth0_clients        = var.auth0_clients
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
@@ -200,4 +210,44 @@ resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration
   stack_id       = spacelift_stack.k8s-stack-deployments.id
   read           = true
   write          = true
+}
+
+
+resource "spacelift_stack" "auth0" {
+  github_enterprise {
+    namespace = "Sage-Bionetworks-Workflows"
+    id        = "sage-bionetworks-workflows-gh"
+  }
+
+  depends_on = [
+    spacelift_space.dpe-space
+  ]
+
+  administrative          = false
+  autodeploy              = var.auto_deploy
+  branch                  = var.git_branch
+  description             = "Stack used to create and manage Auth0 for authentication"
+  name                    = var.auth0_stack_name
+  project_root            = var.auth0_stack_project_root
+  repository              = "eks-stack"
+  terraform_version       = var.opentofu_version
+  terraform_workflow_tool = "OPEN_TOFU"
+  space_id                = spacelift_space.dpe-space.id
+  additional_project_globs = [
+    "deployments/"
+  ]
+}
+
+resource "spacelift_stack_destructor" "auth0-stack-destructor" {
+  stack_id = spacelift_stack.auth0.id
+}
+
+
+resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
+  for_each = local.auth0_stack_variables
+
+  stack_id   = spacelift_stack.auth0.id
+  name       = "TF_VAR_${each.key}"
+  value      = try(tostring(each.value), jsonencode(each.value))
+  write_only = false
 }

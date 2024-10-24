@@ -65,3 +65,38 @@ variable "aws_account_id" {
   description = "AWS account ID"
   type        = string
 }
+
+variable "enable_cluster_ingress" {
+  description = "Enable cluster ingress"
+  type        = bool
+}
+
+variable "enable_otel_ingress" {
+  description = "Enable OpenTelemetry ingress, used to send traces to SigNoz"
+  type        = bool
+}
+
+variable "ssl_hostname" {
+  description = "The hostname to use for the SSL certificate"
+  type        = string
+}
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}
+
+variable "auth0_domain" {
+  description = "Auth0 domain"
+  type        = string
+}
+
+variable "auth0_client_id" {
+  description = "Auth0 client ID"
+  type        = string
+}
+
+variable "auth0_client_secret" {
+  description = "Auth0 client secret"
+  type        = string
+}

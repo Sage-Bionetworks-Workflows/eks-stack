@@ -36,6 +36,42 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
+  %{if var.enable_otel_ingress}
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${var.git_revision}
+    path: modules/signoz/resources-otel-ingress
+    kustomize:
+      patches:
+      - target:
+          kind: ReferenceGrant
+        patch: |-
+          - op: replace
+            path: /spec/from/0/namespace
+            value: ${var.gateway_namespace}
+      - target:
+          kind: HTTPRoute
+        patch: |-
+          - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
+            path: /spec/rules/0/backendRefs/0/namespace
+            value: ${var.namespace}
+      - target:
+          kind: SecurityPolicy
+        patch: |-
+          - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
+            path: /spec/jwt/providers
+            value:
+              - name: auth0
+                remoteJWKS:
+                  uri: ${var.auth0_jwks_uri}
+                audiences:
+                  - ${var.cluster_name}-telemetry
+  %{endif}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
