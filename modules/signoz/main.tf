@@ -51,7 +51,7 @@ spec:
       - name: "alertmanager.enabledb"
         value: ${var.smtp_from}
       - name: "alertmanager.enabledc"
-        value: ${var.var.smtp_password != ""}
+        value: ${var.smtp_password != ""}
       %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
