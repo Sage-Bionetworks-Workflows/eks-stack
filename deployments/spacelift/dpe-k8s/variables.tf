@@ -181,3 +181,13 @@ variable "auth0_clients" {
     app_type    = string
   }))
 }
+
+variable "ses_email_identities" {
+  type        = list(string)
+  description = "List of email identities to be added to SES"
+}
+
+variable "ses_email_domains" {
+  type        = list(string)
+  description = "List of email domains to be added to SES"
+}

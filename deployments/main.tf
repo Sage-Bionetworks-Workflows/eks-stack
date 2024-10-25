@@ -71,6 +71,9 @@ module "dpe-sandbox-spacelift-development" {
   enable_otel_ingress    = true
   ssl_hostname           = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
   auth0_jwks_uri         = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
+  
+  ses_email_identities = ["aws-dpe-dev@sagebase.org", "bryan.fauble@sagebase.org"]
+  ses_email_domains    = ["sagebase.org"]
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -115,4 +118,7 @@ module "dpe-sandbox-spacelift-production" {
   enable_otel_ingress    = false
   ssl_hostname           = ""
   auth0_jwks_uri         = ""
+
+  ses_email_identities = []
+  ses_email_domains    = []
 }

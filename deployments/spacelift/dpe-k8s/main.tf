@@ -11,6 +11,8 @@ locals {
     private_subnet_cidrs_eks_worker_nodes  = var.private_subnet_cidrs_eks_worker_nodes
     azs_eks_control_plane                  = var.azs_eks_control_plane
     azs_eks_worker_nodes                   = var.azs_eks_worker_nodes
+    ses_email_identities                   = var.ses_email_identities
+    ses_email_domains                      = var.ses_email_domains
   }
 
   k8s_stack_deployments_variables = {
