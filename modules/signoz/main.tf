@@ -2,18 +2,6 @@ locals {
   alertmanager_enabled = var.smtp_from != "" && var.smtp_user != "" && var.smtp_password != ""
 }
 
-output "has_smtp_from_filled_in" {
-  value = var.smtp_from != ""
-}
-
-output "has_smtp_user_filled_in" {
-  value = var.smtp_user != ""
-}
-
-output "has_smtp_password_filled_in" {
-  value = var.smtp_password != ""
-}
-
 resource "kubernetes_namespace" "signoz" {
   metadata {
     name = var.namespace
