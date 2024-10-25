@@ -36,7 +36,7 @@ spec:
         value: ${random_password.clickhouse-admin-password.result}
       %{if local.alertmanager_enabled}
       - name: "alertmanager.enabled"
-        value: true
+        value: "true"
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
         value: ${var.smtp_from}
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
@@ -45,7 +45,7 @@ spec:
         value: ${var.smtp_password}
       %{else}
       - name: "alertmanager.enabled"
-        value: false
+        value: "false"
       %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
