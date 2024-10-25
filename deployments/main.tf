@@ -74,6 +74,7 @@ module "dpe-sandbox-spacelift-development" {
   
   ses_email_identities = ["aws-dpe-dev@sagebase.org", "bryan.fauble@sagebase.org"]
   ses_email_domains    = ["sagebase.org"]
+  # Defines the email address that will be used as the sender of the email alerts
   smtp_from            = "aws-dpe-dev@sagebase.org"
 }
 
