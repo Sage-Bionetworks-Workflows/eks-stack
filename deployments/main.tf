@@ -72,7 +72,7 @@ module "dpe-sandbox-spacelift-development" {
   ssl_hostname           = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
   auth0_jwks_uri         = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
   
-  ses_email_identities = ["aws-dpe-dev@sagebase.org", "bryan.fauble@sagebase.org"]
+  ses_email_identities = ["aws-dpe-dev@sagebase.org"]
   ses_email_domains    = ["sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from            = "aws-dpe-dev@sagebase.org"
