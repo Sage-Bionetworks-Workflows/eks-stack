@@ -31,12 +31,19 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
+      %{if var.smtp_from != "" and var.smtp_username != "" and var.smtp_password != ""}
+      - name: "alertmanager.enabled"
+        value: true
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
-        value: TO-FILL-OUT-IT-TICKET
+        value: ${var.smtp_from}
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
-        value: TO-FILL-OUT-IT-TICKET
+        value: ${var.smtp_username}
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
-        value: ${data.aws_secretsmanager_secret_version.smtp_password.secret_string}
+        value: ${var.smtp_password}
+      %{else}
+      - name: "alertmanager.enabled"
+        value: false
+      %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'

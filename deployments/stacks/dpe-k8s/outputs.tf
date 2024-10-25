@@ -37,3 +37,12 @@ output "region" {
 output "cluster_name" {
   value = module.sage-aws-eks.cluster_name
 }
+
+output "smtp_username" {
+  value = module.sage-aws-ses.smtp_username
+}
+
+output "smtp_password" {
+  sensitive = true
+  value     = module.sage-aws-ses.smtp_password
+}

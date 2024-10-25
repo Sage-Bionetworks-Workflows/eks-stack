@@ -89,6 +89,9 @@ module "signoz" {
   gateway_namespace    = "envoy-gateway"
   cluster_name         = var.cluster_name
   auth0_jwks_uri       = var.auth0_jwks_uri
+  smtp_password        = var.smtp_password
+  smtp_user            = var.smtp_user
+  smtp_from            = var.smtp_from
 }
 
 module "envoy-gateway" {

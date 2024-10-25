@@ -27,6 +27,9 @@ locals {
     enable_otel_ingress    = var.enable_otel_ingress
     ssl_hostname           = var.ssl_hostname
     auth0_jwks_uri         = var.auth0_jwks_uri
+    smtp_from              = var.smtp_from
+    smtp_password          = var.smtp_password
+    smtp_user              = var.smtp_user
   }
 
   auth0_stack_variables = {
@@ -41,6 +44,8 @@ locals {
     private_subnet_ids_eks_worker_nodes = "TF_VAR_private_subnet_ids_eks_worker_nodes"
     node_security_group_id              = "TF_VAR_node_security_group_id"
     pod_to_node_dns_sg_id               = "TF_VAR_pod_to_node_dns_sg_id"
+    smtp_username                       = "TF_VAR_smtp_username"
+    smtp_password                       = "TF_VAR_smtp_password"
   }
 }
 

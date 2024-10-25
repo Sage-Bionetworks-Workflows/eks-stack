@@ -191,3 +191,22 @@ variable "ses_email_domains" {
   type        = list(string)
   description = "List of email domains to be added to SES"
 }
+
+
+variable "smtp_user" {
+  description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_password" {
+  description = "The SMTP password. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_from" {
+  description = "The SMTP from address. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}

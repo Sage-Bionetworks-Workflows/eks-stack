@@ -74,6 +74,7 @@ module "dpe-sandbox-spacelift-development" {
   
   ses_email_identities = ["aws-dpe-dev@sagebase.org", "bryan.fauble@sagebase.org"]
   ses_email_domains    = ["sagebase.org"]
+  smtp_from            = "aws-dpe-dev@sagebase.org"
 }
 
 module "dpe-sandbox-spacelift-production" {

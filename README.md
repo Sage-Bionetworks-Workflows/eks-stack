@@ -283,10 +283,25 @@ This document describes the abbreviated process below:
 				"iam:*PolicyVersion",
 				"iam:*OpenIDConnectProvider",
 				"iam:*InstanceProfile",
-				"iam:ListPolicyVersions"
+				"iam:ListPolicyVersions",
+				"iam:ListGroupsForUser",
+                "iam:ListAttachedUserPolicies"
 			],
 			"Resource": "*"
-		}
+		},
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateUser",
+                "iam:AttachUserPolicy",
+                "iam:ListPolicies",
+                "iam:TagUser",
+                "iam:GetUser",
+                "iam:DeleteUser",
+                "iam:CreateAccessKey"
+            ],
+            "Resource": "arn:aws:iam::{{AWS ACCOUNT ID}}:user/smtp_user"
+        }
 	]
 }
 ```

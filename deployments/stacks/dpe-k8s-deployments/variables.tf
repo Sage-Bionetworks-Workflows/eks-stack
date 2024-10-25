@@ -100,3 +100,21 @@ variable "auth0_client_secret" {
   description = "Auth0 client secret"
   type        = string
 }
+
+variable "smtp_user" {
+  description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_password" {
+  description = "The SMTP password. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_from" {
+  description = "The SMTP from address. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
