@@ -44,7 +44,7 @@ locals {
     private_subnet_ids_eks_worker_nodes = "TF_VAR_private_subnet_ids_eks_worker_nodes"
     node_security_group_id              = "TF_VAR_node_security_group_id"
     pod_to_node_dns_sg_id               = "TF_VAR_pod_to_node_dns_sg_id"
-    smtp_username                       = "TF_VAR_smtp_username"
+    smtp_user                           = "TF_VAR_smtp_user"
     smtp_password                       = "TF_VAR_smtp_password"
   }
 }

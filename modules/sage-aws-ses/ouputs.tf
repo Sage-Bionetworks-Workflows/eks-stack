@@ -1,5 +1,5 @@
 
-output "smtp_username" {
+output "smtp_user" {
   value = aws_iam_access_key.smtp_user.id
 }
 

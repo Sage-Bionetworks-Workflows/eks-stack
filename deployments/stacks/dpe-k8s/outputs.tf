@@ -38,8 +38,8 @@ output "cluster_name" {
   value = module.sage-aws-eks.cluster_name
 }
 
-output "smtp_username" {
-  value = module.sage-aws-ses.smtp_username
+output "smtp_user" {
+  value = module.sage-aws-ses.smtp_user
 }
 
 output "smtp_password" {
