@@ -10,8 +10,9 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
 │   └── policies: Rego policies that can be attached to 0..* spacelift stacks
 ├── dev: Development/sandbox environment
 │   ├── spacelift: Terraform scripts to manage spacelift resources
-│   │   └── dpe-sandbox: Spacelift specific resources to manage the CI/CD pipeline
+│   │   └── dpe-k8s/dpe-sandbox: Spacelift specific resources to manage the CI/CD pipeline
 │   └── stacks: The deployable cloud resources
+│       ├── dpe-auth0: Stack used to provision and setup auth0 IDP (Identity Provider) settings
 │       ├── dpe-sandbox-k8s: K8s + supporting AWS resources
 │       └── dpe-sandbox-k8s-deployments: Resources deployed inside of a K8s cluster
 └── modules: Templatized collections of terraform resources that are used in a stack
@@ -19,15 +20,22 @@ This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spac
     │   └── templates: Resources used during deployment of airflow
     ├── argo-cd: K8s deployment for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
     │   └── templates: Resources used during deployment of this helm chart
+    ├── cert-manager: Handles provisioning TLS certificates for the cluster
+    ├── envoy-gateway: API Gateway for the cluster securing and providing secure traffic into the cluster
+    ├── postgres-cloud-native: Used to provision a postgres instance
+    ├── postgres-cloud-native-operator: Operator that manages the lifecycle of postgres instances on the cluster
+    ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
+    ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
+    ├── sage-aws-eks: Sage specific EKS cluster for AWS
+    ├── sage-aws-eks-addons: Sets up additional resources that need to be installed post creation of the EKS cluster
+    ├── sage-aws-k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
+    ├── sage-aws-ses: AWS SES (Simple email service) setup
+    ├── sage-aws-vpc: Sage specific VPC for AWS
+    ├── signoz: SigNoz provides APM, logs, traces, metrics, exceptions, & alerts in a single tool
     ├── trivy-operator: K8s deployment for trivy, along with a few supporting charts for security scanning
     │   └── templates: Resources used during deployment of these helm charts
     ├── victoria-metrics: K8s deployment for victoria metrics, a promethus like tool for cluster metric collection
     │   └── templates: Resources used during deployment of these helm charts
-    ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
-    ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
-    ├── sage-aws-eks: Sage specific EKS cluster for AWS
-    ├── sage-aws-k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
-    └── sage-aws-vpc: Sage specific VPC for AWS
 ```
 
 This root `main.tf` contains all the "Things" that are going to be deployed. 
