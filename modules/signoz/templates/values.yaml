@@ -1039,7 +1039,9 @@ alertmanager:
   additionalEnvs:
     ALERTMANAGER_SMTP_FROM: <Set during helm install>
     ALERTMANAGER_SMTP_HOST: email-smtp.us-east-1.amazonaws.com
-    ALERTMANAGER_SMTP_PORT: "465"
+    # 587 is the STARTTLS port for SMTP
+    # https://docs.aws.amazon.com/ses/latest/dg/smtp-connect.html#smtp-connect-starttls
+    ALERTMANAGER_SMTP_PORT: "587"
     ALERTMANAGER_SMTP_AUTH_USERNAME: <Set during helm install>
     ALERTMANAGER_SMTP_AUTH_PASSWORD: <Set during helm install>
 
