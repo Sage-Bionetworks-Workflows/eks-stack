@@ -1,5 +1,5 @@
 locals {
-  alertmanager_enabled = var.smtp_from != "" && var.smtp_username != "" && var.smtp_password != ""
+  alertmanager_enabled = var.smtp_from != "" && var.smtp_user != "" && var.smtp_password != ""
 }
 
 resource "kubernetes_namespace" "signoz" {
@@ -40,7 +40,7 @@ spec:
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
         value: ${var.smtp_from}
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
-        value: ${var.smtp_username}
+        value: ${var.smtp_user}
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
         value: ${var.smtp_password}
       %{else}
