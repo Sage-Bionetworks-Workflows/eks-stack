@@ -1041,7 +1041,7 @@ alertmanager:
     ALERTMANAGER_SMTP_HOST: email-smtp.us-east-1.amazonaws.com
     ALERTMANAGER_SMTP_PORT: "465"
     ALERTMANAGER_SMTP_AUTH_USERNAME: <Set during helm install>
-    ALERTMANAGER_SMTP_AUTH_PASSWORD: <retrieved from aws secret manager>
+    ALERTMANAGER_SMTP_AUTH_PASSWORD: <Set during helm install>
 
   initContainers:
     init:
