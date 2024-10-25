@@ -44,12 +44,12 @@ import {
 
 import {
   to = module.sage-aws-ses.aws_ses_email_identity.identities[1]
-  id = "bryan.fauble@sagebase.org",
+  id = "bryan.fauble@sagebase.org"
 }
 
 import {
   to = module.sage-aws-ses.aws_ses_domain_identity.identities[0]
-  id = "sagebase.org",
+  id = "sagebase.org"
 }
 
 module "sage-aws-ses" {
