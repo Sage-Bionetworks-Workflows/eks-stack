@@ -37,20 +37,20 @@ module "sage-aws-eks" {
   private_subnet_ids_eks_worker_nodes  = module.sage-aws-vpc.private_subnet_ids_eks_worker_nodes
 }
 
-import {
-  to = module.sage-aws-ses.aws_ses_email_identity.identities[0]
-  id = "aws-dpe-dev@sagebase.org"
-}
+# import {
+#   to = module.sage-aws-ses.aws_ses_email_identity.identities[0]
+#   id = "aws-dpe-dev@sagebase.org"
+# }
 
-import {
-  to = module.sage-aws-ses.aws_ses_email_identity.identities[1]
-  id = "bryan.fauble@sagebase.org"
-}
+# import {
+#   to = module.sage-aws-ses.aws_ses_email_identity.identities[1]
+#   id = "bryan.fauble@sagebase.org"
+# }
 
-import {
-  to = module.sage-aws-ses.aws_ses_domain_identity.identities[0]
-  id = "sagebase.org"
-}
+# import {
+#   to = module.sage-aws-ses.aws_ses_domain_identity.identities[0]
+#   id = "sagebase.org"
+# }
 
 module "sage-aws-ses" {
   source = "../../../modules/sage-aws-ses"
