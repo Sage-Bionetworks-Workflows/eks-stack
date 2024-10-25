@@ -1,3 +1,6 @@
+locals {
+  alertmanager_enabled = var.smtp_from != "" && var.smtp_username != "" && var.smtp_password != ""
+}
 
 resource "kubernetes_namespace" "signoz" {
   metadata {
@@ -31,7 +34,7 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
-      %{if var.smtp_from != "" and var.smtp_username != "" and var.smtp_password != ""}
+      %{if local.alertmanager_enabled}
       - name: "alertmanager.enabled"
         value: true
       - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
