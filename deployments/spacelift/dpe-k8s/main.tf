@@ -28,8 +28,6 @@ locals {
     ssl_hostname           = var.ssl_hostname
     auth0_jwks_uri         = var.auth0_jwks_uri
     smtp_from              = var.smtp_from
-    smtp_password          = var.smtp_password
-    smtp_user              = var.smtp_user
   }
 
   auth0_stack_variables = {

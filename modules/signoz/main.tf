@@ -46,12 +46,6 @@ spec:
       %{else}
       - name: "alertmanager.enabled"
         value: false
-      - name: "alertmanager.enableda"
-        value: ${var.smtp_user}
-      - name: "alertmanager.enabledb"
-        value: ${var.smtp_from}
-      - name: "alertmanager.enabledc"
-        value: ${var.smtp_password != ""}
       %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
