@@ -70,7 +70,7 @@ defaultAirflowRepository: ghcr.io/sage-bionetworks-workflows/orca-recipes
 
 # TODO: Update this with out airflow repo/tag
 # Default airflow tag to deploy
-defaultAirflowTag: "development-0.0.2"
+defaultAirflowTag: "airflow-2.9.3-v1.0.0"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
