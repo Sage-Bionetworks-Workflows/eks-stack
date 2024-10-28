@@ -64,18 +64,15 @@ containerLifecycleHooks: {}
 # Used for mount paths
 airflowHome: /opt/airflow
 
-# TODO: Update this with out airflow repo/tag
 # Default airflow repository -- overridden by all the specific images below
 defaultAirflowRepository: ghcr.io/sage-bionetworks-workflows/orca-recipes
 
-# TODO: Update this with out airflow repo/tag
 # Default airflow tag to deploy
 defaultAirflowTag: "airflow-2.9.3-v1.0.0"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
 
-# TODO: Update this with out airflow repo/tag
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
 airflowVersion: "2.9.3"
 
