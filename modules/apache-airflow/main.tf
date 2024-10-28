@@ -66,7 +66,7 @@ spec:
   sources:
   - repoURL: 'https://airflow.apache.org'
     chart: airflow
-    targetRevision: 1.11.0
+    targetRevision: 1.15.0
     helm:
       releaseName: airflow
       valueFiles:
