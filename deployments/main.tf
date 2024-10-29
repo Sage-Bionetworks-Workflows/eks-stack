@@ -70,7 +70,7 @@ module "dpe-sandbox-spacelift-development" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
-  auth0_jwks_uri         = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
+  auth0_jwks_uri         = "https://dev-sage-dpe.us.auth0.com/.well-known/jwks.json"
 }
 
 module "dpe-sandbox-spacelift-production" {
