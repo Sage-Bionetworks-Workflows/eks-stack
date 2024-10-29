@@ -19,3 +19,18 @@ access the management API.
 
 By setting the above environment variables and running the stack everything should be
 setup according to the stack resources requested.
+
+## Handing out credentials created by this process
+This stack is creating a number of clients for various automated processes to 
+authenticate themselves when sending data to the DPE kubernetes cluster. After the
+stack has ran the handout of these credentials should occur over LastPass:
+
+1) Create a new item in LastPass and set a useful name such as "Client/Secret to export telemetry data (DEV)"
+2) Retrieve the "Client ID" and "Client Secret" from the "Application" in the Auth0 UI
+3) Share the item in LastPass to the users requesting the credentials
+
+Once the user has the requested credentials they will need to make sure that all
+requests sent to the DPE kubernetes cluster contain a Bearer token in the 
+"Authorization" header of the HTTP request. The following document describes the process
+that an application would follow to exchange the "Client ID" and "Client Secret" for
+the access token: <https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow>.
