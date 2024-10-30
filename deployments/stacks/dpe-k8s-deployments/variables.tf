@@ -91,16 +91,6 @@ variable "auth0_domain" {
   type        = string
 }
 
-variable "auth0_client_id" {
-  description = "Auth0 client ID"
-  type        = string
-}
-
-variable "auth0_client_secret" {
-  description = "Auth0 client secret"
-  type        = string
-}
-
 variable "smtp_user" {
   description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
   type        = string

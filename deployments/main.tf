@@ -33,7 +33,7 @@ module "dpe-sandbox-spacelift-development" {
 
   auth0_stack_name         = "DPE DEV Auth0"
   auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain             = "dev-57n3awu5je6q653y.us.auth0.com"
+  auth0_domain             = "dev-sage-dpe.us.auth0.com"
   auth0_clients = [
     {
       name        = "bfauble - automation"
@@ -70,7 +70,8 @@ module "dpe-sandbox-spacelift-development" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "a09a38cc5a8d6497ea69c6bf6318701b-1974793757.us-east-1.elb.amazonaws.com"
-  auth0_jwks_uri         = "https://dev-57n3awu5je6q653y.us.auth0.com/.well-known/jwks.json"
+
+  auth0_jwks_uri         = "https://dev-sage-dpe.us.auth0.com/.well-known/jwks.json"
   
   ses_email_identities = ["aws-dpe-dev@sagebase.org"]
   ses_email_domains    = ["sagebase.org"]
