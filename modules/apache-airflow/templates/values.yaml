@@ -715,7 +715,8 @@ workers:
 
   # Select certain nodes for airflow worker pods.
   nodeSelector: {
-    spotinst.io/node-lifecycle: "od"
+    spotinst.io/node-lifecycle: "od",
+    topology.kubernetes.io/zone: "us-east-1a"
   }
   runtimeClassName: ~
   priorityClassName: ~
@@ -925,7 +926,8 @@ scheduler:
 
   # Select certain nodes for airflow scheduler pods.
   nodeSelector: {
-    spotinst.io/node-lifecycle: "od"
+    spotinst.io/node-lifecycle: "od",
+    topology.kubernetes.io/zone: "us-east-1a"
   }
   affinity:
   # default scheduler affinity is:
@@ -1614,7 +1616,8 @@ triggerer:
 
   # Select certain nodes for airflow triggerer pods.
   nodeSelector: {
-    spotinst.io/node-lifecycle: "od"
+    spotinst.io/node-lifecycle: "od",
+    topology.kubernetes.io/zone: "us-east-1a"
   }
   affinity:
   # default triggerer affinity is:
@@ -2324,7 +2327,8 @@ redis:
 
   # Select certain nodes for redis pods.
   nodeSelector: {
-    spotinst.io/node-lifecycle: "od"
+    spotinst.io/node-lifecycle: "od",
+    topology.kubernetes.io/zone: "us-east-1a"
   }
   affinity: {}
   tolerations: []
