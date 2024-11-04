@@ -2,13 +2,13 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-staging
+  name: lets-encrypt-prod
 spec:
   acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: "bryan.fauble@sagebase.org"
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: "dpe@sagebase.org"
     privateKeySecretRef:
-      name: letsencrypt-staging-account-key
+      name: letsencrypt-prod-account-key
     solvers:
     - http01:
         gatewayHTTPRoute:
@@ -16,10 +16,3 @@ spec:
           - kind: Gateway
             name: eg
             namespace: envoy-gateway
-# ---
-# apiVersion: cert-manager.io/v1
-# kind: ClusterIssuer
-# metadata:
-#   name: selfsigned
-# spec:
-#   selfSigned: {}

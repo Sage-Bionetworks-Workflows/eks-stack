@@ -105,9 +105,8 @@ module "envoy-gateway" {
   git_revision         = var.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
-  cluster_issuer_name  = "lets-encrypt-staging"
+  cluster_issuer_name  = "lets-encrypt-prod"
   ssl_hostname         = var.ssl_hostname
-  auth0_jwks_uri       = var.auth0_jwks_uri
 }
 
 module "cert-manager" {
