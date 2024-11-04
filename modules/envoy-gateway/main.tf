@@ -63,15 +63,6 @@ spec:
           - op: replace
             path: /metadata/name
             value: ${var.cluster_issuer_name}
-      - target:
-          kind: SecurityPolicy
-        patch: |-
-          - op: replace
-            path: /spec/jwt/providers
-            value:
-              - name: auth0
-                remoteJWKS:
-                  uri: ${var.auth0_jwks_uri}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
