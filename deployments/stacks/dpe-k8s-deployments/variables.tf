@@ -86,11 +86,6 @@ variable "auth0_jwks_uri" {
   type        = string
 }
 
-variable "auth0_domain" {
-  description = "Auth0 domain"
-  type        = string
-}
-
 variable "smtp_user" {
   description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
   type        = string
