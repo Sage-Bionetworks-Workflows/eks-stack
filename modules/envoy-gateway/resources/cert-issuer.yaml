@@ -1,25 +1,25 @@
 # To implement using something like letsencrypt
-# apiVersion: cert-manager.io/v1
-# kind: ClusterIssuer
-# metadata:
-#   name: letsencrypt-staging
-# spec:
-#   acme:
-#     server: https://acme-staging-v02.api.letsencrypt.org/directory
-#     email: "bryan.fauble@sagebase.org"
-#     privateKeySecretRef:
-#       name: letsencrypt-staging-account-key
-#     solvers:
-#     - http01:
-#         gatewayHTTPRoute:
-#           parentRefs:
-#           - kind: Gateway
-#             name: eg
-#             namespace: envoy-gateway
----
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: selfsigned
+  name: letsencrypt-staging
 spec:
-  selfSigned: {}
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: "bryan.fauble@sagebase.org"
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+    - http01:
+        gatewayHTTPRoute:
+          parentRefs:
+          - kind: Gateway
+            name: eg
+            namespace: envoy-gateway
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: ClusterIssuer
+# metadata:
+#   name: selfsigned
+# spec:
+#   selfSigned: {}
