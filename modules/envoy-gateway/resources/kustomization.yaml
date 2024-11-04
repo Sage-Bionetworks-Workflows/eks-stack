@@ -6,4 +6,3 @@ resources:
 - envoy-proxy.yaml
 - gateway.yaml
 - traffic-policy.yaml
-- security-policy.yaml
