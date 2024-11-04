@@ -66,3 +66,19 @@ YAML
 An `admin` user is created for airflow via the `airflow-admin-user-secret` secret that
 is added to the namespace. Decode the base64 encoded password/username and use it for
 the UI.
+
+## Building a new image for airflow
+The deployment of our airflow instance depends on a custom apache airflow image being 
+created and pushed to a public available GCHR url. The image is created from the
+`orca-recipes` git repo: <https://github.com/Sage-Bionetworks-Workflows/orca-recipes/tree/main>
+
+1. Update the dockerfile within the orca-recipes repo
+2. Build the new image `docker build .`
+3. Tag the build image with the tag you want to use `docker tag sha256:... ghcr.io/sage-bionetworks-workflows/orca-recipes:0.0.1`
+4. Push to GCHR `docker push ghcr.io/sage-bionetworks-workflows/orca-recipes:0.0.1` (May require an admin of the repo to push this)
+5. Update the `values.yaml` file in this `modules/apache-airflow/templates` directory.
+
+Transitive dependencies may also need to be updated when building a new image for
+airflow, for example `py-orca` was updated in this example PR: <https://github.com/Sage-Bionetworks-Workflows/py-orca/pull/45>.
+Additionally, this PR covers what was completed in order to update the 
+requirements/dockerfile: <https://github.com/Sage-Bionetworks-Workflows/orca-recipes/pull/71>.
