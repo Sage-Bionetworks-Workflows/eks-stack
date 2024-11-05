@@ -41,5 +41,4 @@ module "sage-aws-ses" {
   source = "../../../modules/sage-aws-ses"
 
   email_identities = var.ses_email_identities
-  email_domains    = var.ses_email_domains
 }

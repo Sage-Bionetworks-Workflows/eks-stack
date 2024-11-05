@@ -12,7 +12,6 @@ locals {
     azs_eks_control_plane                  = var.azs_eks_control_plane
     azs_eks_worker_nodes                   = var.azs_eks_worker_nodes
     ses_email_identities                   = var.ses_email_identities
-    ses_email_domains                      = var.ses_email_domains
   }
 
   k8s_stack_deployments_variables = {
@@ -31,9 +30,9 @@ locals {
   }
 
   auth0_stack_variables = {
-    cluster_name         = var.cluster_name
-    auth0_domain         = var.auth0_domain
-    auth0_clients        = var.auth0_clients
+    cluster_name  = var.cluster_name
+    auth0_domain  = var.auth0_domain
+    auth0_clients = var.auth0_clients
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
