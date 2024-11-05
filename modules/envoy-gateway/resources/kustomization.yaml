@@ -6,3 +6,4 @@ resources:
 - envoy-proxy.yaml
 - gateway.yaml
 - traffic-policy.yaml
+- http-to-https-redirect.yaml
