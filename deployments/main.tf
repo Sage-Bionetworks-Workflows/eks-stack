@@ -71,8 +71,7 @@ module "dpe-sandbox-spacelift-development" {
   enable_otel_ingress    = true
   ssl_hostname           = "dev.sagedpe.org"
   auth0_jwks_uri         = "https://dev-sage-dpe.us.auth0.com/.well-known/jwks.json"
-
-  ses_email_identities = ["aws-dpe-dev@sagebase.org"]
+  ses_email_identities   = ["aws-dpe-dev@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "aws-dpe-dev@sagebase.org"
 }
