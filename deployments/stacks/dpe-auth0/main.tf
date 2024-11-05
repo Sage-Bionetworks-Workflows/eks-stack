@@ -4,8 +4,11 @@ resource "auth0_resource_server" "k8s-cluster-telemetry" {
   identifier  = "${var.cluster_name}-telemetry"
   signing_alg = "RS256"
 
-  allow_offline_access                            = false
-  token_lifetime                                  = 86400
+  allow_offline_access = false
+  # 108000 seconds = 1.25 days
+  # An offset of 1.25 days allows a daily token refresh to occur by simple cronjob
+  # for the services that use the token
+  token_lifetime                                  = 108000
   skip_consent_for_verifiable_first_party_clients = true
   # https://registry.terraform.io/providers/auth0/auth0/latest/docs/resources/resource_server_scopes
   # Says to use the following, however it errors out:
