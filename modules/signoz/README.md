@@ -6,12 +6,11 @@ SigNoz is an open-source APM. It helps developers monitor their applications
 source Application Performance Monitoring (APM) & Observability tool.
 
 
-## This module is a work in progress
+## This module is a work in progress (To be completed before production, or determine if not needed)
 A number of items are needed:
 
 - Setting up backups and data retention: https://sagebionetworks.jira.com/browse/IBCDPE-1094
-- Set up ingress to the cluster/collector to send data to: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-- Set up accounts and access to the service decleratively
+- Set up accounts and access to the service declaratively
 
 
 ## Setting up SMTP for alertmanager
