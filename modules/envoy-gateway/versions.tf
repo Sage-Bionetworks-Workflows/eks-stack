@@ -13,12 +13,5 @@ terraform {
       version = "1.14.0"
     }
   }
-  # TODO: Move to this provider
-  # required_providers {
-  #   argocd = {
-  #     source = "oboukili/argocd"
-  #     version = "6.1.1"
-  #   }
-  # }
 }
 
