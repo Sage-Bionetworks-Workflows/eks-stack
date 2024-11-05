@@ -65,3 +65,41 @@ variable "aws_account_id" {
   description = "AWS account ID"
   type        = string
 }
+
+variable "enable_cluster_ingress" {
+  description = "Enable cluster ingress"
+  type        = bool
+}
+
+variable "enable_otel_ingress" {
+  description = "Enable OpenTelemetry ingress, used to send traces to SigNoz"
+  type        = bool
+}
+
+variable "ssl_hostname" {
+  description = "The hostname to use for the SSL certificate"
+  type        = string
+}
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}
+
+variable "smtp_user" {
+  description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_password" {
+  description = "The SMTP password. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_from" {
+  description = "The SMTP from address. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}

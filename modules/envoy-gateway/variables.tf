@@ -25,3 +25,13 @@ variable "namespace" {
   description = "The namespace to deploy into"
   type        = string
 }
+
+variable "cluster_issuer_name" {
+  description = "The name of the cluster issuer"
+  type        = string
+}
+
+variable "ssl_hostname" {
+  description = "The hostname to use for the SSL certificate"
+  type        = string
+}

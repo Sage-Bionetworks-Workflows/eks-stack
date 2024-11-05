@@ -85,11 +85,17 @@ module "signoz" {
   git_revision         = var.git_revision
   namespace            = "signoz"
   argo_deployment_name = "signoz"
+  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
+  gateway_namespace    = "envoy-gateway"
+  cluster_name         = var.cluster_name
+  auth0_jwks_uri       = var.auth0_jwks_uri
+  smtp_password        = var.smtp_password
+  smtp_user            = var.smtp_user
+  smtp_from            = var.smtp_from
 }
 
 module "envoy-gateway" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
+  count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -99,11 +105,12 @@ module "envoy-gateway" {
   git_revision         = var.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
+  cluster_issuer_name  = "lets-encrypt-prod"
+  ssl_hostname         = var.ssl_hostname
 }
 
 module "cert-manager" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
+  count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
@@ -113,23 +120,4 @@ module "cert-manager" {
   git_revision         = var.git_revision
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
-}
-
-module "cluster-ingress" {
-  # TODO: This is temporary until we are ready to deploy the ingress controller: https://sagebionetworks.jira.com/browse/IBCDPE-1095
-  count      = 0
-  depends_on = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
-  source               = "../../../modules/cluster-ingress"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  namespace            = "envoy-gateway"
-  argo_deployment_name = "cluster-ingress"
-
-  # To determine more elegant ways to fill in these values, for example, if we have
-  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname        = "unknown-to-fill-in"
-  cluster_issuer_name = "selfsigned"
 }

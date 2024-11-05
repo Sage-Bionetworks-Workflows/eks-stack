@@ -1,3 +1,6 @@
+locals {
+  alertmanager_enabled = var.smtp_from != "" && var.smtp_user != "" && var.smtp_password != ""
+}
 
 resource "kubernetes_namespace" "signoz" {
   metadata {
@@ -7,7 +10,7 @@ resource "kubernetes_namespace" "signoz" {
 
 resource "kubectl_manifest" "signoz-deployment" {
   depends_on = [kubernetes_namespace.signoz]
-
+  
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -31,11 +34,60 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
+      %{if local.alertmanager_enabled}
+      - name: "alertmanager.enabled"
+        value: "true"
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
+        value: ${var.smtp_from}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
+        value: ${var.smtp_user}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
+        value: ${var.smtp_password}
+      %{else}
+      - name: "alertmanager.enabled"
+        value: "false"
+      %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
+  %{if var.enable_otel_ingress}
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${var.git_revision}
+    path: modules/signoz/resources-otel-ingress
+    kustomize:
+      patches:
+      - target:
+          kind: ReferenceGrant
+        patch: |-
+          - op: replace
+            path: /spec/from/0/namespace
+            value: ${var.gateway_namespace}
+      - target:
+          kind: HTTPRoute
+        patch: |-
+          - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
+            path: /spec/rules/0/backendRefs/0/namespace
+            value: ${var.namespace}
+      - target:
+          kind: SecurityPolicy
+        patch: |-
+          - op: replace
+            path: /metadata/namespace
+            value: ${var.gateway_namespace}
+          - op: replace
+            path: /spec/jwt/providers
+            value:
+              - name: auth0
+                remoteJWKS:
+                  uri: ${var.auth0_jwks_uri}
+                audiences:
+                  - ${var.cluster_name}-telemetry
+  %{endif}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}

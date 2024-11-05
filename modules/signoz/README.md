@@ -13,7 +13,55 @@ A number of items are needed:
 - Set up ingress to the cluster/collector to send data to: https://sagebionetworks.jira.com/browse/IBCDPE-1095
 - Set up accounts and access to the service decleratively
 
-## Accessing signoz
+
+## Setting up SMTP for alertmanager
+Alertmanager is an additional tool that is deployed to the kubernetes cluster that
+handles forwarding an alert out to 1 or more streams that will receive the alert.
+Alert manager is set to to send emails through AWS SES (Simple Email Service) set up
+by the `modules/sage-aws-ses` terraform scripts. See that module for more information
+about the setup of AWS SES.
+
+## Accessing signoz (Internet)
+
+#### Sending data into signoz (From internet)
+When SigNoz is deployed with the terraform variables `enable_otel_ingress` and `gateway_namespace`
+set, an HTTP route to the openTelemetry collector will be exposed out to the internet.
+Using the defined URL a user may send telemetry data via HTTPS and a Bearer auth token
+into the cluster. To accomplish this the sender of the data will need to configure
+the sending application with the appropriate HTTPS url and authentication (Different 
+depending on the sender). The paths to send data to will be as follows:
+
+- `/telemetry/v1/traces`
+- `/telemetry/v1/metrics`
+- `/telemetry/v1/logs`
+
+
+Un-authenticated requests will be rejected with an HTTP 401.
+
+#### Authentication
+Authentication for data being sent into the cluster will occur via a JWT Bearer token.
+As the sender, you will be required to ensure that every request sent has an unexpired
+and valid token. The exact mechanism for attaching this authentication will change
+depending on how data is forwarded into the cluster. For example if using an
+open-telemetry collector you may use this oauth2 extension:
+<https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/oauth2clientauthextension>.
+
+##### Authentication from Python application directly
+If you are sending data directly from an application into the cluster you may specify
+an environment variable with headers to attach to the requests by setting:
+`OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer ...`
+
+> [!NOTE]
+> This method is only a temporary solution as Bearer tokens will expire and need to be rotated.
+
+Future work would be to determine if we may be able to implement the usage of 
+<https://pypi.org/project/requests-oauth2client/> to handle automatic token fetching
+using a client ID/Client secret using Auth0 (Or related IDP).
+
+
+## Accessing signoz (Port-forwarding)
+This guide is for those that have access to the kubernetes cluster and are using 
+port-fowarding to access the data in the cluster.
 
 ### Pre-req
 This assumes that you have accessed the k8s cluster before using `k9s` or another tool.

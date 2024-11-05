@@ -36,3 +36,9 @@ module "sage-aws-eks" {
   private_subnet_ids_eks_control_plane = module.sage-aws-vpc.private_subnet_ids_eks_control_plane
   private_subnet_ids_eks_worker_nodes  = module.sage-aws-vpc.private_subnet_ids_eks_worker_nodes
 }
+
+module "sage-aws-ses" {
+  source = "../../../modules/sage-aws-ses"
+
+  email_identities = var.ses_email_identities
+}

@@ -31,6 +31,38 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${var.git_revision}
+    path: modules/envoy-gateway/resources
+    kustomize:
+      patches:
+      - target:
+          kind: ClusterIssuer
+        patch: |-
+          - op: replace
+            path: /metadata/name
+            value: ${var.cluster_issuer_name}
+      - target:
+          kind: GatewayClass
+        patch: |-
+          - op: replace
+            path: /spec/parametersRef/namespace
+            value: ${var.namespace}
+      - target:
+          kind: Gateway
+        patch: |-
+          - op: replace
+            path: /metadata/annotations/cert-manager.io~1cluster-issuer
+            value: ${var.cluster_issuer_name}
+          - op: replace
+            path: /spec/listeners/0/hostname
+            value: ${var.ssl_hostname}
+      - target:
+          kind: ClusterIssuer
+        patch: |-
+          - op: replace
+            path: /metadata/name
+            value: ${var.cluster_issuer_name}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
