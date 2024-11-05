@@ -13,6 +13,14 @@ A number of items are needed:
 - Set up ingress to the cluster/collector to send data to: https://sagebionetworks.jira.com/browse/IBCDPE-1095
 - Set up accounts and access to the service decleratively
 
+
+## Setting up SMTP for alertmanager
+Alertmanager is an additional tool that is deployed to the kubernetes cluster that
+handles forwarding an alert out to 1 or more streams that will receive the alert.
+Alert manager is set to to send emails through AWS SES (Simple Email Service) set up
+by the `modules/sage-aws-ses` terraform scripts. See that module for more information
+about the setup of AWS SES.
+
 ## Accessing signoz (Internet)
 
 #### Sending data into signoz (From internet)

@@ -1,3 +1,6 @@
+locals {
+  alertmanager_enabled = var.smtp_from != "" && var.smtp_user != "" && var.smtp_password != ""
+}
 
 resource "kubernetes_namespace" "signoz" {
   metadata {
@@ -7,7 +10,7 @@ resource "kubernetes_namespace" "signoz" {
 
 resource "kubectl_manifest" "signoz-deployment" {
   depends_on = [kubernetes_namespace.signoz]
-
+  
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -31,6 +34,19 @@ spec:
       parameters:
       - name: "clickhouse.password"
         value: ${random_password.clickhouse-admin-password.result}
+      %{if local.alertmanager_enabled}
+      - name: "alertmanager.enabled"
+        value: "true"
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
+        value: ${var.smtp_from}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
+        value: ${var.smtp_user}
+      - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
+        value: ${var.smtp_password}
+      %{else}
+      - name: "alertmanager.enabled"
+        value: "false"
+      %{endif}
       valueFiles:
       - $values/modules/signoz/templates/values.yaml
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'

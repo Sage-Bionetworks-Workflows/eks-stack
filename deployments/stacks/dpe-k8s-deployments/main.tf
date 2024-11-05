@@ -89,6 +89,9 @@ module "signoz" {
   gateway_namespace    = "envoy-gateway"
   cluster_name         = var.cluster_name
   auth0_jwks_uri       = var.auth0_jwks_uri
+  smtp_password        = var.smtp_password
+  smtp_user            = var.smtp_user
+  smtp_from            = var.smtp_from
 }
 
 module "envoy-gateway" {
@@ -102,11 +105,8 @@ module "envoy-gateway" {
   git_revision         = var.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
-  cluster_issuer_name  = "selfsigned"
-  # To determine more elegant ways to fill in these values, for example, if we have
-  # a pre-defined DNS name for the cluster (https://sagebionetworks.jira.com/browse/IT-3931)
-  ssl_hostname   = var.ssl_hostname
-  auth0_jwks_uri = var.auth0_jwks_uri
+  cluster_issuer_name  = "lets-encrypt-prod"
+  ssl_hostname         = var.ssl_hostname
 }
 
 module "cert-manager" {

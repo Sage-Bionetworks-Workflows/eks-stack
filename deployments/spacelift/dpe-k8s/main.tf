@@ -11,6 +11,7 @@ locals {
     private_subnet_cidrs_eks_worker_nodes  = var.private_subnet_cidrs_eks_worker_nodes
     azs_eks_control_plane                  = var.azs_eks_control_plane
     azs_eks_worker_nodes                   = var.azs_eks_worker_nodes
+    ses_email_identities                   = var.ses_email_identities
   }
 
   k8s_stack_deployments_variables = {
@@ -25,12 +26,13 @@ locals {
     enable_otel_ingress    = var.enable_otel_ingress
     ssl_hostname           = var.ssl_hostname
     auth0_jwks_uri         = var.auth0_jwks_uri
+    smtp_from              = var.smtp_from
   }
 
   auth0_stack_variables = {
-    cluster_name         = var.cluster_name
-    auth0_domain         = var.auth0_domain
-    auth0_clients        = var.auth0_clients
+    cluster_name  = var.cluster_name
+    auth0_domain  = var.auth0_domain
+    auth0_clients = var.auth0_clients
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
@@ -39,6 +41,8 @@ locals {
     private_subnet_ids_eks_worker_nodes = "TF_VAR_private_subnet_ids_eks_worker_nodes"
     node_security_group_id              = "TF_VAR_node_security_group_id"
     pod_to_node_dns_sg_id               = "TF_VAR_pod_to_node_dns_sg_id"
+    smtp_user                           = "TF_VAR_smtp_user"
+    smtp_password                       = "TF_VAR_smtp_password"
   }
 }
 
