@@ -73,7 +73,6 @@ module "dpe-sandbox-spacelift-development" {
   auth0_jwks_uri         = "https://dev-sage-dpe.us.auth0.com/.well-known/jwks.json"
 
   ses_email_identities = ["aws-dpe-dev@sagebase.org"]
-  ses_email_domains    = ["sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "aws-dpe-dev@sagebase.org"
 }
@@ -122,5 +121,4 @@ module "dpe-sandbox-spacelift-production" {
   auth0_jwks_uri         = ""
 
   ses_email_identities = []
-  ses_email_domains    = []
 }

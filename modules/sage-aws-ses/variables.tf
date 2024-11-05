@@ -3,11 +3,6 @@ variable "email_identities" {
   description = "List of email identities to be added to SES"
 }
 
-variable "email_domains" {
-  type        = list(string)
-  description = "List of email domains to be added to SES"
-}
-
 variable "tags" {
   description = "AWS Resource Tags"
   type        = map(string)
