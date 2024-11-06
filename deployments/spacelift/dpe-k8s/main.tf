@@ -259,7 +259,11 @@ resource "spacelift_stack_destructor" "auth0-stack-destructor" {
 
 
 resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
-  for_each = var.deploy_auth0 ? local.auth0_stack_variables : tomap({})
+  depends_on = [
+    spacelift_stack.auth0
+  ]
+
+  for_each = local.auth0_stack_variables
 
   stack_id   = spacelift_stack.auth0[0].id
   name       = "TF_VAR_${each.key}"
