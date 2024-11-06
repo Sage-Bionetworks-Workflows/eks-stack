@@ -347,8 +347,8 @@ clickhouse:
     #   number: 2
     #   topologyKey: kubernetes.io/hostname
 
-  # TODO: Enable cold storage: https://sagebionetworks.jira.com/browse/IBCDPE-1094
-  # Cold storage configuration
+   # TODO: Enable cold storage: https://sagebionetworks.jira.com/browse/IBCDPE-1094
+   # Cold storage configuration
   coldStorage:
     # -- Whether to enable S3 cold storage
     enabled: false
@@ -603,7 +603,7 @@ queryService:
   image:
     registry: docker.io
     repository: signoz/query-service
-    tag: 0.52.0
+    tag: 0.55.0
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for Query-Service
@@ -646,8 +646,8 @@ queryService:
     "helm.sh/hook-weight": "2"
 
   # -- Query-Service additional arguments for command line
-  additionalArgs: []
-    # - --prefer-delta=true
+  additionalArgs:
+    - --use-logs-new-schema=true
 
   # -- Additional environments to set for queryService
   additionalEnvs: {}
@@ -833,7 +833,7 @@ frontend:
   image:
     registry: docker.io
     repository: signoz/frontend
-    tag: 0.52.0
+    tag: 0.55.0
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for Frontend
@@ -1277,7 +1277,7 @@ schemaMigrator:
   image:
     registry: docker.io
     repository: signoz/signoz-schema-migrator
-    tag: 0.102.4
+    tag: 0.102.10
     pullPolicy: IfNotPresent
 
   args: {}
@@ -1393,7 +1393,7 @@ otelCollector:
   image:
     registry: docker.io
     repository: signoz/signoz-otel-collector
-    tag: 0.102.4
+    tag: 0.102.10
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for OtelCollector
@@ -1767,6 +1767,8 @@ otelCollector:
 
     autoscalingTemplate: []
     keda:
+      annotations:
+        "helm.sh/hook-weight": "4"
       enabled: false
       pollingInterval: "30"   # check 30sec periodically for metrics data
       cooldownPeriod: "300"   # once the load decreased, it will wait for 5 min and downscale
@@ -1988,6 +1990,7 @@ otelCollector:
       clickhouselogsexporter:
         dsn: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_LOG_DATABASE}
         timeout: 10s
+        use_new_schema: true
       prometheus:
         endpoint: 0.0.0.0:8889
     service:
@@ -2022,7 +2025,7 @@ otelCollectorMetrics:
   image:
     registry: docker.io
     repository: signoz/signoz-otel-collector
-    tag: 0.102.4
+    tag: 0.102.10
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for OtelCollector
@@ -2395,4 +2398,3 @@ otelCollectorMetrics:
 
 signoz-otel-gateway:
   enabled: false
-
