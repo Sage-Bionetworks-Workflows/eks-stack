@@ -39,10 +39,10 @@ output "cluster_name" {
 }
 
 output "smtp_user" {
-  value = module.sage-aws-ses.smtp_user
+  value = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_user : null
 }
 
 output "smtp_password" {
   sensitive = true
-  value     = module.sage-aws-ses.smtp_password
+  value     = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_password : null
 }
