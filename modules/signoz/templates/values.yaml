@@ -1301,12 +1301,6 @@ schemaMigrator:
   topologySpreadConstraints: []
 
   initContainers:
-		 
-			
-						   
-										   
-				 
-								
     init:
       enabled: true
       image:
@@ -1499,8 +1493,7 @@ otelCollector:
     type: ClusterIP
 
   # -- OtelCollector Deployment annotation.
-  annotations:
-							  
+  annotations: {}
   # -- OtelCollector pod(s) annotation.
   podAnnotations:
     signoz.io/scrape: 'true'
@@ -2109,8 +2102,7 @@ otelCollectorMetrics:
     type: ClusterIP
 
   # -- OtelCollectorMetrics Deployment annotation.
-  annotations:
-							  
+  annotations: {}
   # -- OtelCollectorMetrics pod(s) annotation.
   podAnnotations:
     signoz.io/scrape: 'true'
