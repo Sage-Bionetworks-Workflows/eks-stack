@@ -38,6 +38,7 @@ module "sage-aws-eks" {
 }
 
 module "sage-aws-ses" {
+  count  = length(var.ses_email_identities) > 0 ? 1 : 0
   source = "../../../modules/sage-aws-ses"
 
   email_identities = var.ses_email_identities
