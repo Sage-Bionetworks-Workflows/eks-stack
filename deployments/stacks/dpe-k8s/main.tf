@@ -38,27 +38,27 @@ module "sage-aws-eks" {
 }
 
 moved {
-  from = aws_iam_access_key.smtp_user
+  from = module.sage-aws-ses.aws_iam_access_key.smtp_user
   to   = module.sage-aws-ses[0].aws_iam_access_key.smtp_user
 }
 
 moved {
-  from = aws_iam_policy.ses_sender
+  from = module.sage-aws-ses.aws_iam_policy.ses_sender
   to   = module.sage-aws-ses[0].aws_iam_policy.ses_sender
 }
 
 moved {
-  from = aws_iam_user.smtp_user
+  from = module.sage-aws-ses.aws_iam_user.smtp_user
   to   = module.sage-aws-ses[0].aws_iam_user.smtp_user
 }
 
 moved {
-  from = aws_iam_user_policy_attachment.test-attach
+  from = module.sage-aws-ses.aws_iam_user_policy_attachment.test-attach
   to   = module.sage-aws-ses[0].aws_iam_user_policy_attachment.test-attach
 }
 
 moved {
-  from = aws_ses_email_identity.identities["aws-dpe-dev@sagebase.org"]
+  from = module.sage-aws-ses.aws_ses_email_identity.identities["aws-dpe-dev@sagebase.org"]
   to   = module.sage-aws-ses[0].aws_ses_email_identity.identities["aws-dpe-dev@sagebase.org"]
 }
 
