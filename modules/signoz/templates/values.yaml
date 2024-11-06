@@ -642,7 +642,7 @@ queryService:
     internalNodePort: null
 
   # -- Query-Service annotations
-  annotations:
+  annotations: {}
 							  
 
   # -- Query-Service additional arguments for command line
