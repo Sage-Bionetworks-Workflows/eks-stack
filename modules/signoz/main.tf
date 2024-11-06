@@ -27,7 +27,7 @@ spec:
   sources:
   - repoURL: 'https://charts.signoz.io'
     chart: signoz
-    targetRevision: 0.53.1
+    targetRevision: 0.55.1
     helm:
       releaseName: signoz
       # Extra parameters to set (same as setting through values.yaml, but these take precedence)

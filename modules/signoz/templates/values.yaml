@@ -347,8 +347,8 @@ clickhouse:
     #   number: 2
     #   topologyKey: kubernetes.io/hostname
 
-   # TODO: Enable cold storage: https://sagebionetworks.jira.com/browse/IBCDPE-1094
-   # Cold storage configuration
+  # TODO: Enable cold storage: https://sagebionetworks.jira.com/browse/IBCDPE-1094
+  # Cold storage configuration
   coldStorage:
     # -- Whether to enable S3 cold storage
     enabled: false
@@ -603,7 +603,7 @@ queryService:
   image:
     registry: docker.io
     repository: signoz/query-service
-    tag: 0.55.0
+    tag: 0.57.0
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for Query-Service
@@ -643,7 +643,7 @@ queryService:
 
   # -- Query-Service annotations
   annotations:
-    "helm.sh/hook-weight": "2"
+							  
 
   # -- Query-Service additional arguments for command line
   additionalArgs:
@@ -833,7 +833,7 @@ frontend:
   image:
     registry: docker.io
     repository: signoz/frontend
-    tag: 0.55.0
+    tag: 0.57.0
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for Frontend
@@ -923,7 +923,7 @@ frontend:
 
   # -- Frontend deployment annotations
   annotations:
-    "helm.sh/hook-weight": "5"
+							  
   # -- Frontend pod security context
   podSecurityContext: {}
     # fsGroup: 2000
@@ -999,7 +999,7 @@ alertmanager:
     repository: signoz/alertmanager
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.23.5
+    tag: 0.23.7
 
   # -- Image Registry Secret Names for Alertmanager
   # If set, this has higher precedence than the root level or global value of imagePullSecrets.
@@ -1150,7 +1150,7 @@ alertmanager:
 
   statefulSet:
     annotations:
-      "helm.sh/hook-weight": "4"
+								
 
   podAnnotations: {}
   podLabels: {}
@@ -1277,13 +1277,18 @@ schemaMigrator:
   image:
     registry: docker.io
     repository: signoz/signoz-schema-migrator
-    tag: 0.102.10
+    tag: 0.111.5
     pullPolicy: IfNotPresent
 
-  args: {}
-  annotations:
-    "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": "before-hook-creation"
+  args:
+    - "--up="
+  # For usual Helm installs, we don't need any additional annotations.
+  # As well as for Helm upgrade (with upgradeHelmHooks to true), we automatically include the required pre-upgrade helm hooks.
+  # For ArgoCD, since every upgrade is an install, we need to automatically include the relevant ArgoCD hooks using upgradeHelmHooks.
+  annotations: {}
+  # In Helm, this is needed to apply helm hooks for pre-upgrade, delete policy and hook weight.
+  # For ArgoCD, this is needed to apply the sync wave - ArgoCD equivalent of hook weight.
+  upgradeHelmHooks: true
 
   # -- Whether to enable replication for schemaMigrator
   enableReplication: true
@@ -1298,12 +1303,12 @@ schemaMigrator:
   topologySpreadConstraints: []
 
   initContainers:
-    wait:
-      image:
-        registry: docker.io
-        repository: groundnuty/k8s-wait-for
-        tag: v2.0
-        pullPolicy: IfNotPresent
+		 
+			
+						   
+										   
+				 
+								
     init:
       enabled: true
       image:
@@ -1386,6 +1391,49 @@ schemaMigrator:
         # limits:
         #   cpu: 100m
         #   memory: 100Mi
+    wait:
+      enabled: true
+      image:
+        registry: docker.io
+        repository: groundnuty/k8s-wait-for
+        tag: v2.0
+        pullPolicy: IfNotPresent
+      env: []
+
+  # SchemaMigrator Service Account
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
+  # SchemaMigrator RBAC config
+  role:
+    # -- Specifies whether a clusterRole should be created
+    create: true
+    # -- Annotations to add to the clusterRole
+    annotations: {}
+    # -- The name of the clusterRole to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    # -- A set of rules as documented here.
+    # ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+    # @default -- See `values.yaml` for defaults
+    rules:
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+        verbs: ["get", "list", "watch"]
+
+    # SchemaMigrator clusterRoleBinding
+    roleBinding:
+      # Annotations to add to the clusterRoleBinding
+      annotations: {}
+      # The name of the clusterRoleBinding to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: ""
 
 # Default values for OtelCollector
 otelCollector:
@@ -1393,7 +1441,7 @@ otelCollector:
   image:
     registry: docker.io
     repository: signoz/signoz-otel-collector
-    tag: 0.102.10
+    tag: 0.111.5
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for OtelCollector
@@ -1454,7 +1502,7 @@ otelCollector:
 
   # -- OtelCollector Deployment annotation.
   annotations:
-    "helm.sh/hook-weight": "3"
+							  
   # -- OtelCollector pod(s) annotation.
   podAnnotations:
     signoz.io/scrape: 'true'
@@ -1473,7 +1521,7 @@ otelCollector:
   lowCardinalityExceptionGrouping: false
 
   minReadySeconds: 5
-  progressDeadlineSeconds: 120
+  progressDeadlineSeconds: 600
   replicaCount: 2
 
   # OtelCollector RBAC config
@@ -1768,7 +1816,6 @@ otelCollector:
     autoscalingTemplate: []
     keda:
       annotations:
-        "helm.sh/hook-weight": "4"
       enabled: false
       pollingInterval: "30"   # check 30sec periodically for metrics data
       cooldownPeriod: "300"   # once the load decreased, it will wait for 5 min and downscale
@@ -1980,15 +2027,15 @@ otelCollector:
         endpoint: localhost:1777
     exporters:
       clickhousetraces:
-        datasource: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_TRACE_DATABASE}
-        low_cardinal_exception_grouping: ${LOW_CARDINAL_EXCEPTION_GROUPING}
+        datasource: tcp://${env:CLICKHOUSE_USER}:${env:CLICKHOUSE_PASSWORD}@${env:CLICKHOUSE_HOST}:${env:CLICKHOUSE_PORT}/${env:CLICKHOUSE_TRACE_DATABASE}
+        low_cardinal_exception_grouping: ${env:LOW_CARDINAL_EXCEPTION_GROUPING}
       clickhousemetricswrite:
-        endpoint: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_DATABASE}
+        endpoint: tcp://${env:CLICKHOUSE_USER}:${env:CLICKHOUSE_PASSWORD}@${env:CLICKHOUSE_HOST}:${env:CLICKHOUSE_PORT}/${env:CLICKHOUSE_DATABASE}
         timeout: 15s
         resource_to_telemetry_conversion:
           enabled: true
       clickhouselogsexporter:
-        dsn: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_LOG_DATABASE}
+        dsn: tcp://${env:CLICKHOUSE_USER}:${env:CLICKHOUSE_PASSWORD}@${env:CLICKHOUSE_HOST}:${env:CLICKHOUSE_PORT}/${env:CLICKHOUSE_LOG_DATABASE}
         timeout: 10s
         use_new_schema: true
       prometheus:
@@ -2025,7 +2072,7 @@ otelCollectorMetrics:
   image:
     registry: docker.io
     repository: signoz/signoz-otel-collector
-    tag: 0.102.10
+    tag: 0.111.5
     pullPolicy: IfNotPresent
 
   # -- Image Registry Secret Names for OtelCollector
@@ -2065,7 +2112,7 @@ otelCollectorMetrics:
 
   # -- OtelCollectorMetrics Deployment annotation.
   annotations:
-    "helm.sh/hook-weight": "3"
+							  
   # -- OtelCollectorMetrics pod(s) annotation.
   podAnnotations:
     signoz.io/scrape: 'true'
@@ -2087,7 +2134,7 @@ otelCollectorMetrics:
     # runAsUser: 1000
 
   minReadySeconds: 5
-  progressDeadlineSeconds: 120
+  progressDeadlineSeconds: 600
   replicaCount: 1
 
   initContainers:
@@ -2378,9 +2425,9 @@ otelCollectorMetrics:
     exporters:
       clickhousemetricswrite:
         timeout: 15s
-        endpoint: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_DATABASE}
+        endpoint: tcp://${env:CLICKHOUSE_USER}:${env:CLICKHOUSE_PASSWORD}@${env:CLICKHOUSE_HOST}:${env:CLICKHOUSE_PORT}/${env:CLICKHOUSE_DATABASE}
       clickhousemetricswrite/hostmetrics:
-        endpoint: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_DATABASE}
+        endpoint: tcp://${env:CLICKHOUSE_USER}:${env:CLICKHOUSE_PASSWORD}@${env:CLICKHOUSE_HOST}:${env:CLICKHOUSE_PORT}/${env:CLICKHOUSE_DATABASE}
         resource_to_telemetry_conversion:
           enabled: true
     service:
