@@ -921,8 +921,8 @@ frontend:
   configVars: {}
 
   # -- Frontend deployment annotations
-  annotations:
-							  
+  annotations: {}
+
   # -- Frontend pod security context
   podSecurityContext: {}
     # fsGroup: 2000
