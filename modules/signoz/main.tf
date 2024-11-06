@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "signoz" {
 
 resource "kubectl_manifest" "signoz-deployment" {
   depends_on = [kubernetes_namespace.signoz]
-  
+
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -27,7 +27,7 @@ spec:
   sources:
   - repoURL: 'https://charts.signoz.io'
     chart: signoz
-    targetRevision: 0.50.0
+    targetRevision: 0.55.1
     helm:
       releaseName: signoz
       # Extra parameters to set (same as setting through values.yaml, but these take precedence)
