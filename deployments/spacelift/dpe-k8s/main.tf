@@ -29,11 +29,11 @@ locals {
     smtp_from              = var.smtp_from
   }
 
-  auth0_stack_variables = var.deploy_auth0 ? {
+  auth0_stack_variables = {
     cluster_name  = var.cluster_name
     auth0_domain  = var.auth0_domain
     auth0_clients = var.auth0_clients
-  } : {}
+  }
 
   # Variables to be passed from the k8s stack to the deployments stack
   k8s_stack_to_deployment_variables = {
@@ -259,7 +259,7 @@ resource "spacelift_stack_destructor" "auth0-stack-destructor" {
 
 
 resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
-  for_each = local.auth0_stack_variables
+  for_each = var.deploy_auth0 ? local.auth0_stack_variables : {}
 
   stack_id   = spacelift_stack.auth0[0].id
   name       = "TF_VAR_${each.key}"
