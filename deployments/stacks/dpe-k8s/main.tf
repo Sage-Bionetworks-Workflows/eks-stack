@@ -37,6 +37,31 @@ module "sage-aws-eks" {
   private_subnet_ids_eks_worker_nodes  = module.sage-aws-vpc.private_subnet_ids_eks_worker_nodes
 }
 
+moved {
+  from = aws_iam_access_key.smtp_user
+  to   = module.sage-aws-ses[0].aws_iam_access_key.smtp_user
+}
+
+moved {
+  from = aws_iam_policy.ses_sender
+  to   = module.sage-aws-ses[0].aws_iam_policy.ses_sender
+}
+
+moved {
+  from = aws_iam_user.smtp_user
+  to   = module.sage-aws-ses[0].aws_iam_user.smtp_user
+}
+
+moved {
+  from = aws_iam_user_policy_attachment.test-attach
+  to   = module.sage-aws-ses[0].aws_iam_user_policy_attachment.test-attach
+}
+
+moved {
+  from = aws_ses_email_identity.identities["aws-dpe-dev@sagebase.org"]
+  to   = module.sage-aws-ses[0].aws_ses_email_identity.identities["aws-dpe-dev@sagebase.org"]
+}
+
 module "sage-aws-ses" {
   count  = length(var.ses_email_identities) > 0 ? 1 : 0
   source = "../../../modules/sage-aws-ses"
