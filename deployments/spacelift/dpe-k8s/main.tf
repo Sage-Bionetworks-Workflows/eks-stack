@@ -29,11 +29,11 @@ locals {
     smtp_from              = var.smtp_from
   }
 
-  auth0_stack_variables = {
+  auth0_stack_variables = var.deploy_auth0 ? {
     cluster_name  = var.cluster_name
     auth0_domain  = var.auth0_domain
     auth0_clients = var.auth0_clients
-  }
+  } : {}
 
   # Variables to be passed from the k8s stack to the deployments stack
   k8s_stack_to_deployment_variables = {
@@ -216,8 +216,18 @@ resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration
   write          = true
 }
 
+moved {
+  from = spacelift_stack.auth0
+  to   = spacelift_stack.auth0[0]
+}
+
+moved {
+  from = spacelift_stack_destructor.auth0-stack-destructor
+  to   = spacelift_stack_destructor.auth0-stack-destructor[0]
+}
 
 resource "spacelift_stack" "auth0" {
+  count = var.deploy_auth0 ? 1 : 0
   github_enterprise {
     namespace = "Sage-Bionetworks-Workflows"
     id        = "sage-bionetworks-workflows-gh"
@@ -243,6 +253,7 @@ resource "spacelift_stack" "auth0" {
 }
 
 resource "spacelift_stack_destructor" "auth0-stack-destructor" {
+  count    = var.deploy_auth0 ? 1 : 0
   stack_id = spacelift_stack.auth0.id
 }
 

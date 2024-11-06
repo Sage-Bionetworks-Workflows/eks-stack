@@ -153,6 +153,12 @@ variable "ssl_hostname" {
   type        = string
 }
 
+variable "deploy_auth0" {
+  description = "Determines if a stack for Auth0 should be deployed"
+  type        = bool
+  default     = false
+}
+
 variable "auth0_jwks_uri" {
   description = "The JWKS URI for Auth0"
   type        = string
