@@ -217,16 +217,6 @@ resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration
   write          = true
 }
 
-moved {
-  from = spacelift_stack.auth0
-  to   = spacelift_stack.auth0[0]
-}
-
-moved {
-  from = spacelift_stack_destructor.auth0-stack-destructor
-  to   = spacelift_stack_destructor.auth0-stack-destructor[0]
-}
-
 resource "spacelift_stack" "auth0" {
   count = var.deploy_auth0 ? 1 : 0
   github_enterprise {
