@@ -263,7 +263,7 @@ resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
     spacelift_stack.auth0
   ]
 
-  for_each = local.auth0_stack_variables
+  for_each = { for k, v in local.auth0_stack_variables : k => v if var.deploy_auth0 }
 
   stack_id   = spacelift_stack.auth0[0].id
   name       = "TF_VAR_${each.key}"
