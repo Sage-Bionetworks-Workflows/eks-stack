@@ -643,7 +643,6 @@ queryService:
 
   # -- Query-Service annotations
   annotations: {}
-							  
 
   # -- Query-Service additional arguments for command line
   additionalArgs:
