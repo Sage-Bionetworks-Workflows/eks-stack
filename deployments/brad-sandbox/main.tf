@@ -27,7 +27,7 @@ resource "spacelift_stack" "brad-sandbox" {
   terraform_version       = "1.8.5"
   terraform_workflow_tool = "OPEN_TOFU"
   repository              = "eks-stack"
-  space_id                = "root"
+  space_id                = "development-01J49XEN88DQ8K9MCPPTTEXSKE"
   additional_project_globs = [
     "modules/*",
     "modules/**/*",
