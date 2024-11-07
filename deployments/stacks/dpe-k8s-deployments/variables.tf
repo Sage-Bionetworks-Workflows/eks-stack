@@ -103,8 +103,3 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
-
-variable "github_container_repository_token" {
-  description = "The GitHub container repository token. Used to authenticate with the container registry for OCI based helm charts."
-  type        = string
-}

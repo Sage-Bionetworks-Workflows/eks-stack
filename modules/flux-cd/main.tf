@@ -5,8 +5,8 @@ resource "kubernetes_namespace" "flux-system" {
 }
 
 resource "helm_release" "fluxcd" {
-  name       = "argo-cd"
-  repository = "oci://ghcr.io/fluxcd-community/charts/flux2"
+  name       = "flux2"
+  repository = "https://fluxcd-community.github.io/helm-charts"
   chart      = "flux2"
   namespace  = "flux-system"
   version    = "2.14.0"
