@@ -65,7 +65,7 @@ rbac:
   impersonationResources: ["users", "groups"]
   # -- If non-empty, this limits the secrets that can be accessed by
   # the service account to the specified ones, e.g. `['weave-gitops-enterprise-credentials']`
-  viewSecretsResourceNames: ["cluster-user-auth", "oidc-auth"]
+  viewSecretsResourceNames: ["cluster-user-auth"]
   # -- If non-empty, these additional rules will be appended to the RBAC role and the cluster role.
   # for example,
   # additionalRules:
@@ -76,7 +76,7 @@ rbac:
 adminUser:
   # -- Whether the local admin user should be created.
   # If you use this make sure you add it to `rbac.impersonationResourceNames`.
-  create: false
+  create: true
   # -- Specifies whether the clusterRole & binding to the admin user should be created.
   # Will be created only if `adminUser.create` is enabled. Without this,
   # the adminUser will only be able to see resources in the target namespace.
@@ -93,7 +93,7 @@ adminUser:
   # -- (string) Set the password for local admin user. Requires `adminUser.create` and `adminUser.createSecret`
   # This needs to have been hashed using bcrypt.
   # You can do this via our CLI with `gitops get bcrypt-hash`.
-  passwordHash:
+  passwordHash: $2b$12$ICeAVneTc.7fr3c1B7uyxO78UcKLcS4qon8blsPChE0BRPf1R92YO
 podAnnotations: {}
 podLabels: {}
 # aadpodidbinding: identity
