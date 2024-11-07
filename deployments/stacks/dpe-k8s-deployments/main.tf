@@ -102,9 +102,7 @@ module "signoz" {
 }
 
 module "signoz-flux-deployment" {
-  depends_on = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
+  depends_on           = [module.flux-cd]
   source               = "../../../modules/signoz-fluxcd"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
@@ -118,6 +116,12 @@ module "signoz-flux-deployment" {
   smtp_password        = var.smtp_password
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
+}
+
+module "weave-gitops" {
+  depends_on = [module.flux-cd]
+  source     = "../../../modules/weave-gitops"
+  namespace  = "weave-gitops"
 }
 
 module "envoy-gateway" {

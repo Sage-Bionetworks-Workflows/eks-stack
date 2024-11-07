@@ -58,6 +58,9 @@ spec:
     alertmanager:
       enabled: false
   valuesFrom:
+    - kind: ConfigMap
+      name: signoz-values
+      valuesKey: signoz_values.yaml
     - kind: Secret
       name: clickhouse-admin-password
       valuesKey: password
