@@ -29,7 +29,7 @@ resource "kubernetes_config_map" "signoz-values" {
   }
 
   data = {
-    "signoz_values.yaml" = "${file("./templates/values.yaml")}"
+    "signoz_values.yaml" = "${file("${path.module}/templates/values.yaml")}"
   }
 
 }
