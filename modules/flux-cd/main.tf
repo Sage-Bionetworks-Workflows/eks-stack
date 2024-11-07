@@ -9,7 +9,7 @@ resource "helm_release" "fluxcd" {
   repository = "oci://ghcr.io/fluxcd-community/charts/flux2"
   chart      = "flux2"
   namespace  = "flux-system"
-  version    = "2.4.0"
+  version    = "2.14.0"
   depends_on = [kubernetes_namespace.flux-system]
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
