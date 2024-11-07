@@ -19,22 +19,16 @@ resource "kubectl_manifest" "capacitor" {
   depends_on = [helm_release.fluxcd]
 
   yaml_body = <<YAML
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
 metadata:
   name: capacitor
   namespace: flux-system
 spec:
-  targetNamespace: flux-system
-  interval: 1h
-  retryInterval: 2m
-  timeout: 5m
-  wait: true
-  prune: true
-  path: "./"
-  sourceRef:
-    kind: OCIRepository
-    name: capacitor
+  interval: 12h
+  url: oci://ghcr.io/gimlet-io/capacitor-manifests
+  ref:
+    semver: ">=0.1.0"
 YAML
 }
 
