@@ -34,6 +34,11 @@ resource "spacelift_stack" "brad-sandbox" {
   ]
 }
 
+import {
+  to = module.brad-sandbox-spacelift.spacelift_space.dpe-space
+  id = "brad-sandbox-01JC3NVVPWXMP68X90QYCMH7A3"
+}
+
 module "brad-sandbox-spacelift" {
   source           = "../spacelift/dpe-k8s"
   parent_space_id  = "development-01J49XEN88DQ8K9MCPPTTEXSKE"
