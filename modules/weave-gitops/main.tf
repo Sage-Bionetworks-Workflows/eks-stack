@@ -28,7 +28,8 @@ YAML
 
 resource "kubernetes_config_map" "weave-values" {
   metadata {
-    name = "weave-values"
+    name      = "weave-values"
+    namespace = var.namespace
   }
 
   data = {

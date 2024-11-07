@@ -25,7 +25,8 @@ YAML
 
 resource "kubernetes_config_map" "signoz-values" {
   metadata {
-    name = "signoz-values"
+    name      = "signoz-values"
+    namespace = var.namespace
   }
 
   data = {
