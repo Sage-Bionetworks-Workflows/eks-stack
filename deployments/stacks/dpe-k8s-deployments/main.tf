@@ -101,6 +101,25 @@ module "signoz" {
   smtp_from            = var.smtp_from
 }
 
+module "signoz-flux-deployment" {
+  depends_on = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/signoz-fluxcd"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = var.git_revision
+  namespace            = "signoz-fluxcd"
+  argo_deployment_name = "signoz-fluxcd"
+  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
+  gateway_namespace    = "envoy-gateway"
+  cluster_name         = var.cluster_name
+  auth0_jwks_uri       = var.auth0_jwks_uri
+  smtp_password        = var.smtp_password
+  smtp_user            = var.smtp_user
+  smtp_from            = var.smtp_from
+}
+
 module "envoy-gateway" {
   count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd]
