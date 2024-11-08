@@ -35,9 +35,100 @@ resource "kubernetes_config_map" "signoz-values" {
 
 }
 
+
+resource "aws_iam_user" "backup" {
+  name = "clickhouse-backup-${var.namespace}"
+}
+
+resource "aws_iam_access_key" "backup" {
+  user = aws_iam_user.backup.name
+}
+
+// Create the S3 bucket
+resource "aws_s3_bucket" "clickhouse_backup" {
+  bucket = "signoz-clickhouse-backup-${var.cluster_name}"
+}
+
+// Enable versioning
+resource "aws_s3_bucket_versioning" "clickhouse_backup" {
+  bucket = aws_s3_bucket.clickhouse_backup.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+// Configure lifecycle rules for backup management
+resource "aws_s3_bucket_lifecycle_configuration" "clickhouse_backup" {
+  bucket = aws_s3_bucket.clickhouse_backup.id
+
+  rule {
+    id     = "cleanup_old_backups"
+    status = "Enabled"
+
+    expiration {
+      days = 30  // Adjust retention period as needed
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 7
+    }
+  }
+}
+
+resource "aws_iam_user_policy" "backup" {
+  name = "clickhouse-backup-policy"
+  user = aws_iam_user.backup.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "${aws_s3_bucket.clickhouse_backup.arn}/*",
+          aws_s3_bucket.clickhouse_backup.arn
+        ]
+      }
+    ]
+  })
+}
+
+resource "kubernetes_config_map" "clickhouse-backup-config" {
+  metadata {
+    name      = "clickhouse-backup-config"
+    namespace = var.namespace
+  }
+
+  data = {
+    "config.yml" = <<-EOT
+      general:
+        remote_storage: s3
+        upload_concurrency: 4
+        download_concurrency: 4
+        disable_progress_bar: false
+      clickhouse:
+        host: localhost
+        port: 9000
+        username: admin
+        password_from_env: CLICKHOUSE_PASSWORD
+      s3:
+        bucket: ${aws_s3_bucket.clickhouse_backup.id}
+        endpoint: s3.amazonaws.com
+        region: ${data.aws_region.current.name}
+        access_key: ${aws_iam_access_key.backup.id}
+        secret_key: ${aws_iam_access_key.backup.secret}
+    EOT
+  }
+}
+
 resource "kubectl_manifest" "signoz-helm-release" {
   depends_on = [kubernetes_namespace.signoz]
-
   yaml_body = <<YAML
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -66,6 +157,56 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: StatefulSet
+              name: signoz-clickhouse
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/-
+                value:
+                  name: backup
+                  image: altinity/clickhouse-backup:2.4.4
+                  imagePullPolicy: IfNotPresent
+                  securityContext:
+                    runAsUser: 101
+                    runAsGroup: 101
+                  env:
+                    - name: CLICKHOUSE_HOST
+                      value: "localhost"
+                    - name: CLICKHOUSE_PORT
+                      value: "9000"
+                    - name: CLICKHOUSE_USER
+                      value: "admin"
+                    - name: CLICKHOUSE_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: clickhouse-admin-password
+                          key: password
+                  volumeMounts:
+                    - name: data
+                      mountPath: /var/lib/clickhouse
+                    - name: backup
+                      mountPath: /var/lib/clickhouse/backup
+                    - name: config
+                      mountPath: /etc/clickhouse-backup
+          - target:
+              kind: StatefulSet
+              name: signoz-clickhouse
+            patch: |
+              - op: add
+                path: /spec/template/spec/volumes/-
+                value:
+                  name: backup
+                  emptyDir: {}
+              - op: add
+                path: /spec/template/spec/volumes/-
+                value:
+                  name: config
+                  configMap:
+                    name: clickhouse-backup-config
 YAML
 }
 
