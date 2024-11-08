@@ -120,7 +120,7 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
       s3:
         bucket: ${aws_s3_bucket.clickhouse_backup.id}
         endpoint: s3.amazonaws.com
-        region: us-east-1
+        region: ${var.region}
         access_key: ${aws_iam_access_key.backup.id}
         secret_key: ${aws_iam_access_key.backup.secret}
     EOT
@@ -129,12 +129,17 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
 
 resource "kubectl_manifest" "signoz-helm-release" {
   depends_on = [kubernetes_namespace.signoz]
+
+  smtp_user = var.smtp_user
+  smtp_password = var.smtp_password
+  smtp_from = var.smtp_from
+
   yaml_body = <<YAML
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: signoz
-  namespace: ${var.namespace}
+  namespace: ${var.namespace}  
 spec:
   interval: 10m
   chart:
