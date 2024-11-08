@@ -120,7 +120,7 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
       s3:
         bucket: ${aws_s3_bucket.clickhouse_backup.id}
         endpoint: s3.amazonaws.com
-        region: ${var.region}
+        region: us-east-1
         access_key: ${aws_iam_access_key.backup.id}
         secret_key: ${aws_iam_access_key.backup.secret}
     EOT
@@ -129,10 +129,6 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
 
 resource "kubectl_manifest" "signoz-helm-release" {
   depends_on = [kubernetes_namespace.signoz]
-
-  smtp_user = var.smtp_user
-  smtp_password = var.smtp_password
-  smtp_from = var.smtp_from
 
   yaml_body = <<YAML
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -151,6 +147,25 @@ spec:
         name: signoz
         namespace: ${var.namespace}
       interval: 10m
+      helm:
+        releaseName: signoz-fluxcd
+        # Extra parameters to set (same as setting through values.yaml, but these take precedence)
+        parameters:
+        - name: "clickhouse.password"
+          value: ${random_password.clickhouse-admin-password.result}
+        %{if local.alertmanager_enabled}
+        - name: "alertmanager.enabled"
+          value: "true"
+        - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_FROM"
+          value: ${var.smtp_from}
+        - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_USERNAME"
+          value: ${var.smtp_user}
+        - name: "alertmanager.additionalEnvs.ALERTMANAGER_SMTP_AUTH_PASSWORD"
+          value: ${var.smtp_password}
+        %{else}
+        - name: "alertmanager.enabled"
+          value: "false"
+        %{endif}
   values:
     alertmanager:
       enabled: false
