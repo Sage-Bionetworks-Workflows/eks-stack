@@ -120,7 +120,7 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
       s3:
         bucket: ${aws_s3_bucket.clickhouse_backup.id}
         endpoint: s3.amazonaws.com
-        region: ${data.aws_region.current.name}
+        region: us-east-1
         access_key: ${aws_iam_access_key.backup.id}
         secret_key: ${aws_iam_access_key.backup.secret}
     EOT
