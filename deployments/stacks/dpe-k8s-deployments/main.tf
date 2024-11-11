@@ -156,3 +156,47 @@ module "clickhouse_backup_bucket" {
   source = "../../../modules/s3-bucket"
   bucket_name = "clickhouse-backup-${var.aws_account_id}"
 }
+
+resource "aws_iam_role" "clickhouse_backup_access" {
+  name = "clickhouse-backup-access-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = ["ec2.amazonaws.com", "eks.amazonaws.com"]
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "clickhouse_backup_policy" {
+  name = "clickhouse-backup-access-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = [
+          module.clickhouse_backup_bucket.bucket_arn,
+          "${module.clickhouse_backup_bucket.bucket_arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "clickhouse_backup_policy_attachment" {
+  role       = aws_iam_role.clickhouse_backup_access.name
+  policy_arn = aws_iam_policy.clickhouse_backup_policy.arn
+}
