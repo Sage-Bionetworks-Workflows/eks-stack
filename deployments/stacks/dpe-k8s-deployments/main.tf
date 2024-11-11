@@ -151,3 +151,9 @@ module "cert-manager" {
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
 }
+
+module "clickhouse_backup_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_name = "clickhouse-backup"
+}
