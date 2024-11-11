@@ -65,3 +65,8 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "aws_account_id" {
+  description = "The AWS account ID"
+  type        = string
+}
