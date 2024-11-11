@@ -41,6 +41,11 @@ imagePullSecrets: []
 clickhouse:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
+  storage:
+  type: s3
+  endpoint: s3.amazonaws.com
+  bucket: clickhouse-backup-${aws_account_id}
+  region: us-east-1
 
   # Zookeeper default values
   # Ref: https://github.com/bitnami/charts/blob/main/bitnami/zookeeper/values.yaml

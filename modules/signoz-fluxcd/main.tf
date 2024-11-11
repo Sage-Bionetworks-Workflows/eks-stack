@@ -35,6 +35,16 @@ resource "kubernetes_config_map" "signoz-values" {
 
 }
 
+resource "kubernetes_service_account" "clickhouse-backup-service-account" {
+  metadata {
+    name      = "clickhouse-backup"
+    namespace = var.namespace
+    annotations = {
+      "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role"
+    }
+  }
+}
+
 resource "kubectl_manifest" "signoz-helm-release" {
   depends_on = [kubernetes_namespace.signoz]
 
@@ -66,6 +76,23 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
+    - kind: Secret
+      name: aws-credentials
+      valuesKey: aws_access_key_id
+      targetPath: clickhouse.s3.accessKey
+    - kind: Secret
+      name: aws-credentials
+      valuesKey: aws_secret_access_key
+      targetPath: clickhouse.s3.secretKey
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              version: v1
+              kind: Deployment
+              name: clickhouse-backup
+            patch: |
+              ${file("${path.module}/templates/clickhouse-backup-patch.yaml")}
 YAML
 }
 
@@ -172,4 +199,16 @@ resource "kubernetes_secret" "clickhouse-admin-password" {
   }
 
   depends_on = [kubernetes_namespace.signoz]
+}
+
+resource "kubernetes_secret" "aws_credentials" {
+  metadata {
+    name      = "aws-credentials"
+    namespace = var.namespace
+  }
+
+  data = {
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+  }
 }

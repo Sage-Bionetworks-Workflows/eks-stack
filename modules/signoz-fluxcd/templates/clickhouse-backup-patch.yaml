@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: clickhouse-backup
+spec:
+  schedule: "0 0 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: clickhouse-backup
+            image: aws/aws-cli:2.8.12
+            command:
+            - /bin/sh
+            - -c
+            - |
+              aws s3 mb s3://clickhouse-backup-${aws_account_id}
+              aws s3 sync /data/clickhouse-backup s3://clickhouse-backup-${aws_account_id}
+            volumeMounts:
+            - name: backup-data
+              mountPath: /data/clickhouse-backup
+          volumes:
+          - name: backup-data
+            emptyDir: {}
+          serviceAccountName: clickhouse-backup-service-account
+          restartPolicy: OnFailure
