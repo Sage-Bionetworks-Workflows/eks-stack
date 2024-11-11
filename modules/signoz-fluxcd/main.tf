@@ -76,14 +76,6 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
-    - kind: Secret
-      name: aws-credentials
-      valuesKey: aws_access_key_id
-      targetPath: clickhouse.s3.accessKey
-    - kind: Secret
-      name: aws-credentials
-      valuesKey: aws_secret_access_key
-      targetPath: clickhouse.s3.secretKey
   postRenderers:
     - kustomize:
         patches:
@@ -199,16 +191,4 @@ resource "kubernetes_secret" "clickhouse-admin-password" {
   }
 
   depends_on = [kubernetes_namespace.signoz]
-}
-
-resource "kubernetes_secret" "aws_credentials" {
-  metadata {
-    name      = "aws-credentials"
-    namespace = var.namespace
-  }
-
-  data = {
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-  }
 }
