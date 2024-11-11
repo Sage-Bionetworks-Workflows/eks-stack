@@ -116,6 +116,7 @@ module "signoz-flux-deployment" {
   smtp_password        = var.smtp_password
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
+  aws_account_id       = var.aws_account_id
 }
 
 module "weave-gitops" {

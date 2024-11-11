@@ -35,6 +35,7 @@ resource "kubernetes_config_map" "signoz-values" {
 
 }
 
+
 resource "kubernetes_service_account" "clickhouse-backup-service-account" {
   metadata {
     name      = "clickhouse-backup"
