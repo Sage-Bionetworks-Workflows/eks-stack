@@ -35,6 +35,36 @@ resource "kubernetes_config_map" "signoz-values" {
 
 }
 
+resource "kubernetes_config_map" "clickhouse-backup-config" {
+  metadata {
+    name      = "clickhouse-backup-config"
+    namespace = var.namespace
+  }
+
+  data = {
+    "backup_disk.xml" = <<-EOT
+      <clickhouse>
+          <storage_configuration>
+              <disks>
+                  <s3>
+                      <type>s3</type>
+                      <endpoint>https://s3.us-east-1.amazonaws.com</endpoint>
+                      <use_environment_credentials>1</use_environment_credentials>
+                      <region>us-east-1</region>
+                  </s3>
+              </disks>
+          </storage_configuration>
+          <backups>
+              <remote>
+                  <type>disk</type>
+                  <disk>s3</disk>
+                  <path>clickhouse-backup-${var.aws_account_id}</path>
+              </remote>
+          </backups>
+      </clickhouse>
+    EOT
+  }
+}
 
 resource "kubernetes_service_account" "clickhouse-backup-service-account" {
   metadata {
