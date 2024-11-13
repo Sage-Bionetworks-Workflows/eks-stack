@@ -92,6 +92,7 @@ module "signoz" {
   smtp_password        = var.smtp_password
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
+  auth0_identifier     = var.auth0_identifier
 }
 
 module "envoy-gateway" {
