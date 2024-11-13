@@ -158,19 +158,19 @@ module "clickhouse_backup_bucket" {
   bucket_name = "clickhouse-backup-${var.aws_account_id}"
 }
 
-# data "tls_certificate" "eks" {
-#   url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
-# }
+data "tls_certificate" "eks" {
+  url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+}
 
-# resource "aws_iam_openid_connect_provider" "eks" {
-#   client_id_list  = ["sts.amazonaws.com"]
-#   thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
-#   url             = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
 
-#   tags = {
-#     Name = "${var.cluster_name}-eks-irsa"
-#   }
-# }
+  tags = {
+    Name = "${var.cluster_name}-eks-irsa"
+  }
+}
 
 resource "aws_iam_policy" "clickhouse_backup_policy" {
   name = "clickhouse-backup-access-policy"
@@ -206,7 +206,7 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated = "https://oidc.eks.us-east-1.amazonaws.com/id/DA1DF11424BEFC68B1726FDB70DA037E"
+          Federated = "arn:aws:iam::${var.aws_account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${module.eks.cluster_id}"
         }
         # Condition = {
         #   StringEquals = {
