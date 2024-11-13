@@ -104,6 +104,7 @@ module "dpe-sandbox-spacelift-production" {
   auth0_stack_project_root = "deployments/stacks/dpe-auth0"
   auth0_domain             = ""
   auth0_clients            = []
+  auth0_identifier         = ""
 
   aws_account_id = "766808016710"
   region         = "us-east-1"
