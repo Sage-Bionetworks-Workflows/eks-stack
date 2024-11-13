@@ -31,17 +31,6 @@ resource "kubernetes_config_map" "signoz-values" {
 
   data = {
     "signoz_values.yaml" = "${file("${path.module}/templates/values.yaml")}"
-  }
-
-}
-
-resource "kubernetes_config_map" "clickhouse-backup-config" {
-  metadata {
-    name      = "clickhouse-backup-config"
-    namespace = var.namespace
-  }
-
-  data = {
     "backup_disk.xml" = <<-EOT
       <clickhouse>
           <storage_configuration>
@@ -64,6 +53,7 @@ resource "kubernetes_config_map" "clickhouse-backup-config" {
       </clickhouse>
     EOT
   }
+
 }
 
 resource "kubernetes_service_account" "clickhouse-backup-service-account" {

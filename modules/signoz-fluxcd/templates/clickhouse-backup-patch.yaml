@@ -108,4 +108,4 @@ spec:
           volumes:
             - name: backup-config
               configMap:
-                name: clickhouse-backup-config
+                name: signoz-values
