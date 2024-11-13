@@ -97,17 +97,71 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              version: v1
-              kind: Deployment
-              name: clickhouse-backup
-            patch: |
-              ${file("${path.module}/templates/clickhouse-backup-patch.yaml")}
 YAML
 }
+  # postRenderers:
+  #   - kustomize:
+  #       patches:
+  #         - target:
+  #             version: v1
+  #             kind: Deployment
+  #             name: clickhouse-backup
+  #           patch: |
+  #             apiVersion: apps/v1
+  #             kind: Deployment
+  #             metadata:
+  #               name: nginx
+  #               namespace: demo-s3
+  #             spec:
+  #               selector:
+  #                 matchLabels:
+  #                   app: nginx
+  #               template:
+  #                 metadata:
+  #                   labels:
+  #                     app: nginx
+  #                 spec:
+  #                   serviceAccountName: default
+  #                   initContainers:
+  #                   - name: demo-aws-cli
+  #                       image: amazon/aws-cli
+  #                       command: ['aws', 's3', 'cp', 's3://demo-bucket/test.txt, '-'
+  #                   containers:
+  #                     - name: my-app
+  #                       image: nginx
+              # ${file("${path.module}/templates/clickhouse-backup-patch.yaml")}
+
+resource "kubectl_manifest" "s3_test_pod" {
+  yaml_body = <<YAML
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: s3-test
+      namespace: ${var.namespace}
+    spec:
+      serviceAccountName: clickhouse-backup-service-account
+      containers:
+      - name: awscli
+        image: amazon/aws-cli:2.8.12
+        command: 
+          - /bin/sh
+          - -c
+          - |
+            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}
+            echo "S3 list completed with exit code $?"
+            # Keep pod running for inspection
+            tail -f /dev/null
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+      restartPolicy: Never
+    YAML
+}
+
 
 # resource "kubectl_manifest" "signoz-deployment" {
 #   depends_on = [kubernetes_namespace.signoz]
