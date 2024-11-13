@@ -206,7 +206,7 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${var.aws_account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${module.eks.cluster_id}"
+          Federated = "arn:aws:iam::${var.aws_account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${module.sage-aws-eks.eks.cluster_id}"
         }
         # Condition = {
         #   StringEquals = {
