@@ -39,18 +39,22 @@ module "dpe-sandbox-spacelift-development" {
       name        = "bfauble - automation"
       description = "App for testing signoz"
       app_type    = "non_interactive"
+      scopes      = ["write:telemetry"]
     },
     {
       name        = "schematic - Github Actions"
       description = "Client for Github Actions to export telemetry data"
       app_type    = "non_interactive"
+      scopes      = ["write:telemetry"]
     },
     {
       name        = "schematic - Dev"
       description = "Client for schematic deployed to AWS DEV to export telemetry data"
       app_type    = "non_interactive"
+      scopes      = ["write:telemetry"]
     },
   ]
+  auth0_identifier = "https://dev.sagedpe.org"
 
   aws_account_id = "631692904429"
   region         = "us-east-1"

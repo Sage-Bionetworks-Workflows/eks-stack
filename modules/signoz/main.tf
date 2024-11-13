@@ -87,6 +87,18 @@ spec:
                   uri: ${var.auth0_jwks_uri}
                 audiences:
                   - ${var.cluster_name}-telemetry
+          - op: replace
+            path: /spec/authorization
+            value:
+              defaultAction: Deny
+              rules:
+              - name: allow
+                action: Allow
+                principal:
+                  jwt:
+                    provider: auth0
+                    scopes:
+                      - write:telemetry
   %{endif}
   destination:
     server: 'https://kubernetes.default.svc'

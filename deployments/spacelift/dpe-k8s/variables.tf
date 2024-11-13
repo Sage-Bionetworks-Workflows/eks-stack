@@ -185,7 +185,13 @@ variable "auth0_clients" {
     name        = string
     description = string
     app_type    = string
+    scopes      = list(string)
   }))
+}
+
+variable "auth0_identifier" {
+  description = "Auth0 identifier for the created API."
+  type        = string
 }
 
 variable "ses_email_identities" {
