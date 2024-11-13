@@ -181,7 +181,7 @@ resource "aws_iam_policy" "clickhouse_backup_policy" {
   })
 }
 
-resource "aws_iam_role" "clickhouse_backup_access_role" {
+resource "aws_iam_role" "clickhouse_backup_access" {
   name = "clickhouse-backup-access-role"
   description = "Assumed role to access the clickhouse backup policy"
 
@@ -206,6 +206,6 @@ resource "aws_iam_role" "clickhouse_backup_access_role" {
 
 
 resource "aws_iam_role_policy_attachment" "clickhouse_backup_policy_attachment" {
-  role       = aws_iam_role.clickhouse_backup_access_role.name
+  role       = aws_iam_role.clickhouse_backup_access.name
   policy_arn = aws_iam_policy.clickhouse_backup_policy.arn
 }
