@@ -155,6 +155,7 @@ module "cert-manager" {
 
 module "clickhouse_backup_bucket" {
   source = "../../../modules/s3-bucket"
+  # bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
   bucket_name = "clickhouse-backup-${var.aws_account_id}"
 }
 
@@ -207,7 +208,7 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Effect = "Allow"
         Principal = {
           # https://oidc.eks.us-east-1.amazonaws.com/id/DA1DF11424BEFC68B1726FDB70DA037E
-          Federated = "arn:aws:iam::${var.aws_account_id}:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/${var.cluster_id}"
+          Federated = "${var.cluster_oidc_provider_arn}"
         }
         # Condition = {
         #   StringEquals = {
