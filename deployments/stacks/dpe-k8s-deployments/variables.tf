@@ -40,6 +40,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_id" {
+  description = "EKS cluster ID"
+  type        = string
+}
+
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string

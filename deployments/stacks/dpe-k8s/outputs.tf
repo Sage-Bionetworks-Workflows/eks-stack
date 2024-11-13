@@ -38,6 +38,10 @@ output "cluster_name" {
   value = module.sage-aws-eks.cluster_name
 }
 
+output "cluster_id" {
+  value = module.sage-aws-eks.cluster_id
+}
+
 output "smtp_user" {
   value = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_user : ""
 }
