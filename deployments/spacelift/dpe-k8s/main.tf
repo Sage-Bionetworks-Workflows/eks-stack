@@ -30,9 +30,10 @@ locals {
   }
 
   auth0_stack_variables = {
-    cluster_name  = var.cluster_name
-    auth0_domain  = var.auth0_domain
-    auth0_clients = var.auth0_clients
+    cluster_name     = var.cluster_name
+    auth0_domain     = var.auth0_domain
+    auth0_clients    = var.auth0_clients
+    auth0_identifier = var.auth0_identifier
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
