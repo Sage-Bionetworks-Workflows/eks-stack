@@ -86,7 +86,7 @@ spec:
                 remoteJWKS:
                   uri: ${var.auth0_jwks_uri}
                 audiences:
-                  - ${var.cluster_name}-telemetry
+                  - ${var.auth0_identifier}
           - op: replace
             path: /spec/authorization
             value:
