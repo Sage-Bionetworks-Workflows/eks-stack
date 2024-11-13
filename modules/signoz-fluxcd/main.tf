@@ -58,7 +58,7 @@ resource "kubernetes_config_map" "signoz-values" {
 
 resource "kubernetes_service_account" "clickhouse-backup-service-account" {
   metadata {
-    name      = "clickhouse-backup"
+    name      = "clickhouse-backup-service-account"
     namespace = var.namespace
     annotations = {
       "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role"
