@@ -38,8 +38,8 @@ output "cluster_name" {
   value = module.sage-aws-eks.cluster_name
 }
 
-output "cluster_id" {
-  value = module.sage-aws-eks.cluster_id
+output "cluster_oidc_provider_arn" {
+  value = module.sage-aws-eks.cluster_oidc_provider_arn
 }
 
 output "smtp_user" {

@@ -43,7 +43,7 @@ locals {
     pod_to_node_dns_sg_id               = "TF_VAR_pod_to_node_dns_sg_id"
     smtp_user                           = "TF_VAR_smtp_user"
     smtp_password                       = "TF_VAR_smtp_password"
-    cluster_id                          = "TF_VAR_cluster_id"
+    cluster_oidc_provider_arn           = "TF_VAR_cluster_oidc_provider_arn"
   }
 }
 

@@ -14,6 +14,6 @@ output "pod_to_node_dns_sg_id" {
   value = aws_security_group.pod-dns-egress.id
 }
 
-output "cluster_id" {
-  value = module.eks.cluster_id
+output "cluster_oidc_provider_arn" {
+  value = module.eks.oidc_provider_arn
 }
