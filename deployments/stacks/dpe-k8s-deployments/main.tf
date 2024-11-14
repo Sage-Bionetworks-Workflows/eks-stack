@@ -155,26 +155,11 @@ module "cert-manager" {
 
 module "clickhouse_backup_bucket" {
   source = "../../../modules/s3-bucket"
-  # bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-  bucket_name = "clickhouse-backup-${var.aws_account_id}"
+  bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
 }
 
-# data "tls_certificate" "eks" {
-#   url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
-# }
-
-# resource "aws_iam_openid_connect_provider" "eks" {
-#   client_id_list  = ["sts.amazonaws.com"]
-#   thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
-#   url             = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
-
-#   tags = {
-#     Name = "${var.cluster_name}-eks-irsa"
-#   }
-# }
-
 resource "aws_iam_policy" "clickhouse_backup_policy" {
-  name = "clickhouse-backup-access-policy"
+  name = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}"
   description = "Policy to access the clickhouse backup bucket"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -197,7 +182,7 @@ resource "aws_iam_policy" "clickhouse_backup_policy" {
 }
 
 resource "aws_iam_role" "clickhouse_backup_access" {
-  name = "clickhouse-backup-access-role"
+  name = "clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
   description = "Assumed role to access the clickhouse backup policy"
 
   assume_role_policy = jsonencode({
@@ -207,14 +192,8 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          # https://oidc.eks.us-east-1.amazonaws.com/id/DA1DF11424BEFC68B1726FDB70DA037E
           Federated = "${var.cluster_oidc_provider_arn}"
         }
-        # Condition = {
-        #   StringEquals = {
-        #     "${data.aws_iam_openid_connect_provider.eks.url}:aud" = "sts.amazonaws.com"
-        #   }
-        # }
       }
     ]
   })

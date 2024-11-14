@@ -31,27 +31,6 @@ resource "kubernetes_config_map" "signoz-values" {
 
   data = {
     "signoz_values.yaml" = "${file("${path.module}/templates/values.yaml")}"
-    "backup_disk.xml" = <<-EOT
-      <clickhouse>
-          <storage_configuration>
-              <disks>
-                  <s3>
-                      <type>s3</type>
-                      <endpoint>https://s3.us-east-1.amazonaws.com</endpoint>
-                      <use_environment_credentials>1</use_environment_credentials>
-                      <region>us-east-1</region>
-                  </s3>
-              </disks>
-          </storage_configuration>
-          <backups>
-              <remote>
-                  <type>disk</type>
-                  <disk>s3</disk>
-                  <path>clickhouse-backup-${var.aws_account_id}</path>
-              </remote>
-          </backups>
-      </clickhouse>
-    EOT
   }
 
 }
@@ -61,7 +40,7 @@ resource "kubernetes_service_account" "clickhouse-backup-service-account" {
     name      = "clickhouse-backup-service-account"
     namespace = var.namespace
     annotations = {
-      "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role"
+      "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
     }
   }
 }
@@ -99,37 +78,6 @@ spec:
       targetPath: clickhouse.password
 YAML
 }
-  # postRenderers:
-  #   - kustomize:
-  #       patches:
-  #         - target:
-  #             version: v1
-  #             kind: Deployment
-  #             name: clickhouse-backup
-  #           patch: |
-  #             apiVersion: apps/v1
-  #             kind: Deployment
-  #             metadata:
-  #               name: nginx
-  #               namespace: demo-s3
-  #             spec:
-  #               selector:
-  #                 matchLabels:
-  #                   app: nginx
-  #               template:
-  #                 metadata:
-  #                   labels:
-  #                     app: nginx
-  #                 spec:
-  #                   serviceAccountName: default
-  #                   initContainers:
-  #                   - name: demo-aws-cli
-  #                       image: amazon/aws-cli
-  #                       command: ['aws', 's3', 'cp', 's3://demo-bucket/test.txt, '-'
-  #                   containers:
-  #                     - name: my-app
-  #                       image: nginx
-              # ${file("${path.module}/templates/clickhouse-backup-patch.yaml")}
 
 resource "kubectl_manifest" "s3_test_pod" {
   yaml_body = <<YAML
