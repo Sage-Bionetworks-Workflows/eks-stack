@@ -44,7 +44,7 @@ clickhouse:
   storage:
   type: s3
   endpoint: s3.amazonaws.com
-  bucket: clickhouse-backup-${aws_account_id}
+  bucket: clickhouse-backup-${aws_account_id}-${cluster_name}
   region: us-east-1
 
   # Zookeeper default values
