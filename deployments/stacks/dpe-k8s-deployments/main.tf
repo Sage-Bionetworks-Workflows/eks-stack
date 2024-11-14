@@ -161,6 +161,7 @@ module "clickhouse_backup_bucket" {
 resource "aws_iam_policy" "clickhouse_backup_policy" {
   name = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}"
   description = "Policy to access the clickhouse backup bucket"
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -192,13 +193,13 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated = "${var.cluster_oidc_provider_arn}"
+          Federated = "${var.cluster_oidc_provider_arn}",
+          Service = "eks.amazonaws.com"
         }
       }
     ]
   })
 }
-
 
 resource "aws_iam_role_policy_attachment" "clickhouse_backup_policy_attachment" {
   role       = aws_iam_role.clickhouse_backup_access.name
