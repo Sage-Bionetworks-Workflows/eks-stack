@@ -76,6 +76,14 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: clickhouse-backup
+            patch: |
+              ${file("${path.module}/templates/clickhouse-backup-patch.yaml")}
 YAML
 }
 
