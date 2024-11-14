@@ -155,7 +155,7 @@ module "cert-manager" {
 
 module "clickhouse_backup_bucket" {
   source = "../../../modules/s3-bucket"
-  bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+  bucket_name = "clickhouse-backup-${var.aws_account_id}"
 }
 
 resource "aws_iam_policy" "clickhouse_backup_policy" {
