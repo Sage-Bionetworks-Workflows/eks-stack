@@ -97,7 +97,7 @@ module "signoz" {
 
 module "envoy-gateway" {
   count      = var.enable_cluster_ingress ? 1 : 0
-  depends_on = [module.argo-cd]
+  depends_on = [module.argo-cd, module.cert-manager]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
   source               = "../../../modules/envoy-gateway"
