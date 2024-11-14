@@ -194,7 +194,6 @@ resource "aws_iam_role" "clickhouse_backup_access" {
         Effect = "Allow"
         Principal = {
           Federated = "${var.cluster_oidc_provider_arn}",
-          Service = "eks.amazonaws.com"
         }
       }
     ]
