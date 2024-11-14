@@ -80,13 +80,13 @@ spec:
     - kustomize:
         patches:
           - target:
-              kind: HelmRelease
-              name: signoz
+              kind: StatefulSet
+              name: chi-signoz-clickhouse-cluster-0-0
             patch: |
               - op: add
                 path: /spec/template/spec/containers/-
                 value:
-                  name: clickhouse-backup
+                  name: clickhouse-backup-sidecar
                   image: altinity/clickhouse-backup:2.6.3
                   resources:
                     requests:
@@ -100,13 +100,13 @@ spec:
                     - name: REMOTE_STORAGE
                       value: "s3"
                     - name: BACKUPS_TO_KEEP_REMOTE
-                      value: "0" # 0 means keep all backups remote
+                      value: "0"
                     - name: FULL_INTERVAL
                       value: "24h"
-                    - name: LOG_LEVEL # TODO: remove this before merging
+                    - name: LOG_LEVEL
                       value: "debug"
                     - name: BACKUP_NAME
-                      value: "my-backup"
+                      value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_BUCKET
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
 YAML
