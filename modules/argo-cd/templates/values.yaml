@@ -2453,27 +2453,7 @@ repoServer:
   # -- Additional containers to be added to the repo server pod
   ## Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/config-management-plugins/
   ## Note: Supports use of custom Helm templates
-  extraContainers:
-    - name: lovely-plugin
-    # Choose your image here - see https://github.com/crumbhole/argocd-lovely-plugin/blob/main/doc/variations.md
-    image: ghcr.io/crumbhole/lovely:1.1.1
-    securityContext:
-      runAsNonRoot: true
-      runAsUser: 999
-    volumeMounts:
-        # Import the repo-server's plugin binary
-      - mountPath: /var/run/argocd
-        name: var-files
-      - mountPath: /home/argocd/cmp-server/plugins
-        name: plugins
-        # Starting with v2.4, do NOT mount the same tmp volume as the repo-server container. The filesystem separation helps
-        # mitigate path traversal attacks.
-      - mountPath: /tmp
-        name: lovely-tmp
-    volumes:
-      # A temporary directory for the tool to work in.
-      - emptyDir: {}
-        name: lovely-tmp
+  extraContainers: []
     # - name: cmp-my-plugin
     #   command:
     #     - "/var/run/argocd/argocd-cmp-server"
