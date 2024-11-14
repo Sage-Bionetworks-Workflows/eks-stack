@@ -128,7 +128,7 @@ resource "kubectl_manifest" "s3_test_pod" {
           - /bin/sh
           - -c
           - |
-            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}
+            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}
             echo "S3 list completed with exit code $?"
             # Keep pod running for inspection
             tail -f /dev/null
