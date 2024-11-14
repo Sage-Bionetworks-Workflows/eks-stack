@@ -82,7 +82,7 @@ spec:
           - target:
               kind: HelmRelease
               name: signoz
-          patch: |
+          patch: |-
             - op: add
               path: /spec/template/spec/containers/-
               value:
