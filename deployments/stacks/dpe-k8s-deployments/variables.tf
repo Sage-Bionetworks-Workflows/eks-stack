@@ -108,3 +108,9 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "oidc_client_secret_otel" {
+  description = "The OIDC client secret for the UI to redirect users to jumpcloud for SSO login. Since this is sourced externally it will be set in spacelift under the environment tab as `TF_VAR_oidc_client_secret_otel`."
+  type        = string
+  default     = ""
+}

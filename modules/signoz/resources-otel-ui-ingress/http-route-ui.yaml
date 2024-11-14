@@ -1,0 +1,46 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: signoz-ui-route
+  namespace: envoy-gateway
+spec:
+  parentRefs:
+    - name: eg
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: signoz-frontend
+          namespace: signoz
+          port: 3301
+          weight: 1
+      filters:
+      - type: URLRewrite
+        urlRewrite:
+          path:
+            type: ReplacePrefixMatch
+            replacePrefixMatch: /
+      matches:
+        - path:
+            type: PathPrefix
+            value: /telemetry/ui
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: signoz-ui-oidc-policy
+  namespace: envoy-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: signoz-ui-route
+  oidc:
+    provider:
+      issuer: "https://oauth.id.jumpcloud.com/"
+    clientID: <replaced-by-kustomize>
+    clientSecret:
+      name: "oidc-secret-telemetry"
+    # redirectURL: "https://dev.sagedpe.org/telemetry/ui/oauth2/callback"
+    redirectURL: <replaced-by-kustomize>
+    logoutPath: "/telemetry/ui/logout"

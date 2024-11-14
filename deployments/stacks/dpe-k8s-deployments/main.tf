@@ -79,20 +79,22 @@ module "signoz" {
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source               = "../../../modules/signoz"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  namespace            = "signoz"
-  argo_deployment_name = "signoz"
-  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
-  gateway_namespace    = "envoy-gateway"
-  cluster_name         = var.cluster_name
-  auth0_jwks_uri       = var.auth0_jwks_uri
-  smtp_password        = var.smtp_password
-  smtp_user            = var.smtp_user
-  smtp_from            = var.smtp_from
-  auth0_identifier     = var.auth0_identifier
+  source                  = "../../../modules/signoz"
+  auto_deploy             = var.auto_deploy
+  auto_prune              = var.auto_prune
+  git_revision            = var.git_revision
+  namespace               = "signoz"
+  argo_deployment_name    = "signoz"
+  enable_otel_ingress     = var.enable_otel_ingress && var.enable_cluster_ingress
+  gateway_namespace       = "envoy-gateway"
+  cluster_name            = var.cluster_name
+  auth0_jwks_uri          = var.auth0_jwks_uri
+  smtp_password           = var.smtp_password
+  smtp_user               = var.smtp_user
+  smtp_from               = var.smtp_from
+  auth0_identifier        = var.auth0_identifier
+  oidc_client_secret_otel = var.oidc_client_secret_otel
+  hostname                = var.ssl_hostname
 }
 
 module "envoy-gateway" {

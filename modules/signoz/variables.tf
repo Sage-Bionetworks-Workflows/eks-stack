@@ -70,3 +70,21 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "oidc_client_secret_otel" {
+  description = "The OIDC client secret for the UI to redirect users to jumpcloud for SSO login."
+  type        = string
+  default     = ""
+}
+
+variable "oidc_client_id" {
+  description = "The OIDC client ID for the UI to redirect users to jumpcloud for SSO login."
+  type        = string
+  default     = ""
+}
+
+variable "hostname" {
+  description = "The hostname to use for any url redirects for SSO"
+  type        = string
+  default     = ""
+}
