@@ -82,33 +82,33 @@ spec:
           - target:
               kind: HelmRelease
               name: signoz
-          patch: |
-            - op: add
-              path: /spec/template/spec/containers/-
-              value:
-                name: clickhouse-backup
-                image: altinity/clickhouse-backup:2.6.3
-                resources:
-                  requests:
-                    cpu: "100m"
-                    memory: "128Mi"
-                    storage: "10Gi"
-                volumeMounts:
-                  - name: clickhouse-data
-                    mountPath: /var/lib/clickhouse
-                env:
-                  - name: REMOTE_STORAGE
-                    value: "s3"
-                  - name: BACKUPS_TO_KEEP_REMOTE
-                    value: "0" # 0 means keep all backups remote
-                  - name: FULL_INTERVAL
-                    value: "24h"
-                  - name: LOG_LEVEL # TODO: remove this before merging
-                    value: "debug"
-                  - name: BACKUP_NAME
-                    value: "my-backup"
-                  - name: S3_BUCKET
-                    value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/-
+                value:
+                  name: clickhouse-backup
+                  image: altinity/clickhouse-backup:2.6.3
+                  resources:
+                    requests:
+                      cpu: "100m"
+                      memory: "128Mi"
+                      storage: "10Gi"
+                  volumeMounts:
+                    - name: clickhouse-data
+                      mountPath: /var/lib/clickhouse
+                  env:
+                    - name: REMOTE_STORAGE
+                      value: "s3"
+                    - name: BACKUPS_TO_KEEP_REMOTE
+                      value: "0" # 0 means keep all backups remote
+                    - name: FULL_INTERVAL
+                      value: "24h"
+                    - name: LOG_LEVEL # TODO: remove this before merging
+                      value: "debug"
+                    - name: BACKUP_NAME
+                      value: "my-backup"
+                    - name: S3_BUCKET
+                      value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
 YAML
 }
 
