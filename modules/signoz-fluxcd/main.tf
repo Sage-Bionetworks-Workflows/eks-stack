@@ -78,42 +78,37 @@ spec:
       targetPath: clickhouse.password
   postRenderers:
     - kustomize:
-        patchesStrategicMerge:
-          - kind: Deployment
-            apiVersion: apps/v1
-            metadata:
-              name: clickhouse-backup-sidecar
-            spec:
-              template:
-                spec:
-                  serviceAccountName: clickhouse-backup-service-account
-                  containers:
-                    - name: clickhouse-backup-sidecar
-                      image: altinity/clickhouse-backup:2.6.3
-                      resources:
-                        requests:
-                          cpu: "100m"
-                          memory: "128Mi"
-                      volumeMounts:
-                        - name: clickhouse-data
-                          mountPath: /var/lib/clickhouse
-                      env:
-                        - name: REMOTE_STORAGE
-                          value: "s3"
-                        - name: BACKUPS_TO_KEEP_REMOTE
-                          value: "0"
-                        - name: FULL_INTERVAL
-                          value: "24h"
-                        - name: LOG_LEVEL
-                          value: "debug"
-                        - name: BACKUP_NAME
-                          value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-                        - name: S3_BUCKET
-                          value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-                  volumes:
-                    - name: clickhouse-data
-                      persistentVolumeClaim:
-                        claimName: data-clickhouse-0
+        patches:
+          - target:
+              kind: HelmRelease
+              name: signoz
+          patch: |
+            - op: add
+              path: /spec/template/spec/containers/-
+              value:
+                name: clickhouse-backup
+                image: altinity/clickhouse-backup:2.6.3
+                resources:
+                  requests:
+                    cpu: "100m"
+                    memory: "128Mi"
+                    storage: "10Gi"
+                volumeMounts:
+                  - name: clickhouse-data
+                    mountPath: /var/lib/clickhouse
+                env:
+                  - name: REMOTE_STORAGE
+                    value: "s3"
+                  - name: BACKUPS_TO_KEEP_REMOTE
+                    value: "0" # 0 means keep all backups remote
+                  - name: FULL_INTERVAL
+                    value: "24h"
+                  - name: LOG_LEVEL # TODO: remove this before merging
+                    value: "debug"
+                  - name: BACKUP_NAME
+                    value: "my-backup"
+                  - name: S3_BUCKET
+                    value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
 YAML
 }
 
