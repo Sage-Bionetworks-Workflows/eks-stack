@@ -79,6 +79,13 @@ spec:
   postRenderers:
     - kustomize:
         patches:
+          # Set the service account
+          - target:
+              kind: ClickHouseInstallation
+            patch: |
+              - op: replace
+                path: /spec/templates/podTemplates/0/spec/serviceAccountName
+                value: clickhouse-backup-service-account
           # Add the backup volume to the volumes list
           - target:
               kind: ClickHouseInstallation
@@ -88,7 +95,7 @@ spec:
                 value:
                   name: clickhouse-backup
                   persistentVolumeClaim:
-                    claimName: data-volumeclaim-clickhouse-backup
+                    claimName: data-volumeclaim-template
           # Add the sidecar container
           - target:
               kind: ClickHouseInstallation
@@ -109,8 +116,11 @@ spec:
                     requests:
                       cpu: "100m"
                       memory: "128Mi"
+                    limits:
+                      cpu: "500m"
+                      memory: "256Mi"
                   volumeMounts:
-                    - name: data-volumeclaim-clickhouse-backup
+                    - name: data-volumeclaim-template
                       mountPath: /var/lib/clickhouse
                   env:
                     - name: REMOTE_STORAGE
@@ -134,6 +144,7 @@ spec:
                           key: password
 YAML
 }
+
 
 # resource "kubectl_manifest" "signoz-deployment" {
 #   depends_on = [kubernetes_namespace.signoz]
