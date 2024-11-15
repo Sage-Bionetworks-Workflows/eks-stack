@@ -145,38 +145,6 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "s3_test_pod" {
-  yaml_body = <<YAML
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: s3-test
-      namespace: ${var.namespace}
-    spec:
-      serviceAccountName: clickhouse-backup-service-account
-      containers:
-      - name: awscli
-        image: amazon/aws-cli:2.8.12
-        command: 
-          - /bin/sh
-          - -c
-          - |
-            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}
-            echo "S3 list completed with exit code $?"
-            # Keep pod running for inspection
-            tail -f /dev/null
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "100m"
-          limits:
-            memory: "128Mi"
-            cpu: "200m"
-      restartPolicy: Never
-    YAML
-}
-
-
 # resource "kubectl_manifest" "signoz-deployment" {
 #   depends_on = [kubernetes_namespace.signoz]
 
