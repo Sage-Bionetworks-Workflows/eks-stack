@@ -68,6 +68,10 @@ spec:
   values:
     alertmanager:
       enabled: false
+    clickhouse:
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
   valuesFrom:
     - kind: ConfigMap
       name: signoz-values
