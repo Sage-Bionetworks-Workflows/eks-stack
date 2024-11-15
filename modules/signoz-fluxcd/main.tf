@@ -114,6 +114,8 @@ spec:
                       value: "3"
                     - name: REMOTE_STORAGE
                       value: "s3"
+                    - name: WATCH_INTERVAL
+                      value: "8h"
                     - name: FULL_INTERVAL
                       value: "24h"
                     - name: BACKUP_NAME
