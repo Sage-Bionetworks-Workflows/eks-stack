@@ -94,7 +94,7 @@ spec:
                     - -c
                     - |
                       echo "Clickhouse backup sidecar started!!!"
-                      /usr/local/bin/clickhouse-backup server
+                      tail -f /dev/null
                   resources:
                     requests:
                       cpu: "100m"
