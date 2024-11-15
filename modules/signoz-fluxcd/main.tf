@@ -79,16 +79,6 @@ spec:
   postRenderers:
     - kustomize:
         patches:
-          # Add the backup volume to the volumes list if it doesn't exist
-          - target:
-              kind: ClickHouseInstallation
-            patch: |
-              - op: add
-                path: /spec/templates/podTemplates/0/spec/volumes/-
-                value:
-                  name: clickhouse-backup
-                  persistentVolumeClaim:
-                    claimName: data-volumeclaim-template
           # Add the sidecar container
           - target:
               kind: ClickHouseInstallation
