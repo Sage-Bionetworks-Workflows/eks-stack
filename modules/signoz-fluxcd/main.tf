@@ -65,6 +65,7 @@ spec:
         name: signoz
         namespace: ${var.namespace}
       interval: 10m
+      reconcileStrategy: Revision
   values:
     alertmanager:
       enabled: false
