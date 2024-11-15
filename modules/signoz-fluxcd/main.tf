@@ -115,11 +115,6 @@ spec:
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_BUCKET
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-                    - name: CLICKHOUSE_PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                          name: clickhouse-admin-password
-                          key: password
 YAML
 }
 
