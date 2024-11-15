@@ -79,21 +79,48 @@ spec:
   postRenderers:
     - kustomize:
         patches:
+          # Set the service account
+          - target:
+              kind: ClickHouseInstallation
+            patch: |
+              - op: replace
+                path: /spec/templates/podTemplates/0/spec/serviceAccountName
+                value: clickhouse-backup-service-account
+          # Add the backup volume to the volumes list
           - target:
               kind: ClickHouseInstallation
             patch: |
               - op: add
-                path: /spec/templates/podTemplates/spec/containers/-
+                path: /spec/templates/podTemplates/0/spec/volumes/-
+                value:
+                  name: clickhouse-backup
+                  persistentVolumeClaim:
+                    claimName: data-volumeclaim-template
+          # Add the sidecar container
+          - target:
+              kind: ClickHouseInstallation
+            patch: |
+              - op: add
+                path: /spec/templates/podTemplates/0/spec/containers/-
                 value:
                   name: clickhouse-backup-sidecar
                   image: altinity/clickhouse-backup:2.6.3
+                  imagePullPolicy: IfNotPresent
+                  command:
+                    - /bin/sh
+                    - -c
+                    - |
+                      echo "Clickhouse backup sidecar started!!!"
+                      /usr/local/bin/clickhouse-backup server
                   resources:
                     requests:
                       cpu: "100m"
                       memory: "128Mi"
-                      storage: "10Gi"
+                    limits:
+                      cpu: "500m"
+                      memory: "256Mi"
                   volumeMounts:
-                    - name: clickhouse-data
+                    - name: data-volumeclaim-template
                       mountPath: /var/lib/clickhouse
                   env:
                     - name: REMOTE_STORAGE
@@ -108,6 +135,13 @@ spec:
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_BUCKET
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+                    - name: API_CREATE_INTEGRATION_TABLES
+                      value: "true"
+                    - name: CLICKHOUSE_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: clickhouse-admin-password
+                          key: password
 YAML
 }
 
@@ -127,7 +161,7 @@ resource "kubectl_manifest" "s3_test_pod" {
           - /bin/sh
           - -c
           - |
-            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}
+            aws s3 ls s3://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}
             echo "S3 list completed with exit code $?"
             # Keep pod running for inspection
             tail -f /dev/null
