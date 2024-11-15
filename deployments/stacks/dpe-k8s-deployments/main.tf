@@ -119,12 +119,6 @@ module "signoz-flux-deployment" {
   aws_account_id       = var.aws_account_id
 }
 
-module "weave-gitops" {
-  depends_on = [module.flux-cd]
-  source     = "../../../modules/weave-gitops"
-  namespace  = "weave-gitops"
-}
-
 module "envoy-gateway" {
   count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd]
@@ -154,12 +148,12 @@ module "cert-manager" {
 }
 
 module "clickhouse_backup_bucket" {
-  source = "../../../modules/s3-bucket"
+  source      = "../../../modules/s3-bucket"
   bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
 }
 
 resource "aws_iam_policy" "clickhouse_backup_policy" {
-  name = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}"
+  name        = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}"
   description = "Policy to access the clickhouse backup bucket"
 
   policy = jsonencode({
@@ -183,7 +177,7 @@ resource "aws_iam_policy" "clickhouse_backup_policy" {
 }
 
 resource "aws_iam_role" "clickhouse_backup_access" {
-  name = "clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
+  name        = "clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
   description = "Assumed role to access the clickhouse backup policy"
 
   assume_role_policy = jsonencode({
