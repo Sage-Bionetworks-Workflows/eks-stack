@@ -95,10 +95,6 @@ spec:
                     - |
                       echo "Clickhouse backup sidecar started!!!"
                       /usr/local/bin/clickhouse-backup server
-                  ports:
-                    - name: backup-api
-                      containerPort: 7171
-                      protocol: TCP
                   resources:
                     requests:
                       cpu: "100m"
@@ -106,12 +102,6 @@ spec:
                     limits:
                       cpu: "500m"
                       memory: "256Mi"
-                  volumeMounts:
-                    - name: data-volumeclaim-template
-                      mountPath: /var/lib/clickhouse
-                  securityContext:
-                    runAsUser: 101
-                    runAsGroup: 101
                   env:
                     - name: REMOTE_STORAGE
                       value: "s3"
@@ -125,16 +115,6 @@ spec:
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_BUCKET
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-                    - name: API_LISTEN
-                      value: "0.0.0.0:7171"
-                    - name: API_CREATE_INTEGRATION_TABLES
-                      value: "true"
-                    - name: CLICKHOUSE_HOST
-                      value: "localhost"
-                    - name: CLICKHOUSE_PORT
-                      value: "9000"
-                    - name: CLICKHOUSE_USER
-                      value: "admin"
                     - name: CLICKHOUSE_PASSWORD
                       valueFrom:
                         secretKeyRef:
