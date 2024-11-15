@@ -89,12 +89,7 @@ spec:
                   name: clickhouse-backup-sidecar
                   image: altinity/clickhouse-backup:2.6.3
                   imagePullPolicy: IfNotPresent
-                  command:
-                    - /bin/sh
-                    - -c
-                    - |
-                      echo "Clickhouse backup sidecar started!!!"
-                      tail -f /dev/null
+                  args: ["server"]
                   resources:
                     requests:
                       cpu: "100m"
@@ -103,18 +98,29 @@ spec:
                       cpu: "500m"
                       memory: "256Mi"
                   env:
-                    - name: REMOTE_STORAGE
-                      value: "s3"
-                    - name: BACKUPS_TO_KEEP_REMOTE
-                      value: "0"
-                    - name: FULL_INTERVAL
-                      value: "24h"
                     - name: LOG_LEVEL
                       value: "debug"
+                    - name: ALLOW_EMPTY_BACKUPS
+                      value: "true"
+                    - name: API_LISTEN
+                      value: "0.0.0.0:7171"
+                    - name: API_CREATE_INTEGRATION_TABLES
+                      value: "true"
+                    - name: BACKUPS_TO_KEEP_REMOTE
+                      value: "3"
+                    - name: REMOTE_STORAGE
+                      value: "s3"
+                    - name: FULL_INTERVAL
+                      value: "24h"
                     - name: BACKUP_NAME
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_BUCKET
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+                    - name: S3_PATH
+                      value: "backup/shard-{shard}"
+                  ports:
+                    - name: backup-rest
+                      containerPort: 7171
 YAML
 }
 
