@@ -95,7 +95,7 @@ spec:
                 value:
                   name: clickhouse-backup
                   persistentVolumeClaim:
-                    claimName: data-volumeclaim-template
+                    claimName: clickhouse-backup-data-volumeclaim
           # Add the sidecar container
           - target:
               kind: ClickHouseInstallation
@@ -120,7 +120,7 @@ spec:
                       cpu: "500m"
                       memory: "256Mi"
                   volumeMounts:
-                    - name: data-volumeclaim-template
+                    - name: clickhouse-backup-data-volumeclaim
                       mountPath: /var/lib/clickhouse
                   env:
                     - name: REMOTE_STORAGE
