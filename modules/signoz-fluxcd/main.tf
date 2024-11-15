@@ -80,11 +80,10 @@ spec:
     - kustomize:
         patches:
           - target:
-              kind: StatefulSet
-              name: chi-signoz-clickhouse-cluster-0-0
+              kind: ClickHouseInstallation
             patch: |
               - op: add
-                path: /spec/template/spec/containers/-
+                path: /spec/templates/podTemplates/spec/containers/-
                 value:
                   name: clickhouse-backup-sidecar
                   image: altinity/clickhouse-backup:2.6.3
