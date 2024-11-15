@@ -77,6 +77,10 @@ spec:
         defaultKeepFreeSpaceBytes: "10485760" # 10MiB
         type: s3
         endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/data/
+        role:
+          enabled: true
+          annotations:
+            eks.amazonaws.com/role-arn: "arn:aws:iam::${var.aws_account_id}:role/clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
   valuesFrom:
     - kind: ConfigMap
       name: signoz-values

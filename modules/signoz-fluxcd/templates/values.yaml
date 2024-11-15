@@ -368,9 +368,9 @@ clickhouse:
     # For GCS, endpoint should be https://storage.googleapis.com/<bucket-name>/data/
     endpoint: https://<bucket-name>.s3-<region>.amazonaws.com/data/
     # -- Access Key for S3 or GCS
-    accessKey: <access_key_id>
+    # accessKey: <access_key_id>
     # -- Secret Access Key for S3 or GCS
-    secretAccess: <secret_access_key>
+    # secretAccess: <secret_access_key>
     # AWS role configuration - to use environment variables instead of passing access and secret keys
     role:
       # -- Whether to enable AWS IAM ARN role.
