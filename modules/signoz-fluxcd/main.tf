@@ -79,13 +79,6 @@ spec:
   postRenderers:
     - kustomize:
         patches:
-          # Set the service account
-          - target:
-              kind: ClickHouseInstallation
-            patch: |
-              - op: replace
-                path: /spec/templates/podTemplates/0/spec/serviceAccountName
-                value: clickhouse-backup-service-account
           # Add the backup volume to the volumes list
           - target:
               kind: ClickHouseInstallation
