@@ -808,6 +808,10 @@ grafana:
         gnetId: 20417
         revision: 3
         datasource: VictoriaMetrics
+      altinity-clickhouse-operator-dashboard:
+        gnetId: 12163
+        revision: 2
+        datasource: VictoriaMetrics
 
   defaultDashboardsTimezone: utc
 

@@ -35,8 +35,9 @@ module "flux-cd" {
 
 module "victoria-metrics" {
   depends_on   = [module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version      = "0.4.8"
+  # source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
+  # version      = "0.4.8"
+  source = "../../../modules/victoria-metrics"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = var.git_revision

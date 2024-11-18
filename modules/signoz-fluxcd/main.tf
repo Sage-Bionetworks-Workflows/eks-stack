@@ -227,6 +227,45 @@ YAML
 # YAML
 # }
 
+resource "kubectl_manifest" "signoz-git-repo" {
+  depends_on = [helm_release.fluxcd]
+
+  yaml_body = <<YAML
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: signoz-additional-resources
+  namespace: ${var.namespace}
+spec:
+  interval: 1m
+  ref:
+    branch: ${var.git_revision}
+  url: https://github.com/Sage-Bionetworks-Workflows/eks-stack
+YAML
+}
+
+resource "kubectl_manifest" "signoz-kustomization" {
+  depends_on = [kubectl_manifest.signoz-git-repo, kubectl_manifest.signoz-helm-release]
+
+  yaml_body = <<YAML
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: signoz-additional-resources
+  namespace: ${var.namespace}
+spec:
+  targetNamespace: ${var.namespace}
+  interval: 1h
+  retryInterval: 2m
+  timeout: 5m
+  wait: true
+  prune: true
+  path: "./modules/signoz-fluxcd/resources"
+  sourceRef:
+    kind: GitRepository
+    name: signoz-additional-resources
+YAML
+}
 
 resource "random_password" "clickhouse-admin-password" {
   length  = 32
