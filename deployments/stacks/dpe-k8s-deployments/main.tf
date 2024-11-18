@@ -165,7 +165,8 @@ resource "aws_iam_policy" "clickhouse_backup_policy" {
           "s3:ListBucket",
           "s3:GetObject",
           "s3:PutObject",
-          "s3:DeleteObject"
+          "s3:DeleteObject",
+          "s3:CopyObject"
         ]
         Resource = [
           module.clickhouse_backup_bucket.bucket_arn,
