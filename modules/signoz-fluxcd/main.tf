@@ -103,7 +103,7 @@ spec:
                   name: clickhouse-backup-sidecar
                   image: altinity/clickhouse-backup:2.6.3
                   imagePullPolicy: IfNotPresent
-                  args: ["server"]
+                  args: ["server", "--watch"]
                   resources:
                     requests:
                       cpu: "100m"
