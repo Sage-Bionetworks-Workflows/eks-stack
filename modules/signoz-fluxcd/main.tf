@@ -228,7 +228,7 @@ YAML
 # }
 
 resource "kubectl_manifest" "signoz-git-repo" {
-  depends_on = [helm_release.fluxcd]
+  depends_on = [kubectl_manifest.signoz-helm-release]
 
   yaml_body = <<YAML
 apiVersion: source.toolkit.fluxcd.io/v1
@@ -280,6 +280,21 @@ resource "kubernetes_secret" "clickhouse-admin-password" {
 
   data = {
     "password" = random_password.clickhouse-admin-password.result
+  }
+
+  depends_on = [kubernetes_namespace.signoz]
+}
+
+resource "kubernetes_secret" "signoz-smtp-config" {
+  metadata {
+    name      = "signoz-smtp-config"
+    namespace = var.namespace
+  }
+
+  data = {
+    "smtp-config.yaml" = <<YAML
+
+    YAML
   }
 
   depends_on = [kubernetes_namespace.signoz]
