@@ -67,8 +67,6 @@ spec:
       interval: 10m
       reconcileStrategy: Revision
   values:
-    alertmanager:
-      enabled: false
     clickhouse:
       serviceAccount:
         annotations:
@@ -90,6 +88,9 @@ spec:
       name: clickhouse-admin-password
       valuesKey: password
       targetPath: clickhouse.password
+    - kind: Secret
+      name: signoz-smtp-config
+      valuesKey: smtp_config.yaml
   postRenderers:
     - kustomize:
         patches:
@@ -292,9 +293,14 @@ resource "kubernetes_secret" "signoz-smtp-config" {
   }
 
   data = {
-    "smtp-config.yaml" = <<YAML
-
-    YAML
+    "smtp_config.yaml" = <<YAML
+alertmanager:
+  enabled: ${local.alertmanager_enabled ? "true" : "false"}
+  additionalEnvs:
+    ALERTMANAGER_SMTP_FROM: ${local.alertmanager_enabled ? var.smtp_from : ""}
+    ALERTMANAGER_SMTP_AUTH_USERNAME: ${local.alertmanager_enabled ? var.smtp_user : ""}
+    ALERTMANAGER_SMTP_AUTH_PASSWORD: ${local.alertmanager_enabled ? var.smtp_password : ""}
+YAML
   }
 
   depends_on = [kubernetes_namespace.signoz]
