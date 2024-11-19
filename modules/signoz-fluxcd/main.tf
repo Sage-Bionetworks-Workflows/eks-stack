@@ -138,12 +138,42 @@ spec:
                   ports:
                     - name: backup-rest
                       containerPort: 7171
-            - target:
-                kind: ClickHouseInstallation
-              patch: |
-                - op: add
-                  path: /spec/configuration/files/config.d/storage.xml/clickhouse/storage_configuration/disks/s3/region
-                  value: "us-east-1"
+          - target:
+              kind: ClickHouseInstallation
+            patch: |
+              - op: replace
+                path: /spec/configuration/files/config.d/storage.xml
+                value: |
+                  <clickhouse>
+                    <storage_configuration>
+                        <disks>
+                          <default>
+                            <keep_free_space_bytes>10485760</keep_free_space_bytes>
+                          </default>
+                          <s3>
+                            <type>s3</type>
+                            <endpoint>https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.us-east-1.s3.amazonaws.com/data/</endpoint>
+                            <use_environment_credentials>true</use_environment_credentials>
+                            <region>us-east-1</region>
+                          </s3>
+                        </disks>
+                        <policies>
+                          <tiered>
+                            <volumes>
+                              <default>
+                                <disk>default</disk>
+                              </default>
+                              <s3>
+                                <disk>s3</disk>
+                                <perform_ttl_move_on_insert>0</perform_ttl_move_on_insert>
+                                <prefer_not_to_merge>1</prefer_not_to_merge>
+                              </s3>
+                            </volumes>
+                            <move_factor>0</move_factor>
+                          </tiered>
+                        </policies>
+                      </storage_configuration>
+                    </clickhouse>
 YAML
 }
 
