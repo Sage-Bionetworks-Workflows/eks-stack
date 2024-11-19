@@ -142,7 +142,7 @@ spec:
                 kind: ClickHouseInstallation
               patch: |
                 - op: add
-                  path: /spec/configuration/files/storage.xml/clickhouse/storage_configuration/disks/s3/region
+                  path: /spec/configuration/files/config.d/storage.xml/clickhouse/storage_configuration/disks/s3/region
                   value: "us-east-1"
 YAML
 }
