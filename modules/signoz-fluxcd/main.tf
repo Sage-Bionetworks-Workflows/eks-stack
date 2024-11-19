@@ -142,7 +142,7 @@ spec:
               kind: ClickHouseInstallation
             patch: |
               - op: replace
-                path: /spec/configuration/files/config.d/storage.xml
+                path: /spec/configuration/files/config.d~1storage.xml
                 value: |
                   <clickhouse>
                     <storage_configuration>
