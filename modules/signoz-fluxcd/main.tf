@@ -75,7 +75,7 @@ spec:
         enabled: true
         defaultKeepFreeSpaceBytes: "10485760" # 10MiB
         type: s3
-        endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.us-east-1.s3.amazonaws.com/data/
+        endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/data/
         role:
           enabled: true
           annotations:
@@ -152,7 +152,7 @@ spec:
                           </default>
                           <s3>
                             <type>s3</type>
-                            <endpoint>https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.us-east-1.s3.amazonaws.com/data/</endpoint>
+                            <endpoint>https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/data/</endpoint>
                             <use_environment_credentials>true</use_environment_credentials>
                             <region>us-east-1</region>
                           </s3>
