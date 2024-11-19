@@ -23,7 +23,7 @@ spec:
   sources:
   - repoURL: registry-1.docker.io
     chart: envoyproxy/gateway-helm
-    targetRevision: v1.1.2
+    targetRevision: v1.2.1
     helm:
       releaseName: gateway-helm
       valueFiles:
