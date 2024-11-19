@@ -10,3 +10,4 @@ spec:
     name: signoz-otel-collector-route
   jwt:
     providers: <replaced-by-kustomize>
+  authorization: <replaced-by-kustomize>

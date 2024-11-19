@@ -92,11 +92,12 @@ module "signoz" {
   smtp_password        = var.smtp_password
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
+  auth0_identifier     = var.auth0_identifier
 }
 
 module "envoy-gateway" {
   count      = var.enable_cluster_ingress ? 1 : 0
-  depends_on = [module.argo-cd]
+  depends_on = [module.argo-cd, module.cert-manager]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
   source               = "../../../modules/envoy-gateway"
