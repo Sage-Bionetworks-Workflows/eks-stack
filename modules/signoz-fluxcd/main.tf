@@ -76,7 +76,6 @@ spec:
         defaultKeepFreeSpaceBytes: "10485760" # 10MiB
         type: s3
         endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.us-east-1.s3.amazonaws.com/data/
-        region: us-east-1
         role:
           enabled: true
           annotations:
@@ -139,6 +138,12 @@ spec:
                   ports:
                     - name: backup-rest
                       containerPort: 7171
+            - target:
+                kind: ClickHouseInstallation
+              patch: |
+                - op: add
+                  path: /spec/configuration/files/storage.xml/clickhouse/storage_configuration/disks/s3/region
+                  value: "us-east-1"
 YAML
 }
 
