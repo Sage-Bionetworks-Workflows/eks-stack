@@ -75,7 +75,7 @@ spec:
         enabled: true
         defaultKeepFreeSpaceBytes: "10485760" # 10MiB
         type: s3
-        endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/data/
+        endpoint: https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/coldstorage/
         role:
           enabled: true
           annotations:
@@ -135,6 +135,8 @@ spec:
                       value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
                     - name: S3_PATH
                       value: "backup/shard-{shard}"
+                    - name: S3_OBJECT_DISK_PATH
+                      value: "backup-object-disks/shard-{shard}"
                   ports:
                     - name: backup-rest
                       containerPort: 7171
@@ -152,7 +154,7 @@ spec:
                           </default>
                           <s3>
                             <type>s3</type>
-                            <endpoint>https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/data/</endpoint>
+                            <endpoint>https://clickhouse-backup-${var.aws_account_id}-${var.cluster_name}.s3.amazonaws.com/coldstorage/</endpoint>
                             <use_environment_credentials>true</use_environment_credentials>
                             <region>us-east-1</region>
                           </s3>
