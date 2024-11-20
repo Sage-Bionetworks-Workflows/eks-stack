@@ -35,18 +35,6 @@ resource "kubernetes_config_map" "signoz-values" {
 
 }
 
-resource "kubernetes_service_account" "clickhouse-backup-service-account" {
-  depends_on = [kubernetes_namespace.signoz]
-
-  metadata {
-    name      = "clickhouse-backup-service-account"
-    namespace = var.namespace
-    annotations = {
-      "eks.amazonaws.com/role-arn" = var.s3_access_role_arn
-    }
-  }
-}
-
 resource "kubectl_manifest" "signoz-helm-release" {
   depends_on = [kubernetes_namespace.signoz]
 
