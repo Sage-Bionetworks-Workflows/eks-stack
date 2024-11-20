@@ -82,6 +82,14 @@ module "postgres-cloud-native-database" {
   argo_deployment_name = "airflow-postgres-cloud-native"
 }
 
+module "clickhouse-backup-bucket" {
+  source      = "../../../modules/s3-bucket"
+  bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+  enable_versioning = false
+  aws_account_id = var.aws_account_id
+  cluster_name = var.cluster_name
+  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
+}
 
 module "signoz" {
   depends_on = [module.argo-cd]
@@ -101,24 +109,9 @@ module "signoz" {
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
   auth0_identifier     = var.auth0_identifier
-}
-
-module "signoz-flux-deployment" {
-  depends_on           = [module.flux-cd]
-  source               = "../../../modules/signoz-fluxcd"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  namespace            = "signoz-fluxcd"
-  argo_deployment_name = "signoz-fluxcd"
-  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
-  gateway_namespace    = "envoy-gateway"
-  cluster_name         = var.cluster_name
-  auth0_jwks_uri       = var.auth0_jwks_uri
-  smtp_password        = var.smtp_password
-  smtp_user            = var.smtp_user
-  smtp_from            = var.smtp_from
   aws_account_id       = var.aws_account_id
+  s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
+  s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
 }
 
 module "envoy-gateway" {
@@ -147,56 +140,4 @@ module "cert-manager" {
   git_revision         = var.git_revision
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
-}
-
-module "clickhouse_backup_bucket" {
-  source      = "../../../modules/s3-bucket"
-  bucket_name = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-}
-
-resource "aws_iam_policy" "clickhouse_backup_policy" {
-  name        = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}"
-  description = "Policy to access the clickhouse backup bucket"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:ListBucket",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
-        ]
-        Resource = [
-          module.clickhouse_backup_bucket.bucket_arn,
-          "${module.clickhouse_backup_bucket.bucket_arn}/*"
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "clickhouse_backup_access" {
-  name        = "clickhouse-backup-access-role-${var.aws_account_id}-${var.cluster_name}"
-  description = "Assumed role to access the clickhouse backup policy"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Effect = "Allow"
-        Principal = {
-          Federated = "${var.cluster_oidc_provider_arn}",
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "clickhouse_backup_policy_attachment" {
-  role       = aws_iam_role.clickhouse_backup_access.name
-  policy_arn = aws_iam_policy.clickhouse_backup_policy.arn
 }

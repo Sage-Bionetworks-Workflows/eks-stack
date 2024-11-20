@@ -70,3 +70,13 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "s3_backup_bucket_name" {
+  description = "The name of the S3 bucket to use for backups"
+  type        = string
+}
+
+variable "s3_access_role_arn" {
+  description = "The ARN of the role to use for accessing the S3 bucket"
+  type        = string
+}

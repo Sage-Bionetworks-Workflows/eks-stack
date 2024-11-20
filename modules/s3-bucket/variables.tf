@@ -14,3 +14,18 @@ variable "enable_versioning" {
   type        = bool
   default     = true
 }
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
+variable "cluster_oidc_provider_arn" {
+  description = "EKS cluster ARN for the oidc provider"
+  type        = string
+}
