@@ -192,6 +192,7 @@ variable "auth0_clients" {
 variable "auth0_identifier" {
   description = "Auth0 identifier for the created API."
   type        = string
+  default     = ""
 }
 
 variable "ses_email_identities" {
