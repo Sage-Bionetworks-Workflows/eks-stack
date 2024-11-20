@@ -121,6 +121,8 @@ spec:
                       value: "0.0.0.0:7171"
                     - name: API_CREATE_INTEGRATION_TABLES
                       value: "true"
+                    - name: BACKUPS_TO_KEEP_LOCAL
+                      value: "1"
                     - name: BACKUPS_TO_KEEP_REMOTE
                       value: "3"
                     - name: REMOTE_STORAGE
