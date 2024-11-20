@@ -172,7 +172,7 @@ allow us to review for any security advisories.
 
 ### Deploying an application to the kubernetes cluster
 Deployment of applications to the kubernetes cluster is handled through the combination
-of terraform (.tf) scripts, spacelift (CICD tool), and ArgoCd (Declarative definitions 
+of terraform (.tf) scripts, spacelift (CICD tool), and ArgoCd or Flux CD (Declarative definitions 
 for applications).
 
 To start of the deployment journey the first step is to create a new terraform module
