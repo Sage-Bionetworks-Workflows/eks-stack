@@ -32,8 +32,8 @@ resource "aws_iam_policy" "s3-access-policy" {
           "s3:DeleteObject",
         ]
         Resource = [
-          module.clickhouse_backup_bucket.bucket_arn,
-          "${module.clickhouse_backup_bucket.bucket_arn}/*"
+          aws_s3_bucket.bucket.arn,
+          "${aws_s3_bucket.bucket.arn}/*"
         ]
       }
     ]
