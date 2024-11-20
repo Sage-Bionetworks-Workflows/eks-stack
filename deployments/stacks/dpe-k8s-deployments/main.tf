@@ -109,7 +109,6 @@ module "signoz" {
   smtp_user            = var.smtp_user
   smtp_from            = var.smtp_from
   auth0_identifier     = var.auth0_identifier
-  aws_account_id       = var.aws_account_id
   s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
   s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
 }

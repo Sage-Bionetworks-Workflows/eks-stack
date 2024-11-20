@@ -132,9 +132,9 @@ spec:
                     - name: FULL_INTERVAL
                       value: "24h"
                     - name: BACKUP_NAME
-                      value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+                      value: "${var.s3_backup_bucket_name}"
                     - name: S3_BUCKET
-                      value: "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+                      value: "${var.s3_backup_bucket_name}"
                     - name: S3_PATH
                       value: "backup/shard-{shard}"
                     - name: S3_OBJECT_DISK_PATH

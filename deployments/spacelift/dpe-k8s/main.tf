@@ -179,31 +179,6 @@ resource "spacelift_stack_dependency_reference" "cluster-name" {
 #   stack_id  = spacelift_stack.k8s-stack.id
 # }
 
-# resource "spacelift_stack_destructor" "k8s-stack-deployments-destructor" {
-#   depends_on = [
-#     spacelift_stack.k8s-stack,
-#     spacelift_aws_integration_attachment.k8s-deployments-aws-integration-attachment,
-#     spacelift_context_attachment.k8s-kubeconfig-hooks,
-#     spacelift_stack_dependency_reference.cluster-name,
-#     spacelift_stack_dependency_reference.region-name,
-#     spacelift_environment_variable.k8s-stack-deployments-environment-variables
-#   ]
-
-#   stack_id = spacelift_stack.k8s-stack-deployments.id
-# }
-
-# resource "spacelift_stack_destructor" "k8s-stack-destructor" {
-#   depends_on = [
-#     spacelift_aws_integration_attachment.k8s-aws-integration-attachment,
-#     spacelift_context_attachment.k8s-kubeconfig-hooks,
-#     spacelift_stack_dependency_reference.cluster-name,
-#     spacelift_stack_dependency_reference.region-name,
-#     spacelift_environment_variable.k8s-stack-environment-variables
-#   ]
-
-#   stack_id = spacelift_stack.k8s-stack.id
-# }
-
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
   integration_id = var.aws_integration_id
   stack_id       = spacelift_stack.k8s-stack.id
@@ -244,12 +219,6 @@ resource "spacelift_stack" "auth0" {
     "deployments/"
   ]
 }
-
-# resource "spacelift_stack_destructor" "auth0-stack-destructor" {
-#   count    = var.deploy_auth0 ? 1 : 0
-#   stack_id = spacelift_stack.auth0[0].id
-# }
-
 
 resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
   depends_on = [
