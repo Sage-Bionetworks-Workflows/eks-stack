@@ -17,7 +17,7 @@ resource "aws_s3_bucket_versioning" "versioning" {
 
 
 resource "aws_iam_policy" "s3-access-policy" {
-  name        = "clickhouse-backup-access-policy-${var.aws_account_id}-${var.cluster_name}-${var.bucket_name}"
+  name        = "access-policy-${var.aws_account_id}-${var.cluster_name}-${var.bucket_name}"
   description = "Policy to access the s3 bucket"
 
   policy = jsonencode({
