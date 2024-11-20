@@ -5,13 +5,10 @@ SigNoz is an open-source APM. It helps developers monitor their applications
 & troubleshoot problems, an open-source alternative to DataDog, NewRelic, etc. Open 
 source Application Performance Monitoring (APM) & Observability tool.
 
-
-## This module is a work in progress (To be completed before production, or determine if not needed)
-A number of items are needed:
-
-- Setting up backups and data retention: https://sagebionetworks.jira.com/browse/IBCDPE-1094
-- Set up accounts and access to the service declaratively
-
+## Initial setup
+After this module is deployed to the kubernetes cluster the accounts in the service need
+to be manually set up. This is only available with an enterprise license of this
+service. Additionally, any dashboards need to be created within the cluster.
 
 ## Setting up SMTP for alertmanager
 Alertmanager is an additional tool that is deployed to the kubernetes cluster that

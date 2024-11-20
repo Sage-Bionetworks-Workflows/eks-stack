@@ -1,3 +1,7 @@
+locals {
+  # git_revision = var.git_revision
+  git_revision = "schematic-138-cold-storage-and-backups"
+}
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
@@ -40,7 +44,7 @@ module "victoria-metrics" {
   source = "../../../modules/victoria-metrics"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "trivy-operator" {
@@ -49,7 +53,7 @@ module "trivy-operator" {
   version      = "0.3.2"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "airflow" {
@@ -58,7 +62,7 @@ module "airflow" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
   namespace    = "airflow"
 }
 
@@ -68,7 +72,7 @@ module "postgres-cloud-native-operator" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "postgres-cloud-native-database" {
@@ -77,7 +81,7 @@ module "postgres-cloud-native-database" {
   version              = "0.5.0"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
 }
@@ -98,7 +102,7 @@ module "signoz" {
   source               = "../../../modules/signoz"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "signoz"
   argo_deployment_name = "signoz"
   enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
@@ -121,7 +125,7 @@ module "envoy-gateway" {
   source               = "../../../modules/envoy-gateway"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
   cluster_issuer_name  = "lets-encrypt-prod"
@@ -136,7 +140,7 @@ module "cert-manager" {
   source               = "../../../modules/cert-manager"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
 }

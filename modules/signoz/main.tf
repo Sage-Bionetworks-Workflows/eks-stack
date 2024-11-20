@@ -36,6 +36,8 @@ resource "kubernetes_config_map" "signoz-values" {
 }
 
 resource "kubernetes_service_account" "clickhouse-backup-service-account" {
+  depends_on = [kubernetes_namespace.signoz]
+
   metadata {
     name      = "clickhouse-backup-service-account"
     namespace = var.namespace
