@@ -6,7 +6,9 @@ variable "bucket_name" {
 variable "tags" {
   description = "Tags to apply to the S3 bucket"
   type        = map(string)
-  default     = {}
+  default = {
+    "CostCenter" = "No Program / 000000"
+  }
 }
 
 variable "enable_versioning" {
