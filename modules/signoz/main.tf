@@ -204,7 +204,7 @@ spec:
   timeout: 5m
   wait: true
   prune: true
-  path: "./modules/signoz-fluxcd/resources-service-scrape"
+  path: "./modules/signoz/resources-service-scrape"
   sourceRef:
     kind: GitRepository
     name: signoz-git-repo
@@ -227,7 +227,7 @@ spec:
   timeout: 5m
   wait: true
   prune: true
-  path: "./modules/signoz-fluxcd/resources-otel-ingress"
+  path: "./modules/signoz/resources-otel-ingress"
   sourceRef:
     kind: GitRepository
     name: signoz-git-repo
