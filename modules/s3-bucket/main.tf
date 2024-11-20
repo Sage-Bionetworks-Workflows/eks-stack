@@ -41,7 +41,7 @@ resource "aws_iam_policy" "s3-access-policy" {
 }
 
 resource "aws_iam_role" "s3-access-iam-role" {
-  name        = "s3-access-role-${var.aws_account_id}-${var.cluster_name}-${var.bucket_name}"
+  name        = "s3-${var.cluster_name}-${var.bucket_name}"
   description = "Assumed role to access the s3 bucket with the given permissions."
 
   assume_role_policy = jsonencode({
