@@ -31,9 +31,7 @@ module "argo-cd" {
 
 module "flux-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
-  # source     = "spacelift.io/sagebionetworks/argo-cd/aws"
-  # version    = "0.3.1"
-  source = "../../../modules/flux-cd"
+  source     = "../../../modules/flux-cd"
 }
 
 module "victoria-metrics" {
