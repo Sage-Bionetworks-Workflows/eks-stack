@@ -107,3 +107,12 @@ Once you're connected via a port-forward session the next item is to make sure t
 application you're sending data from is instrumented with open-telemetry. This is going
 to be application specific so instructions will need to live within the application
 you are using.
+
+### Clickhouse Backups and Restores
+This module uses the `clickhouse-backup` tool to automatically back up the clickhouse database and store the data in an S3 bucket to ensure continuity of the data regardless of the state of the cluster.`clickhouse-backup` is deployed as a sidecar container to the `signoz` helm release. It will perform incremental backups of the database every 8 hours and full backups every 24 hours.
+
+To restore the database from an S3 backup, you can use the following steps:
+1. Scale the replica cluster (`chi-signoz-clickhouse-cluster-0-1`) `StatefulSet` to 0 replicas.
+1. Identify the backup that you would like to restore from. You can get the full list of backups by shelling into the `clickhouse-backup-sidecar` container within the `chi-signoz-clickhouse-cluster-0-0-0` pod and running `clickhouse-backup list`.
+1. Restore the database from your backup by running `clickhouse-backup restore_remote --rm --schema <backup-name>` (assuming the backup from remote storage).
+1. Scale the replica cluster `StatefulSet` back to 1 replica. Once the `chi-signoz-clickhouse-cluster-0-1-0` has fully come back up, you should see the restored data showing in the `signoz` UI.
