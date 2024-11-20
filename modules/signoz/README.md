@@ -6,9 +6,11 @@ SigNoz is an open-source APM. It helps developers monitor their applications
 source Application Performance Monitoring (APM) & Observability tool.
 
 ## Initial setup
-After this module is deployed to the kubernetes cluster the accounts in the service need
-to be manually set up. This is only available with an enterprise license of this
-service. Additionally, any dashboards need to be created within the cluster.
+
+- Accounts in SigNoz need to be manually set up (SSO is only available in the enterprise version)
+- 120 months for "Total Retention Period" and 1 month for "Move to S3" settings should be set
+- Any dashboards need to be copied or set up
+- Alert channels (Email/Slack) need to be set
 
 ## Setting up SMTP for alertmanager
 Alertmanager is an additional tool that is deployed to the kubernetes cluster that
