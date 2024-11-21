@@ -308,7 +308,7 @@ This document describes the abbreviated process below:
                 "iam:DeleteUser",
                 "iam:CreateAccessKey",
                 "iam:ListAccessKeys",
-                "iam:DeleteAccessKeys"
+                "iam:DeleteAccessKey"
             ],
             "Resource": "arn:aws:iam::{{AWS ACCOUNT ID}}:user/smtp_user"
         }
