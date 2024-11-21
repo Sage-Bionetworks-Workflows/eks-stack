@@ -221,7 +221,6 @@ metadata:
   name: signoz-telemetry-ingress
   namespace: ${var.namespace}
 spec:
-  targetNamespace: ${var.namespace}
   interval: 1h
   retryInterval: 2m
   timeout: 5m
@@ -235,6 +234,9 @@ spec:
     - target:
         kind: ReferenceGrant
       patch: |-
+        - op: replace
+          path: /metadata/namespace
+          value: ${var.namespace}
         - op: replace
           path: /spec/from/0/namespace
           value: ${var.gateway_namespace}
