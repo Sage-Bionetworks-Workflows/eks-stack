@@ -28,6 +28,7 @@ spec:
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
+  %{if var.deploy_pooler}
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     path: modules/postgres-cloud-native/resources
@@ -42,6 +43,7 @@ spec:
           - op: replace
             path: /metadata/name
             value: ${var.argo_deployment_name}-pooler-rw
+  %{endif}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ${var.namespace}
@@ -65,7 +67,7 @@ resource "kubernetes_secret" "connection-secret" {
 
   type = "kubernetes.io/basic-auth"
 
-
+  # TODO: Need to provide an updated connection if not using the pooler
   data = {
     "dbname"     = "application-database"
     "host"       = "${var.argo_deployment_name}-pooler-rw.${var.namespace}"

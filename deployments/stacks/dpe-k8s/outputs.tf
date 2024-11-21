@@ -14,8 +14,8 @@ output "vpc_private_subnet_cidrs" {
   value = module.sage-aws-vpc.vpc_private_subnet_cidrs
 }
 
-output "private_subnet_ids" {
-  value = module.sage-aws-vpc.private_subnet_ids
+output "private_subnet_ids_eks_worker_nodes" {
+  value = module.sage-aws-vpc.private_subnet_ids_eks_worker_nodes
 }
 
 output "vpc_security_group_id" {
@@ -36,4 +36,17 @@ output "region" {
 
 output "cluster_name" {
   value = module.sage-aws-eks.cluster_name
+}
+
+output "cluster_oidc_provider_arn" {
+  value = module.sage-aws-eks.cluster_oidc_provider_arn
+}
+
+output "smtp_user" {
+  value = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_user : ""
+}
+
+output "smtp_password" {
+  sensitive = true
+  value     = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_password : ""
 }

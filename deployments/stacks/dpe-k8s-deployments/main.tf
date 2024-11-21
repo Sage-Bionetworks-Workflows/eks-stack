@@ -1,12 +1,15 @@
+locals {
+  git_revision = var.git_revision
+}
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
   cluster_name           = var.cluster_name
-  private_vpc_subnet_ids = var.private_subnet_ids
+  private_vpc_subnet_ids = var.private_subnet_ids_eks_worker_nodes
   vpc_id                 = var.vpc_id
   node_security_group_id = var.node_security_group_id
   spotinst_account       = var.spotinst_account
-  single_az              = true
+  single_az              = false
   desired_capacity       = 3
 }
 
@@ -16,22 +19,29 @@ module "sage-aws-eks-addons" {
   cluster_name       = var.cluster_name
   aws_account_id     = var.aws_account_id
   vpc_id             = var.vpc_id
-  private_subnet_ids = var.private_subnet_ids
+  private_subnet_ids = var.private_subnet_ids_eks_worker_nodes
 }
 
 module "argo-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
-  source     = "spacelift.io/sagebionetworks/argo-cd/aws"
-  version    = "0.3.1"
+  # source     = "spacelift.io/sagebionetworks/argo-cd/aws"
+  # version    = "0.3.1"
+  source = "../../../modules/argo-cd"
+}
+
+module "flux-cd" {
+  depends_on = [module.sage-aws-eks-autoscaler]
+  source     = "../../../modules/flux-cd"
 }
 
 module "victoria-metrics" {
-  depends_on   = [module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version      = "0.4.8"
+  depends_on = [module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
+  # version      = "0.4.8"
+  source       = "../../../modules/victoria-metrics"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "trivy-operator" {
@@ -40,7 +50,7 @@ module "trivy-operator" {
   version      = "0.3.2"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "airflow" {
@@ -49,7 +59,7 @@ module "airflow" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
   namespace    = "airflow"
 }
 
@@ -59,17 +69,75 @@ module "postgres-cloud-native-operator" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "postgres-cloud-native-database" {
   depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   version              = "0.5.0"
-  auto_deploy          = true
-  auto_prune           = true
-  git_revision         = var.git_revision
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = local.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
 }
 
+module "clickhouse-backup-bucket" {
+  source                    = "../../../modules/s3-bucket"
+  bucket_name               = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+  enable_versioning         = false
+  aws_account_id            = var.aws_account_id
+  cluster_name              = var.cluster_name
+  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
+}
+
+module "signoz" {
+  depends_on = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source                = "../../../modules/signoz"
+  auto_deploy           = var.auto_deploy
+  auto_prune            = var.auto_prune
+  git_revision          = local.git_revision
+  namespace             = "signoz"
+  argo_deployment_name  = "signoz"
+  enable_otel_ingress   = var.enable_otel_ingress && var.enable_cluster_ingress
+  gateway_namespace     = "envoy-gateway"
+  cluster_name          = var.cluster_name
+  auth0_jwks_uri        = var.auth0_jwks_uri
+  smtp_password         = var.smtp_password
+  smtp_user             = var.smtp_user
+  smtp_from             = var.smtp_from
+  auth0_identifier      = var.auth0_identifier
+  s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
+  s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
+}
+
+module "envoy-gateway" {
+  count      = var.enable_cluster_ingress ? 1 : 0
+  depends_on = [module.argo-cd, module.cert-manager]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/envoy-gateway"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = local.git_revision
+  namespace            = "envoy-gateway"
+  argo_deployment_name = "envoy-gateway"
+  cluster_issuer_name  = "lets-encrypt-prod"
+  ssl_hostname         = var.ssl_hostname
+}
+
+module "cert-manager" {
+  count      = var.enable_cluster_ingress ? 1 : 0
+  depends_on = [module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/cert-manager"
+  auto_deploy          = var.auto_deploy
+  auto_prune           = var.auto_prune
+  git_revision         = local.git_revision
+  namespace            = "cert-manager"
+  argo_deployment_name = "cert-manager"
+}

@@ -20,7 +20,7 @@ resource "spacelift_stack" "root_administrative_stack" {
   }
 
   administrative          = true
-  autodeploy              = true
+  autodeploy              = false
   branch                  = local.git_branch
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"

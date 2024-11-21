@@ -233,6 +233,9 @@ vmsingle:
       resources:
         requests:
           storage: 20Gi
+    nodeSelector: {
+      spotinst.io/node-lifecycle: "od"
+    }
   ingress:
     enabled: false
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
@@ -698,6 +701,9 @@ vmagent:
       # Do not store original labels in vmagent's memory by default. This reduces the amount of memory used by vmagent
       # but makes vmagent debugging UI less informative. See: https://docs.victoriametrics.com/vmagent/#relabel-debug
       promscrape.dropOriginalLabels: "true"
+    nodeSelector: {
+      spotinst.io/node-lifecycle: "od"
+    }
   ingress:
     enabled: false
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
@@ -801,6 +807,10 @@ grafana:
       cloudnativepg:
         gnetId: 20417
         revision: 3
+        datasource: VictoriaMetrics
+      altinity-clickhouse-operator-dashboard:
+        gnetId: 12163
+        revision: 2
         datasource: VictoriaMetrics
 
   defaultDashboardsTimezone: utc

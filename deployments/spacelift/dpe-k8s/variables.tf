@@ -118,12 +118,101 @@ variable "public_subnet_cidrs" {
   description = "Public Subnet CIDR values"
 }
 
-variable "private_subnet_cidrs" {
+variable "private_subnet_cidrs_eks_control_plane" {
   type        = list(string)
-  description = "Private Subnet CIDR values"
+  description = "Private Subnet CIDR values for the EKS control plane"
 }
 
-variable "azs" {
+variable "private_subnet_cidrs_eks_worker_nodes" {
   type        = list(string)
-  description = "Availability Zones"
+  description = "Private Subnet CIDR values for the EKS worker nodes"
+}
+
+variable "azs_eks_control_plane" {
+  type        = list(string)
+  description = "Availability Zones for the EKS control plane"
+}
+
+variable "azs_eks_worker_nodes" {
+  type        = list(string)
+  description = "Availability Zones for the EKS worker nodes"
+}
+
+variable "enable_cluster_ingress" {
+  description = "Enable cluster ingress"
+  type        = bool
+}
+
+variable "enable_otel_ingress" {
+  description = "Enable OpenTelemetry ingress, used to send traces to SigNoz"
+  type        = bool
+}
+
+variable "ssl_hostname" {
+  description = "The hostname to use for the SSL certificate"
+  type        = string
+}
+
+variable "deploy_auth0" {
+  description = "Determines if a stack for Auth0 should be deployed"
+  type        = bool
+  default     = false
+}
+
+variable "auth0_jwks_uri" {
+  description = "The JWKS URI for Auth0"
+  type        = string
+}
+
+variable "auth0_stack_name" {
+  description = "Name of the auth0 stack"
+  type        = string
+}
+
+variable "auth0_stack_project_root" {
+  description = "Project root of the auth0 stack"
+  type        = string
+}
+
+variable "auth0_domain" {
+  description = "Auth0 domain"
+  type        = string
+}
+
+variable "auth0_clients" {
+  description = "List of clients to create in Auth0."
+  type = list(object({
+    name        = string
+    description = string
+    app_type    = string
+    scopes      = list(string)
+  }))
+}
+
+variable "auth0_identifier" {
+  description = "Auth0 identifier for the created API."
+  type        = string
+}
+
+variable "ses_email_identities" {
+  type        = list(string)
+  description = "List of email identities to be added to SES"
+}
+
+variable "smtp_user" {
+  description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_password" {
+  description = "The SMTP password. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
+}
+
+variable "smtp_from" {
+  description = "The SMTP from address. Required if smtp_user, smtp_password, and smtp_from are set"
+  type        = string
+  default     = ""
 }

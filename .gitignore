@@ -2,3 +2,4 @@
 .terraform
 terraform.tfvars
 settings.json
+temporary_files*

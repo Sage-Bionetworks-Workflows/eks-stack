@@ -6,7 +6,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "Version of K8 cluster"
   type        = string
-  default     = "1.30"
+  default     = "1.31"
 }
 
 variable "region" {
@@ -28,9 +28,14 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "private_vpc_subnet_ids" {
-  description = "List of private subnets to deploy the cluster to"
+variable "private_subnet_ids_eks_control_plane" {
   type        = list(string)
+  description = "Private Subnet ID values for the EKS control plane"
+}
+
+variable "private_subnet_ids_eks_worker_nodes" {
+  type        = list(string)
+  description = "Private Subnet ID values for the EKS worker nodes"
 }
 
 variable "private_subnet_cidrs" {
