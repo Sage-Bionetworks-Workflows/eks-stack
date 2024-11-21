@@ -40,6 +40,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_oidc_provider_arn" {
+  description = "EKS cluster ARN for the oidc provider"
+  type        = string
+}
+
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string

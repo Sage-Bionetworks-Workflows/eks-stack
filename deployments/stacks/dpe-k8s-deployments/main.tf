@@ -1,3 +1,6 @@
+locals {
+  git_revision = var.git_revision
+}
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
@@ -26,13 +29,19 @@ module "argo-cd" {
   source = "../../../modules/argo-cd"
 }
 
+module "flux-cd" {
+  depends_on = [module.sage-aws-eks-autoscaler]
+  source     = "../../../modules/flux-cd"
+}
+
 module "victoria-metrics" {
-  depends_on   = [module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  version      = "0.4.8"
+  depends_on = [module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
+  # version      = "0.4.8"
+  source       = "../../../modules/victoria-metrics"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "trivy-operator" {
@@ -41,7 +50,7 @@ module "trivy-operator" {
   version      = "0.3.2"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "airflow" {
@@ -50,7 +59,7 @@ module "airflow" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
   namespace    = "airflow"
 }
 
@@ -60,7 +69,7 @@ module "postgres-cloud-native-operator" {
   version      = "0.4.0"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = var.git_revision
+  git_revision = local.git_revision
 }
 
 module "postgres-cloud-native-database" {
@@ -69,30 +78,40 @@ module "postgres-cloud-native-database" {
   version              = "0.5.0"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
 }
 
+module "clickhouse-backup-bucket" {
+  source                    = "../../../modules/s3-bucket"
+  bucket_name               = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
+  enable_versioning         = false
+  aws_account_id            = var.aws_account_id
+  cluster_name              = var.cluster_name
+  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
+}
 
 module "signoz" {
   depends_on = [module.argo-cd]
   # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
   # version              = "0.5.0"
-  source               = "../../../modules/signoz"
-  auto_deploy          = var.auto_deploy
-  auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
-  namespace            = "signoz"
-  argo_deployment_name = "signoz"
-  enable_otel_ingress  = var.enable_otel_ingress && var.enable_cluster_ingress
-  gateway_namespace    = "envoy-gateway"
-  cluster_name         = var.cluster_name
-  auth0_jwks_uri       = var.auth0_jwks_uri
-  smtp_password        = var.smtp_password
-  smtp_user            = var.smtp_user
-  smtp_from            = var.smtp_from
-  auth0_identifier     = var.auth0_identifier
+  source                = "../../../modules/signoz"
+  auto_deploy           = var.auto_deploy
+  auto_prune            = var.auto_prune
+  git_revision          = local.git_revision
+  namespace             = "signoz"
+  argo_deployment_name  = "signoz"
+  enable_otel_ingress   = var.enable_otel_ingress && var.enable_cluster_ingress
+  gateway_namespace     = "envoy-gateway"
+  cluster_name          = var.cluster_name
+  auth0_jwks_uri        = var.auth0_jwks_uri
+  smtp_password         = var.smtp_password
+  smtp_user             = var.smtp_user
+  smtp_from             = var.smtp_from
+  auth0_identifier      = var.auth0_identifier
+  s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
+  s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
 }
 
 module "envoy-gateway" {
@@ -103,7 +122,7 @@ module "envoy-gateway" {
   source               = "../../../modules/envoy-gateway"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "envoy-gateway"
   argo_deployment_name = "envoy-gateway"
   cluster_issuer_name  = "lets-encrypt-prod"
@@ -118,7 +137,7 @@ module "cert-manager" {
   source               = "../../../modules/cert-manager"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
-  git_revision         = var.git_revision
+  git_revision         = local.git_revision
   namespace            = "cert-manager"
   argo_deployment_name = "cert-manager"
 }
