@@ -12,3 +12,7 @@ spec:
   - group: ""
     kind: Service
     name: signoz-otel-collector
+  - group: ""
+    kind: Service
+    name: signoz-frontend
+

@@ -4,3 +4,9 @@ metadata:
   name: custom-proxy-config
 spec:
   mergeGateways: false
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
