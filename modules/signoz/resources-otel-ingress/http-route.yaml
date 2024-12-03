@@ -41,27 +41,7 @@ spec:
           namespace: signoz
           port: 3301
           weight: 1
-      filters:
-      - type: URLRewrite
-        urlRewrite:
-          path:
-            type: ReplacePrefixMatch
-            replacePrefixMatch: /
       matches:
         - path:
             type: PathPrefix
-            value: /telemetry/ui
-    - backendRefs:
-        - group: ""
-          kind: Service
-          name: signoz-frontend
-          namespace: signoz
-          port: 3301
-          weight: 1
-      matches:
-        - path:
-            type: Exact
             value: /
-        - headers:
-            - name: Referer
-              value: https://dev.sagedpe.org/telemetry/ui
