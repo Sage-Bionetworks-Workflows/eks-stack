@@ -85,7 +85,7 @@ module "postgres-cloud-native-database" {
   git_revision         = local.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
-  deploy_pooler        = True
+  deploy_pooler        = true
 }
 
 module "clickhouse-backup-bucket" {
