@@ -45,18 +45,20 @@ module "victoria-metrics" {
 }
 
 module "trivy-operator" {
-  depends_on   = [module.victoria-metrics, module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  version      = "0.3.2"
+  depends_on = [module.victoria-metrics, module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
+  # version      = "0.3.2"
+  source       = "../../../modules/trivy-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = local.git_revision
 }
 
 module "airflow" {
-  depends_on   = [module.victoria-metrics, module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/airflow/aws"
-  version      = "0.4.0"
+  depends_on = [module.victoria-metrics, module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/airflow/aws"
+  # version      = "0.4.0"
+  source       = "../../../modules/apache-airflow"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = local.git_revision
@@ -64,23 +66,26 @@ module "airflow" {
 }
 
 module "postgres-cloud-native-operator" {
-  depends_on   = [module.argo-cd]
-  source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
-  version      = "0.4.0"
+  depends_on = [module.argo-cd]
+  # source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
+  # version      = "0.4.0"
+  source       = "../../../modules/postgres-cloud-native-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
   git_revision = local.git_revision
 }
 
 module "postgres-cloud-native-database" {
-  depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
-  source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  version              = "0.5.0"
+  depends_on = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
+  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
+  # version              = "0.5.0"
+  source               = "../../../modules/postgres-cloud-native"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
   git_revision         = local.git_revision
   namespace            = "airflow"
   argo_deployment_name = "airflow-postgres-cloud-native"
+  deploy_pooler        = True
 }
 
 module "clickhouse-backup-bucket" {
