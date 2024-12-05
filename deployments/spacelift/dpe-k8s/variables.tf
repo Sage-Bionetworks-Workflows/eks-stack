@@ -67,7 +67,7 @@ variable "k8s_stack_deployments_project_root" {
 variable "opentofu_version" {
   description = "Version of opentofu to use"
   type        = string
-  default     = "1.7.2"
+  default     = "1.8.6"
 }
 
 variable "aws_account_id" {
