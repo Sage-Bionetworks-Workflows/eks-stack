@@ -1,7 +1,7 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: require-audience-for-authorization
+  name: require-jwt-for-collector
   namespace: envoy-gateway
 spec:
   targetRef:
@@ -11,3 +11,22 @@ spec:
   jwt:
     providers: <replaced-by-kustomize>
   authorization: <replaced-by-kustomize>
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: restrict-ui-to-sage-vpn
+  namespace: envoy-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: signoz-ui-route
+  authorization:
+    defaultAction: Deny
+    rules:
+    - action: Allow
+      principal:
+        clientCIDRs:
+        # Public IP address for the Sage VPN. `/32` CIDR mask means a single IP address.
+        - 52.44.61.21/32

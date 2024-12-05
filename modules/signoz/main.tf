@@ -251,6 +251,7 @@ spec:
           value: ${var.namespace}
     - target:
         kind: SecurityPolicy
+        name: require-jwt-for-collector
       patch: |-
         - op: replace
           path: /metadata/namespace
