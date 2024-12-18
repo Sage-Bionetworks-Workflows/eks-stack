@@ -255,7 +255,7 @@ clickhouse:
       - ReadWriteOnce
 
     # -- Persistent Volume size
-    size: 100Gi
+    size: 200Gi
 
   # -- Clickhouse user profile configuration.
   # You can use this to override profile settings, for example
