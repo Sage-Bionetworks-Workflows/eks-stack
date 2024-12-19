@@ -68,7 +68,7 @@ clickhouse:
       signoz.io/port: "9141"
       signoz.io/path: "/metrics"
     metrics:
-      enabled: true
+      enabled: false
     logLevel: INFO
     livenessProbe:
       enabled: false
@@ -1636,7 +1636,7 @@ otelCollector:
       protocol: TCP
     metrics:
       # -- Whether to enable service port for internal metrics
-      enabled: true
+      enabled: false
       # -- Container port for internal metrics
       containerPort: 8888
       # -- Service port for internal metrics
