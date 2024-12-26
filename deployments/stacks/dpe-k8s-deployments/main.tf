@@ -117,6 +117,7 @@ module "signoz" {
   auth0_identifier      = var.auth0_identifier
   s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
   s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
+  docker_access_token   = var.docker_access_token
 }
 
 module "envoy-gateway" {

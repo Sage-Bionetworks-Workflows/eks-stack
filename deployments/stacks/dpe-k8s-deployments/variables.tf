@@ -113,3 +113,9 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "docker_access_token" {
+  description = "The access token to use for docker authenticated pulls. Created via by setting 'TF_VAR_docker_access_token' within spacelift as an environment variable"
+  type        = string
+  default     = ""
+}
