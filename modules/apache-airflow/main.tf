@@ -79,3 +79,25 @@ spec:
     namespace: ${var.namespace}
 YAML
 }
+
+resource "kubernetes_secret" "docker-cfg" {
+  metadata {
+    name      = "docker-cfg"
+    namespace = var.namespace
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "${var.docker_server}" = {
+          "username" = var.docker_username,
+          "password" = var.docker_access_token,
+          "email"    = var.docker_email
+          "auth"     = base64encode("${var.docker_username}:${var.docker_access_token}")
+        }
+      }
+    })
+  }
+}
