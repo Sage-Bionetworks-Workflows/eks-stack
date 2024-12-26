@@ -58,11 +58,12 @@ module "airflow" {
   depends_on = [module.victoria-metrics, module.argo-cd]
   # source       = "spacelift.io/sagebionetworks/airflow/aws"
   # version      = "0.4.0"
-  source       = "../../../modules/apache-airflow"
-  auto_deploy  = var.auto_deploy
-  auto_prune   = var.auto_prune
-  git_revision = local.git_revision
-  namespace    = "airflow"
+  source              = "../../../modules/apache-airflow"
+  auto_deploy         = var.auto_deploy
+  auto_prune          = var.auto_prune
+  git_revision        = local.git_revision
+  namespace           = "airflow"
+  docker_access_token = var.docker_access_token
 }
 
 module "postgres-cloud-native-operator" {
@@ -133,6 +134,7 @@ module "envoy-gateway" {
   argo_deployment_name = "envoy-gateway"
   cluster_issuer_name  = "lets-encrypt-prod"
   ssl_hostname         = var.ssl_hostname
+  docker_access_token  = var.docker_access_token
 }
 
 module "cert-manager" {
