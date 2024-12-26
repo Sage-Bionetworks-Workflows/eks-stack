@@ -3,7 +3,8 @@ global:
   # -- Overrides the Image registry globally
   imageRegistry: &GLOBAL_IMAGE_REGISTRY null
   # -- Global Image Pull Secrets
-  imagePullSecrets: []
+  imagePullSecrets:
+    - "docker-cfg"
   # -- Overrides the storage class for all PVC with persistence enabled.
   # If not set, the default storage class is used.
   # If set to "-", storageClassName: "", which disables dynamic provisioning
