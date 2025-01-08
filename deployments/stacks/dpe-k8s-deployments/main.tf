@@ -58,11 +58,12 @@ module "airflow" {
   depends_on = [module.victoria-metrics, module.argo-cd]
   # source       = "spacelift.io/sagebionetworks/airflow/aws"
   # version      = "0.4.0"
-  source       = "../../../modules/apache-airflow"
-  auto_deploy  = var.auto_deploy
-  auto_prune   = var.auto_prune
-  git_revision = local.git_revision
-  namespace    = "airflow"
+  source              = "../../../modules/apache-airflow"
+  auto_deploy         = var.auto_deploy
+  auto_prune          = var.auto_prune
+  git_revision        = local.git_revision
+  namespace           = "airflow"
+  docker_access_token = var.docker_access_token
 }
 
 module "postgres-cloud-native-operator" {
@@ -88,37 +89,6 @@ module "postgres-cloud-native-database" {
   deploy_pooler        = true
 }
 
-module "clickhouse-backup-bucket" {
-  source                    = "../../../modules/s3-bucket"
-  bucket_name               = "clickhouse-backup-${var.aws_account_id}-${var.cluster_name}"
-  enable_versioning         = false
-  aws_account_id            = var.aws_account_id
-  cluster_name              = var.cluster_name
-  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
-}
-
-module "signoz" {
-  depends_on = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
-  source                = "../../../modules/signoz"
-  auto_deploy           = var.auto_deploy
-  auto_prune            = var.auto_prune
-  git_revision          = local.git_revision
-  namespace             = "signoz"
-  argo_deployment_name  = "signoz"
-  enable_otel_ingress   = var.enable_otel_ingress && var.enable_cluster_ingress
-  gateway_namespace     = "envoy-gateway"
-  cluster_name          = var.cluster_name
-  auth0_jwks_uri        = var.auth0_jwks_uri
-  smtp_password         = var.smtp_password
-  smtp_user             = var.smtp_user
-  smtp_from             = var.smtp_from
-  auth0_identifier      = var.auth0_identifier
-  s3_backup_bucket_name = module.clickhouse-backup-bucket.bucket_name
-  s3_access_role_arn    = module.clickhouse-backup-bucket.access_role_arn
-}
-
 module "envoy-gateway" {
   count      = var.enable_cluster_ingress ? 1 : 0
   depends_on = [module.argo-cd, module.cert-manager]
@@ -132,6 +102,7 @@ module "envoy-gateway" {
   argo_deployment_name = "envoy-gateway"
   cluster_issuer_name  = "lets-encrypt-prod"
   ssl_hostname         = var.ssl_hostname
+  docker_access_token  = var.docker_access_token
 }
 
 module "cert-manager" {

@@ -226,6 +226,73 @@ log into the tool. Examples:
 - ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
 - Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
 
+### Authenticated docker pulls
+As docker limits the number of unauthenticated pulls for images for anonymous accounts
+we are using a DPE service account named `dpesagebionetworks` to authenticate all pulls
+from docker. To accomplish this task the following steps were taken:
+
+1) Log into docker hub with credentials stored in lastpass
+2) Create a new Personal access token for the account
+3) Copy the personal access token into the Spacelift stack for "Kubernetes Deployments" as an environment variable named "TF_VAR_docker_access_token"
+4) Update the `variables.tf` in the relevant module to include the variable as shown below
+5) Update the `main.tf` to add a new kubernetes secret (Below) for all namespaces where an authenticated docker pull needs to occur
+6) Update any helm charts to reference the authentication as described in [this document](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
+7) Deploy the changes via terraform to the kubernetes cluster and apply the changes via ArgoCD or FluxCD
+
+
+To add to `variables.tf`
+```terraform
+variable "docker_server" {
+  description = "The docker registry URL"
+  default     = "https://index.docker.io/v1/"
+  type        = string
+}
+
+variable "docker_username" {
+  description = "Username to log into docker for authenticated pulls"
+  default     = "dpesagebionetworks"
+  type        = string
+}
+
+variable "docker_access_token" {
+  description = "The access token to use for docker authenticated pulls. Created via by setting 'TF_VAR_docker_access_token' within spacelift as an environment variable"
+  type        = string
+}
+
+variable "docker_email" {
+  description = "The email for the docker account"
+  default     = "dpe@sagebase.org"
+  type        = string
+}
+
+```
+
+To add to `main.tf`
+```terraform
+resource "kubernetes_secret" "docker-cfg" {
+  metadata {
+    name      = "docker-cfg"
+    namespace = var.namespace
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "${var.docker_server}" = {
+          "username" = var.docker_username,
+          "password" = var.docker_access_token,
+          "email"    = var.docker_email
+          "auth"     = base64encode("${var.docker_username}:${var.docker_access_token}")
+        }
+      }
+    })
+  }
+}
+```
+
+
 ## Tear down of EKS stacks
 If you need to fully tear down all of the infra start at the smallest point and work
 outwards. Destroy items in this order:
