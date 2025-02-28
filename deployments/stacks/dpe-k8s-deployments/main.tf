@@ -51,7 +51,7 @@ module "trivy-operator" {
   source       = "../../../modules/trivy-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
-  git_revision = "dpe-1248-upgrade-trivy-operator"
+  git_revision = local.git_revision
 }
 
 module "airflow" {
