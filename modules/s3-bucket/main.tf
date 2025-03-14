@@ -12,7 +12,7 @@ resource "aws_s3_bucket_ownership_controls" "ownership" {
   count = var.public_access ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
