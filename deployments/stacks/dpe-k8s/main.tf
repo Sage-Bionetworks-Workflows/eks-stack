@@ -43,3 +43,13 @@ module "sage-aws-ses" {
 
   email_identities = var.ses_email_identities
 }
+
+module "synapse_dataset_to_crossiant_metadata" {
+  count  = var.cluster_name == "dpe-k8-sandbox" ? 1 : 0
+  source      = "../../../modules/s3-bucket"
+  bucket_name = "synapse-croissant-metadata"
+  enable_versioning = true
+  aws_account_id = var.aws_account_id
+  cluster_name = var.cluster_name
+  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+}
