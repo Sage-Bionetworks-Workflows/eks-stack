@@ -39,7 +39,7 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
 
 resource "aws_s3_bucket_policy" "my_bucket_policy" {
   count = var.public_access ? 1 : 0
-  bucket = aws_s3_bucket.my_bucket.bucket
+  bucket = aws_s3_bucket.bucket.bucket
 
   policy = jsonencode({
     Version = "2012-10-17",
