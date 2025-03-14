@@ -43,3 +43,15 @@ module "sage-aws-ses" {
 
   email_identities = var.ses_email_identities
 }
+
+module "synapse_dataset_to_crossiant_metadata" {
+  # This points to the prod cluster - The only location where we want to create the bucket
+  count  = var.cluster_name == "dpe-k8" ? 1 : 0
+  source      = "../../../modules/s3-bucket"
+  bucket_name = "synapse-croissant-metadata"
+  enable_versioning = true
+  aws_account_id = var.aws_account_id
+  cluster_name = var.cluster_name
+  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  public_access = false
+}

@@ -31,3 +31,9 @@ variable "cluster_oidc_provider_arn" {
   description = "EKS cluster ARN for the oidc provider"
   type        = string
 }
+
+variable "public_access" {
+  description = "Enable/block public access to the bucket"
+  type        = bool
+  default     = false
+}
