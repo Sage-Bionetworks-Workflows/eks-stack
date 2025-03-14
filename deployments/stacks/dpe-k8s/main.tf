@@ -45,7 +45,7 @@ module "sage-aws-ses" {
 }
 
 module "synapse_dataset_to_crossiant_metadata" {
-  count  = var.cluster_name == "dpe-k8-sandbox" ? 1 : 0
+  count  = var.cluster_name == "----------dpe-k8-sandbox" ? 1 : 0
   source      = "../../../modules/s3-bucket"
   bucket_name = "synapse-croissant-metadata"
   enable_versioning = true
