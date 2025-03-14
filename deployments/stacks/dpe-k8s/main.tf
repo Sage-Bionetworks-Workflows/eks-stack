@@ -52,4 +52,5 @@ module "synapse_dataset_to_crossiant_metadata" {
   aws_account_id = var.aws_account_id
   cluster_name = var.cluster_name
   cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  public_access = true
 }
