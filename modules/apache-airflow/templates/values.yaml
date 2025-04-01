@@ -68,13 +68,13 @@ airflowHome: /opt/airflow
 defaultAirflowRepository: ghcr.io/sage-bionetworks-workflows/orca-recipes
 
 # Default airflow tag to deploy
-defaultAirflowTag: "0.1.0"
+defaultAirflowTag: "0.2.0"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
 
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
-airflowVersion: "2.9.3"
+airflowVersion: "2.10.5"
 
 # Images
 images:
@@ -105,7 +105,7 @@ images:
     pullPolicy: IfNotPresent
   statsd:
     repository: quay.io/prometheus/statsd-exporter
-    tag: v0.26.1
+    tag: v0.28.0
     pullPolicy: IfNotPresent
   redis:
     repository: redis
@@ -115,7 +115,7 @@ images:
     pullPolicy: IfNotPresent
   pgbouncer:
     repository: apache/airflow
-    tag: airflow-pgbouncer-2024.01.19-1.21.0
+    tag: airflow-pgbouncer-2025.01.10-1.24.0
     pullPolicy: IfNotPresent
   pgbouncerExporter:
     repository: apache/airflow
@@ -123,7 +123,7 @@ images:
     pullPolicy: IfNotPresent
   gitSync:
     repository: registry.k8s.io/git-sync/git-sync
-    tag: v4.1.0
+    tag: v4.3.0
     pullPolicy: IfNotPresent
 
 # Select certain nodes for airflow pods.
@@ -162,7 +162,7 @@ ingress:
 
     # The hostnames or hosts configuration for the web Ingress
     hosts: []
-    #   # The hostname for the web Ingress (can be templated)
+    #   # The hostname for the web Ingress (templated)
     # - name: ""
     #   # configs for web Ingress TLS
     #   tls:
@@ -206,7 +206,7 @@ ingress:
 
     # The hostnames or hosts configuration for the flower Ingress
     hosts: []
-    #   # The hostname for the flower Ingress (can be templated)
+    #   # The hostname for the flower Ingress (templated)
     # - name: ""
     #   tls:
     #     # Enable TLS termination for the flower Ingress
@@ -237,7 +237,7 @@ airflowPodAnnotations: {}
 # main Airflow configmap
 airflowConfigAnnotations: {}
 
-# `airflow_local_settings` file as a string (can be templated).
+# `airflow_local_settings` file as a string (templated).
 airflowLocalSettings: |-
   {{- if semverCompare ">=2.2.0" .Values.airflowVersion }}
   {{- if not (or .Values.webserverSecretKey .Values.webserverSecretKeySecretName) }}
@@ -266,6 +266,7 @@ rbac:
 
 # Airflow executor
 # One of: LocalExecutor, LocalKubernetesExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
+# Specify executors in a prioritized list to leverage multiple execution environments as needed.
 executor: "CeleryExecutor"
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
@@ -307,6 +308,7 @@ enableBuiltInSecretEnvVars:
   AIRFLOW__CELERY__BROKER_URL: true
   AIRFLOW__ELASTICSEARCH__HOST: true
   AIRFLOW__ELASTICSEARCH__ELASTICSEARCH_HOST: true
+  # AIRFLOW__OPENSEARCH__HOST: true
 
 # Priority Classes that will be installed by charts.
 # Ideally, there should be an entry for dagProcessor, flower,
@@ -326,9 +328,9 @@ priorityClasses: []
 # Extra secrets that will be managed by the chart
 # (You can use them with extraEnv or extraEnvFrom or some of the extraVolumes values).
 # The format for secret data is "key/value" where
-#    * key (can be templated) is the name of the secret that will be created
+#    * key (templated) is the name of the secret that will be created
 #    * value: an object with the standard 'data' or 'stringData' key (or both).
-#          The value associated with those keys must be a string (can be templated)
+#          The value associated with those keys must be a string (templated)
 extraSecrets: {}
 # eg:
 # extraSecrets:
@@ -353,9 +355,9 @@ extraSecrets: {}
 # Extra ConfigMaps that will be managed by the chart
 # (You can use them with extraEnv or extraEnvFrom or some of the extraVolumes values).
 # The format for configmap data is "key/value" where
-#    * key (can be templated) is the name of the configmap that will be created
+#    * key (templated) is the name of the configmap that will be created
 #    * value: an object with the standard 'data' key.
-#          The value associated with this keys must be a string (can be templated)
+#          The value associated with this keys must be a string (templated)
 extraConfigMaps: {}
 # eg:
 # extraConfigMaps:
@@ -367,7 +369,7 @@ extraConfigMaps: {}
 #       AIRFLOW_VAR_KUBERNETES_NAMESPACE: "{{ .Release.Namespace }}"
 
 # Extra env 'items' that will be added to the definition of airflow containers
-# a string is expected (can be templated).
+# a string is expected (templated).
 # TODO: difference from `env`? This is a templated string. Probably should template `env` and remove this.
 extraEnv: ~
 # eg:
@@ -532,6 +534,9 @@ workers:
       maxSurge: "100%"
       maxUnavailable: "50%"
 
+  # Allow relaxing ordering guarantees while preserving its uniqueness and identity
+  # podManagementPolicy: Parallel
+
   # When not set, the values defined in the global securityContext will be used
   securityContext: {}
   #  runAsUser: 50000
@@ -594,7 +599,8 @@ workers:
       SELECT ceil(COUNT(*)::decimal / {{ .Values.config.celery.worker_concurrency }})
       FROM task_instance
       WHERE (state='running' OR state='queued')
-      {{- if eq .Values.executor "CeleryKubernetesExecutor" }}
+      {{- if or (contains "CeleryKubernetesExecutor" .Values.executor)
+      (contains "KubernetesExecutor" .Values.executor) }}
       AND queue != '{{ .Values.config.celery_kubernetes_executor.kubernetes_queue }}'
       {{- end }}
 
@@ -779,8 +785,6 @@ workers:
     securityContexts:
       container: {}
 
-  env: []
-
   volumeClaimTemplates: []
   # Additional volumeClaimTemplates needed.
   # Comment out the above and uncomment the section below to enable it.
@@ -870,7 +874,7 @@ scheduler:
 
   # Create ServiceAccount
   serviceAccount:
-    # default value is true
+    # only affect CeleryExecutor, default value is true
     # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
     automountServiceAccountToken: true
     # Specifies whether a ServiceAccount should be created
@@ -1186,18 +1190,15 @@ migrateDatabaseJob:
   useHelmHooks: false
   applyCustomEnv: true
 
-# rpcServer support is experimental / dev purpose only and will later be renamed
-_rpcServer:
-  enabled: false
+_apiServer:
 
   # Labels specific to workers objects and pods
   labels: {}
 
-  # Command to use when running the Airflow rpc server (templated).
-  command:
-    - "bash"
-  # Args to use when running the Airflow rpc server (templated).
-  args: ["-c", "exec airflow internal-api"]
+  # Command to use when running the Airflow API server (templated).
+  command: ~
+  # Args to use when running the Airflow API server (templated).
+  args: ["bash", "-c", "exec airflow fastapi-api"]
   env: []
   serviceAccount:
     # default value is true
@@ -1216,8 +1217,8 @@ _rpcServer:
     ## service annotations
     annotations: {}
     ports:
-      - name: rpc-server
-        port: "{{ .Values.ports._rpcServer }}"
+      - name: api-server
+        port: "9091"
 
     loadBalancerIP: ~
     ## Limit load balancer source ips to list of CIDRs
@@ -1250,15 +1251,13 @@ _rpcServer:
   # Launch additional containers into the flower pods.
   extraContainers: []
 
-  # Additional network policies as needed (Deprecated - renamed to `webserver.networkPolicy.ingress.from`)
-  extraNetworkPolicies: []
   networkPolicy:
     ingress:
       # Peers for webserver NetworkPolicy ingress
       from: []
       # Ports for webserver NetworkPolicy ingress (if `from` is set)
       ports:
-        - port: "{{ .Values.ports._rpcServer }}"
+        - port: "9091"
 
   resources: {}
   #   limits:
@@ -1282,8 +1281,6 @@ _rpcServer:
     periodSeconds: 10
     scheme: HTTP
 
-  # Wait for at most 1 minute (6*10s) for the RPC server container to startup.
-  # livenessProbe kicks in after the first successful startupProbe
   startupProbe:
     timeoutSeconds: 20
     failureThreshold: 6
@@ -1335,6 +1332,7 @@ webserver:
   command: ~
   # Args to use when running the Airflow webserver (templated).
   args: ["bash", "-c", "exec airflow webserver"]
+
 
   # Create ServiceAccount
   serviceAccount:
@@ -1426,7 +1424,7 @@ webserver:
   extraVolumes: []
   extraVolumeMounts: []
 
-  # This string (can be templated) will be mounted into the Airflow Webserver
+  # This string (templated) will be mounted into the Airflow Webserver
   # as a custom webserver_config.py. You can bake a webserver_config.py in to
   # your image instead or specify a configmap containing the
   # webserver_config.py.
@@ -2192,6 +2190,8 @@ pgbouncer:
   #     - name: my-templated-extra-volume
   #       mountPath: "{{ .Values.my_custom_path }}"
   #       readOnly: true
+  # Volumes apply to all pgbouncer containers, while volume mounts apply to the pgbouncer
+  # container itself. Metrics exporter container has its own mounts.
   extraVolumes: []
   extraVolumeMounts: []
 
@@ -2380,6 +2380,22 @@ elasticsearch:
   #   port: ~
   connection: {}
 
+# OpenSearch logging configuration
+opensearch:
+  # Enable opensearch task logging
+  enabled: false
+  # A secret containing the connection
+  secretName: ~
+  # Or an object representing the connection
+  # Example:
+  # connection:
+  #   scheme: ~
+  #   user: ~
+  #   pass: ~
+  #   host: ~
+  #   port: ~
+  connection: {}
+
 # All ports used by chart
 ports:
   flowerUI: 5555
@@ -2391,8 +2407,7 @@ ports:
   statsdScrape: 9102
   pgbouncer: 6543
   pgbouncerScrape: 9127
-  # rpcServer support is experimental / dev purpose only and will later be renamed
-  _rpcServer: 9080
+  # _apiServer: 9091
 
 # Define any ResourceQuotas for namespace
 quotas: {}
@@ -2499,10 +2514,10 @@ config:
     executor: '{{ .Values.executor }}'
     # For Airflow 1.10, backward compatibility; moved to [logging] in 2.0
     colored_console_log: 'False'
-    remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+    remote_logging: '{{- ternary "True" "False" (or .Values.elasticsearch.enabled .Values.opensearch.enabled) }}'
     allowed_deserialization_classes_regexp: ".*"
   logging:
-    remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+    remote_logging: '{{- ternary "True" "False" (or .Values.elasticsearch.enabled .Values.opensearch.enabled) }}'
     colored_console_log: 'False'
   metrics:
     statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
@@ -2517,7 +2532,7 @@ config:
     flower_url_prefix: '{{ ternary "" .Values.ingress.flower.path (eq .Values.ingress.flower.path "/") }}'
     worker_concurrency: 16
   scheduler:
-    standalone_dag_processor: '{{ ternary "True" "False" .Values.dagProcessor.enabled }}'
+    standalone_dag_processor: '{{ ternary "True" "False" (or (semverCompare ">=3.0.0" .Values.airflowVersion) (.Values.dagProcessor.enabled | default false)) }}'
     # statsd params included for Airflow 1.10 backward compatibility; moved to [metrics] in 2.0
     statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
     statsd_port: 9125
@@ -2743,4 +2758,3 @@ logs:
     storageClassName: gp3
     ## the name of an existing PVC to use
     existingClaim:
-
