@@ -1903,8 +1903,6 @@ dagProcessor:
     securityContexts:
       container: {}
 
-    env: []
-
   waitForMigrations:
     # Whether to create init container to wait for db migrations
     enabled: true
