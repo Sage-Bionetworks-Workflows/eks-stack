@@ -2577,14 +2577,6 @@ config:
     backend_kwargs: '{"connections_prefix": "airflow/connections", "variables_prefix": "airflow/variables", "region_name": "us-east-1"}'
   triggerer:
     default_capacity: 1000
-  # TODO: I might need to use a collector in the cluster that has this required config
-  traces:
-    otel_on: true
-    otel_host: # SOME VALUE
-    otel_port: # SOME VALUE
-    otel_application: airflow
-    otel_ssl_active: true
-    otel_task_log_event: true
 # yamllint enable rule:line-length
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
