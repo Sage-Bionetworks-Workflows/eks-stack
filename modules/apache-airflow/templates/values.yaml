@@ -68,7 +68,7 @@ airflowHome: /opt/airflow
 defaultAirflowRepository: ghcr.io/sage-bionetworks-workflows/orca-recipes
 
 # Default airflow tag to deploy
-defaultAirflowTag: "0.2.0"
+defaultAirflowTag: "0.2.1"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
