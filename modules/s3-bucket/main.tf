@@ -56,7 +56,7 @@ resource "aws_s3_bucket_policy" "my_bucket_policy" {
   })
 }
 
-resource "aws_s3_bucket_cors_configuration" "example" {
+resource "aws_s3_bucket_cors_configuration" "cors" {
   count = var.enable_cors ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
 
