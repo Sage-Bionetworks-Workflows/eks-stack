@@ -37,3 +37,9 @@ variable "public_access" {
   type        = bool
   default     = false
 }
+
+variable "enable_cors" {
+  description = "Enable CORS on the bucket"
+  type        = bool
+  default     = false
+}
