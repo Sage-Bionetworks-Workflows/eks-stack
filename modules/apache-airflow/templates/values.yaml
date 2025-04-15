@@ -2638,7 +2638,7 @@ dags:
     branch: main
     rev: HEAD
     # The git revision (branch, tag, or hash) to check out, v4 only
-    ref: v2-2-stable
+    ref: main
     depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
@@ -2695,7 +2695,7 @@ dags:
     # low values cause more traffic to the remote git repository
     # Go-style duration string (e.g. "100ms" or "0.1s" = 100ms).
     # For backwards compatibility, wait will be used if it is specified.
-    period: 5s
+    period: 600s
     wait: 600
     # add variables from secret into gitSync containers, such proxy-config
     envFrom: ~
