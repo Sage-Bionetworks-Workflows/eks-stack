@@ -1474,14 +1474,14 @@ webserver:
   priorityClassName: ~
   affinity: {}
   # default webserver affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: webserver
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: webserver
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
