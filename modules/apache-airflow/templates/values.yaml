@@ -681,14 +681,13 @@ workers:
     #   cpu: 100m
     #   memory: 128Mi
 
-
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Grace period for tasks to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 600
@@ -896,13 +895,13 @@ scheduler:
       maxUnavailable: 1
       # minAvailable: 1
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # This setting tells kubernetes that its ok to evict
   # when it wants to scale a node down.
@@ -966,12 +965,12 @@ scheduler:
     # Number of days to retain logs
     retentionDays: 15
     resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      limits:
+       cpu: 100m
+       memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -1087,13 +1086,13 @@ createUserJob:
 
   env: []
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+     limits:
+       cpu: 100m
+       memory: 128Mi
+     requests:
+       cpu: 100m
+       memory: 128Mi
 
 # Airflow database migration job settings
 migrateDatabaseJob:
@@ -1151,13 +1150,13 @@ migrateDatabaseJob:
     # Annotations to add to migrate database job kubernetes service account.
     annotations: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Launch additional containers into database migration job
   extraContainers: []
@@ -1259,13 +1258,13 @@ _apiServer:
       ports:
         - port: "9091"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+     limits:
+       cpu: 100m
+       memory: 128Mi
+     requests:
+       cpu: 100m
+       memory: 128Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1386,13 +1385,13 @@ webserver:
       ports:
         - port: "{{ .Values.ports.airflowUI }}"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+     limits:
+       cpu: 100m
+       memory: 128Mi
+     requests:
+       cpu: 100m
+       memory: 128Mi
 
   # Create initial user.
   defaultUser:
@@ -1577,13 +1576,13 @@ triggerer:
     # Annotations to add to triggerer volumes
     annotations: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+     limits:
+       cpu: 100m
+       memory: 128Mi
+     requests:
+       cpu: 100m
+       memory: 128Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1767,13 +1766,13 @@ dagProcessor:
   # container level lifecycle hooks
   containerLifecycleHooks: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Grace period for dag processor to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1833,13 +1832,13 @@ dagProcessor:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+    resources:
+      limits:
+       cpu: 100m
+       memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     securityContexts:
       container: {}
 
@@ -1895,13 +1894,13 @@ flower:
       ports:
         - port: "{{ .Values.ports.flowerUI }}"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # When not set, the values defined in the global securityContext will be used
   securityContext: {}
@@ -2221,13 +2220,13 @@ pgbouncer:
         command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 120"]
 
   metricsExporterSidecar:
-    resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+    resources:
+      limits:
+       cpu: 100m
+       memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     sslmode: "disable"
 
     # supply the name of existing secret with PGBouncer connection URI containing
@@ -2305,13 +2304,13 @@ redis:
   #   sizeLimit: 1Gi
   #   medium: Memory
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+     cpu: 100m
+     memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # If set use as redis secret. Make sure to also set data.brokerUrlSecretName value.
   passwordSecretName: ~
@@ -2734,12 +2733,12 @@ dags:
     #   medium: Memory
 
     resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      limits:
+       cpu: 100m
+       memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
