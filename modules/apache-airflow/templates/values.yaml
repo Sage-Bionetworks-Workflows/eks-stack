@@ -657,13 +657,13 @@ workers:
   kerberosSidecar:
     # Enable kerberos sidecar
     enabled: false
-    resources:
+    resources: {}
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-     requests:
-      cpu: 100m
-      memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
     # Detailed default security context for kerberosSidecar for container level
     securityContexts:
       container: {}
@@ -680,7 +680,6 @@ workers:
     #  requests:
     #   cpu: 100m
     #   memory: 128Mi
-
 
   resources: {}
   #  limits:
@@ -766,13 +765,13 @@ workers:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -841,7 +840,7 @@ scheduler:
 
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -896,13 +895,13 @@ scheduler:
       maxUnavailable: 1
       # minAvailable: 1
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # This setting tells kubernetes that its ok to evict
   # when it wants to scale a node down.
@@ -965,13 +964,13 @@ scheduler:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -1087,13 +1086,13 @@ createUserJob:
 
   env: []
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
 # Airflow database migration job settings
 migrateDatabaseJob:
@@ -1151,13 +1150,13 @@ migrateDatabaseJob:
     # Annotations to add to migrate database job kubernetes service account.
     annotations: {}
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Launch additional containers into database migration job
   extraContainers: []
@@ -1259,13 +1258,13 @@ _apiServer:
       ports:
         - port: "9091"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1324,7 +1323,7 @@ webserver:
     scheme: HTTP
 
   # Number of webservers
-  replicas: 1
+  replicas: 2
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -1386,13 +1385,13 @@ webserver:
       ports:
         - port: "{{ .Values.ports.airflowUI }}"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Create initial user.
   defaultUser:
@@ -1472,16 +1471,16 @@ webserver:
   # Select certain nodes for airflow webserver pods.
   nodeSelector: {}
   priorityClassName: ~
-  affinity: {}
+  affinity:
   # default webserver affinity is:
-  #  podAntiAffinity:
-  #    preferredDuringSchedulingIgnoredDuringExecution:
-  #    - podAffinityTerm:
-  #        labelSelector:
-  #          matchLabels:
-  #            component: webserver
-  #        topologyKey: kubernetes.io/hostname
-  #      weight: 100
+   podAntiAffinity:
+     preferredDuringSchedulingIgnoredDuringExecution:
+     - podAffinityTerm:
+         labelSelector:
+           matchLabels:
+             component: webserver
+         topologyKey: kubernetes.io/hostname
+       weight: 100
   tolerations: []
   topologySpreadConstraints: []
 
@@ -1577,13 +1576,13 @@ triggerer:
     # Annotations to add to triggerer volumes
     annotations: {}
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1649,13 +1648,13 @@ triggerer:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -1833,13 +1832,13 @@ dagProcessor:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     securityContexts:
       container: {}
 
@@ -1896,12 +1895,12 @@ flower:
         - port: "{{ .Values.ports.flowerUI }}"
 
   resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # When not set, the values defined in the global securityContext will be used
   securityContext: {}
@@ -2221,13 +2220,13 @@ pgbouncer:
         command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 120"]
 
   metricsExporterSidecar:
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     sslmode: "disable"
 
     # supply the name of existing secret with PGBouncer connection URI containing
@@ -2305,13 +2304,13 @@ redis:
   #   sizeLimit: 1Gi
   #   medium: Memory
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # If set use as redis secret. Make sure to also set data.brokerUrlSecretName value.
   passwordSecretName: ~
@@ -2445,13 +2444,13 @@ cleanup:
   # Labels specific to cleanup objects and pods
   labels: {}
 
-  resources:
-   limits:
-    cpu: 1000m
-    memory: 512Mi
-   requests:
-    cpu: 100m
-    memory: 128Mi
+  resources: {}
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # Create ServiceAccount
   serviceAccount:
@@ -2733,13 +2732,13 @@ dags:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
-    resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
