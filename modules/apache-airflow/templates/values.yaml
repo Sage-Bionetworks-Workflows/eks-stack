@@ -2732,13 +2732,13 @@ dags:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
-  resources:
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-    requests:
-     cpu: 100m
-     memory: 128Mi
+    resources:
+    #  limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+      requests:
+      cpu: 100m
+      memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
