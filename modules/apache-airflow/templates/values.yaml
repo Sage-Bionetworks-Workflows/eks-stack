@@ -657,13 +657,13 @@ workers:
   kerberosSidecar:
     # Enable kerberos sidecar
     enabled: false
-    resources:
+    resources: {}
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-     requests:
-      cpu: 100m
-      memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
     # Detailed default security context for kerberosSidecar for container level
     securityContexts:
       container: {}
@@ -673,21 +673,21 @@ workers:
   kerberosInitContainer:
     # Enable kerberos init container
     enabled: false
-    resources:
+    resources: {}
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-      requests:
-       cpu: 100m
-       memory: 128Mi
+    #  requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
-  resources:
+  resources: {}
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-    requests:
-     cpu: 100m
-     memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # Grace period for tasks to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 600
@@ -1766,13 +1766,13 @@ dagProcessor:
   # container level lifecycle hooks
   containerLifecycleHooks: {}
 
-  resources:
+  resources: {}
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-    requests:
-     cpu: 100m
-     memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # Grace period for dag processor to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1894,13 +1894,13 @@ flower:
       ports:
         - port: "{{ .Values.ports.flowerUI }}"
 
-  resources:
+  resources: {}
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-    requests:
-     cpu: 100m
-     memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # When not set, the values defined in the global securityContext will be used
   securityContext: {}
@@ -2444,13 +2444,13 @@ cleanup:
   # Labels specific to cleanup objects and pods
   labels: {}
 
-  resources:
+  resources: {}
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-    requests:
-     cpu: 100m
-     memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # Create ServiceAccount
   serviceAccount:
