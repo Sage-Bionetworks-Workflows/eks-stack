@@ -673,7 +673,7 @@ workers:
   kerberosInitContainer:
     # Enable kerberos init container
     enabled: false
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
