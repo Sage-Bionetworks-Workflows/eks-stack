@@ -677,14 +677,14 @@ workers:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -765,13 +765,13 @@ workers:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -896,9 +896,9 @@ scheduler:
       # minAvailable: 1
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -964,10 +964,10 @@ scheduler:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
-      limits:
-       cpu: 100m
-       memory: 128Mi
+    resources:
+    #  limits:
+    #   cpu: 100m
+    #   memory: 128Mi
       requests:
        cpu: 100m
        memory: 128Mi
@@ -1087,12 +1087,12 @@ createUserJob:
   env: []
 
   resources:
-     limits:
-       cpu: 100m
-       memory: 128Mi
-     requests:
-       cpu: 100m
-       memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
 # Airflow database migration job settings
 migrateDatabaseJob:
@@ -1151,9 +1151,9 @@ migrateDatabaseJob:
     annotations: {}
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -1259,12 +1259,12 @@ _apiServer:
         - port: "9091"
 
   resources:
-     limits:
-       cpu: 100m
-       memory: 128Mi
-     requests:
-       cpu: 100m
-       memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1386,12 +1386,12 @@ webserver:
         - port: "{{ .Values.ports.airflowUI }}"
 
   resources:
-     limits:
-       cpu: 100m
-       memory: 128Mi
-     requests:
-       cpu: 100m
-       memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Create initial user.
   defaultUser:
@@ -1577,12 +1577,12 @@ triggerer:
     annotations: {}
 
   resources:
-     limits:
-       cpu: 100m
-       memory: 128Mi
-     requests:
-       cpu: 100m
-       memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1648,13 +1648,13 @@ triggerer:
     args: ["bash", "/clean-logs"]
     # Number of days to retain logs
     retentionDays: 15
-    resources: {}
+    resources:
     #  limits:
     #   cpu: 100m
     #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      requests:
+       cpu: 100m
+       memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
       container: {}
@@ -1767,9 +1767,9 @@ dagProcessor:
   containerLifecycleHooks: {}
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -1833,9 +1833,9 @@ dagProcessor:
     # Number of days to retain logs
     retentionDays: 15
     resources:
-      limits:
-       cpu: 100m
-       memory: 128Mi
+    #  limits:
+    #   cpu: 100m
+    #   memory: 128Mi
       requests:
        cpu: 100m
        memory: 128Mi
@@ -1895,9 +1895,9 @@ flower:
         - port: "{{ .Values.ports.flowerUI }}"
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -2221,9 +2221,9 @@ pgbouncer:
 
   metricsExporterSidecar:
     resources:
-      limits:
-       cpu: 100m
-       memory: 128Mi
+    #  limits:
+    #   cpu: 100m
+    #   memory: 128Mi
       requests:
        cpu: 100m
        memory: 128Mi
@@ -2305,9 +2305,9 @@ redis:
   #   medium: Memory
 
   resources:
-    limits:
-     cpu: 100m
-     memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
     requests:
      cpu: 100m
      memory: 128Mi
@@ -2445,12 +2445,12 @@ cleanup:
   labels: {}
 
   resources:
-   limits:
-    cpu: 1000m
-    memory: 512Mi
-   requests:
-    cpu: 100m
-    memory: 128Mi
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
   # Create ServiceAccount
   serviceAccount:
@@ -2732,13 +2732,13 @@ dags:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
-    resources: {}
-      limits:
-       cpu: 100m
-       memory: 128Mi
-      requests:
-       cpu: 100m
-       memory: 128Mi
+  resources:
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+    requests:
+     cpu: 100m
+     memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
