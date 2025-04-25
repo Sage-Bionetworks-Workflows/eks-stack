@@ -681,13 +681,13 @@ workers:
     #   cpu: 100m
     #   memory: 128Mi
 
-  resources: {}
+  resources:
   #  limits:
   #   cpu: 100m
   #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+   requests:
+    cpu: 500m
+    memory: 1Gi
 
   # Grace period for tasks to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 600
@@ -770,7 +770,7 @@ workers:
     #   cpu: 100m
     #   memory: 128Mi
       requests:
-       cpu: 100m
+       cpu: 50m
        memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
@@ -900,8 +900,8 @@ scheduler:
   #   cpu: 100m
   #   memory: 128Mi
     requests:
-     cpu: 100m
-     memory: 128Mi
+     cpu: 500m
+     memory: 1Gi
 
   # This setting tells kubernetes that its ok to evict
   # when it wants to scale a node down.
@@ -969,7 +969,7 @@ scheduler:
     #   cpu: 100m
     #   memory: 128Mi
       requests:
-       cpu: 100m
+       cpu: 50m
        memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
@@ -1092,7 +1092,7 @@ createUserJob:
   #   memory: 128Mi
     requests:
      cpu: 100m
-     memory: 128Mi
+     memory: 256Mi
 
 # Airflow database migration job settings
 migrateDatabaseJob:
@@ -1156,7 +1156,7 @@ migrateDatabaseJob:
   #   memory: 128Mi
     requests:
      cpu: 100m
-     memory: 128Mi
+     memory: 256Mi
 
   # Launch additional containers into database migration job
   extraContainers: []
@@ -1263,8 +1263,8 @@ _apiServer:
   #   cpu: 100m
   #   memory: 128Mi
     requests:
-     cpu: 100m
-     memory: 128Mi
+     cpu: 250m
+     memory: 512Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1390,8 +1390,8 @@ webserver:
   #   cpu: 100m
   #   memory: 128Mi
     requests:
-     cpu: 100m
-     memory: 128Mi
+     cpu: 250m
+     memory: 750Mi
 
   # Create initial user.
   defaultUser:
@@ -1581,8 +1581,8 @@ triggerer:
   #   cpu: 100m
   #   memory: 128Mi
     requests:
-     cpu: 100m
-     memory: 128Mi
+     cpu: 250m
+     memory: 512Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1653,7 +1653,7 @@ triggerer:
     #   cpu: 100m
     #   memory: 128Mi
       requests:
-       cpu: 100m
+       cpu: 50m
        memory: 128Mi
     # Detailed default security context for logGroomerSidecar for container level
     securityContexts:
@@ -1837,7 +1837,7 @@ dagProcessor:
     #   cpu: 100m
     #   memory: 128Mi
       requests:
-       cpu: 100m
+       cpu: 50m
        memory: 128Mi
     securityContexts:
       container: {}
@@ -2310,7 +2310,7 @@ redis:
   #   memory: 128Mi
     requests:
      cpu: 100m
-     memory: 128Mi
+     memory: 256Mi
 
   # If set use as redis secret. Make sure to also set data.brokerUrlSecretName value.
   passwordSecretName: ~
@@ -2737,7 +2737,7 @@ dags:
     #   cpu: 100m
     #   memory: 128Mi
       requests:
-        cpu: 100m
+        cpu: 50m
         memory: 128Mi
 
 logs:
