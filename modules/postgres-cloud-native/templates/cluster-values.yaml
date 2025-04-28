@@ -117,8 +117,8 @@ cluster:
     #   cpu: 2000m
     #   memory: 8Gi
     requests:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 100m
+      memory: 256Mi
 
   priorityClassName: ""
 
