@@ -63,6 +63,7 @@ module "synapse-webhook-test" {
   name = "synapse-webhook-test"
   queue_name = "synapse-webhook-test"
   namespace = "sqs-test"
+  aws_account_id = var.aws_account_id
   aws_region = var.region
   ack_controller_role_arn = module.sage-aws-eks.cluster_oidc_provider_arn
 }
