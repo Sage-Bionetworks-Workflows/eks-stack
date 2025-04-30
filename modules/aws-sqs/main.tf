@@ -29,28 +29,34 @@ resource "kubernetes_manifest" "sqs_queue" {
     spec = {
       name = var.queue_name
       queueAttributes = {
-        VisibilityTimeout = var.visibility_timeout
-        MessageRetentionPeriod = var.message_retention_period
-        DelaySeconds = var.delay_seconds
-        MaximumMessageSize = var.maximum_message_size
+        VisibilityTimeout = tostring(var.visibility_timeout)
+        MessageRetentionPeriod = tostring(var.message_retention_period)
+        DelaySeconds = tostring(var.delay_seconds)
+        MaximumMessageSize = tostring(var.maximum_message_size)
       }
       tags = var.tags
     }
   }
 }
 
-resource "aws_sqs_queue" "webhook_test_queue" {
-  name                      = "${var.environment}-${var.name}-webhook-test"
-  visibility_timeout        = 30
-  message_retention_seconds = 345600  # 4 days
-  tags = {
-    Environment = var.environment
-    Name        = var.name
-  }
+# AWS SQS queue for API integration
+resource "aws_sqs_queue" "api_queue" {
+  name                       = "${var.environment}-${var.name}-api"
+  visibility_timeout_seconds = var.visibility_timeout
+  message_retention_seconds  = var.message_retention_period
+  delay_seconds              = var.delay_seconds
+  max_message_size           = var.maximum_message_size
+  tags = merge(
+    var.tags,
+    {
+      Environment = var.environment
+      Name        = var.name
+    }
+  )
 }
 
-resource "aws_sqs_queue_policy" "webhook_test_queue_policy" {
-  queue_url = aws_sqs_queue.webhook_test_queue.id
+resource "aws_sqs_queue_policy" "api_queue_policy" {
+  queue_url = aws_sqs_queue.api_queue.id
   policy    = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -58,20 +64,20 @@ resource "aws_sqs_queue_policy" "webhook_test_queue_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = ["sqs:SendMessage"]
-        Resource  = aws_sqs_queue.webhook_test_queue.arn
+        Resource  = aws_sqs_queue.api_queue.arn
       }
     ]
   })
 }
 
-resource "aws_apigatewayv2_api" "webhook_test_api" {
-  name          = "${var.environment}-${var.name}-webhook-test-api"
+resource "aws_apigatewayv2_api" "api_gateway" {
+  name          = "${var.environment}-${var.name}-api"
   protocol_type = "HTTP"
-  description   = "API for testing webhooks, forwards events to a testing SQS queue"
+  description   = "API Gateway for SQS integration"
 }
 
-resource "aws_apigatewayv2_stage" "webhook_test_api_stage" {
-  api_id = aws_apigatewayv2_api.webhook_test_api.id
+resource "aws_apigatewayv2_stage" "api_gateway_stage" {
+  api_id = aws_apigatewayv2_api.api_gateway.id
   name   = "$default"
   auto_deploy = true
 }
@@ -103,30 +109,30 @@ resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
       {
         Effect = "Allow"
         Action = ["sqs:SendMessage"]
-        Resource = aws_sqs_queue.webhook_test_queue.arn
+        Resource = aws_sqs_queue.api_queue.arn
       }
     ]
   })
 }
 
-resource "aws_apigatewayv2_integration" "webhook_test_sqs_integration" {
-  api_id           = aws_apigatewayv2_api.webhook_test_api.id
+resource "aws_apigatewayv2_integration" "sqs_integration" {
+  api_id           = aws_apigatewayv2_api.api_gateway.id
   integration_type = "AWS_PROXY"
   integration_subtype = "SQS-SendMessage"
   payload_format_version = "1.0"
   credentials_arn = aws_iam_role.api_gateway_sqs_role.arn
 
   request_parameters = {
-    "QueueUrl" = aws_sqs_queue.webhook_test_queue.url
+    "QueueUrl" = aws_sqs_queue.api_queue.url
     "MessageBody" = "$request.body"
     "MessageAttributes" = jsonencode({
-      "WebhookMessageType" = {
+      "MessageType" = {
         "DataType" = "String"
-        "StringValue" = "$request.header.X-Syn-Webhook-Message-Type"
+        "StringValue" = "$request.header.X-Message-Type"
       }
-      "WebhookId" = {
+      "MessageId" = {
         "DataType" = "String"
-        "StringValue" = "$request.header.X-Syn-Webhook-Id"
+        "StringValue" = "$request.header.X-Message-Id"
       }
       "AuthorizationHeader" = {
         "DataType" = "String"
@@ -136,8 +142,8 @@ resource "aws_apigatewayv2_integration" "webhook_test_sqs_integration" {
   }
 }
 
-resource "aws_apigatewayv2_route" "webhook_test_route" {
-  api_id    = aws_apigatewayv2_api.webhook_test_api.id
+resource "aws_apigatewayv2_route" "events_route" {
+  api_id    = aws_apigatewayv2_api.api_gateway.id
   route_key = "POST /events"
-  target    = "integrations/${aws_apigatewayv2_integration.webhook_test_sqs_integration.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.sqs_integration.id}"
 } 

@@ -59,11 +59,17 @@ module "synapse_dataset_to_crossiant_metadata" {
 
 module "synapse-webhook-test" {
   source = "../../../modules/aws-sqs"
-  environment = "dev"
-  name = "synapse-webhook-test"
-  queue_name = "synapse-webhook-test"
+  environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
+  name = "synapse-webhook"
+  queue_name = "synapse-webhook-queue"
   namespace = "sqs-test"
   aws_account_id = var.aws_account_id
   aws_region = var.region
   ack_controller_role_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  
+  tags = {
+    Environment = var.cluster_name
+    Application = "synapse"
+    ManagedBy   = "terraform"
+  }
 }

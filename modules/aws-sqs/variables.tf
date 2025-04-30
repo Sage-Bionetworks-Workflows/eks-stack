@@ -37,26 +37,26 @@ variable "ack_controller_role_arn" {
 
 variable "visibility_timeout" {
   description = "The visibility timeout for the queue in seconds"
-  type        = string
-  default     = "30"
+  type        = number
+  default     = 30
 }
 
 variable "message_retention_period" {
   description = "The message retention period in seconds"
-  type        = string
-  default     = "345600"  # 4 days
+  type        = number
+  default     = 345600  # 4 days
 }
 
 variable "delay_seconds" {
   description = "The delay in seconds before a message becomes available for processing"
-  type        = string
-  default     = "0"
+  type        = number
+  default     = 0
 }
 
 variable "maximum_message_size" {
   description = "The maximum message size in bytes"
-  type        = string
-  default     = "262144"  # 256 KiB
+  type        = number
+  default     = 262144  # 256 KiB
 }
 
 variable "tags" {
