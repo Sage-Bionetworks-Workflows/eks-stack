@@ -8,17 +8,6 @@ variable "name" {
   type        = string
 }
 
-variable "queue_name" {
-  description = "The name of the SQS queue"
-  type        = string
-}
-
-variable "namespace" {
-  description = "The Kubernetes namespace to deploy to"
-  type        = string
-  default     = "default"
-}
-
 variable "aws_region" {
   description = "The AWS region to deploy to"
   type        = string
@@ -30,8 +19,8 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "ack_controller_role_arn" {
-  description = "The ARN of the IAM role for the ACK controller"
+variable "cluster_oidc_provider_arn" {
+  description = "The ARN of the OIDC provider for the EKS cluster"
   type        = string
 }
 

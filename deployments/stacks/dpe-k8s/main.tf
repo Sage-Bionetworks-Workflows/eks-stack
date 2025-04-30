@@ -57,15 +57,13 @@ module "synapse_dataset_to_crossiant_metadata" {
   enable_cors = true
 }
 
-module "synapse-webhook-test" {
+module "synapse-sqs-test" {
   source = "../../../modules/aws-sqs"
   environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
-  name = "synapse-webhook"
-  queue_name = "synapse-webhook-queue"
-  namespace = "sqs-test"
+  name = "synapse-sqs-test"
   aws_account_id = var.aws_account_id
   aws_region = var.region
-  ack_controller_role_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
   
   tags = {
     Environment = var.cluster_name

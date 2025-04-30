@@ -1,47 +1,5 @@
-resource "helm_release" "ack_sqs_controller" {
-  name       = "ack-sqs-controller"
-  repository = "oci://public.ecr.aws/aws-controllers-k8s"
-  chart      = "sqs-chart"
-  version    = "1.0.6"
-  namespace  = var.namespace
-
-  set {
-    name  = "aws.region"
-    value = var.aws_region
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = var.ack_controller_role_arn
-  }
-}
-
-resource "kubernetes_manifest" "sqs_queue" {
-  depends_on = [helm_release.ack_sqs_controller]
-
-  manifest = {
-    apiVersion = "sqs.services.k8s.aws/v1alpha1"
-    kind       = "Queue"
-    metadata = {
-      name      = var.queue_name
-      namespace = var.namespace
-    }
-    spec = {
-      name = var.queue_name
-      queueAttributes = {
-        VisibilityTimeout = tostring(var.visibility_timeout)
-        MessageRetentionPeriod = tostring(var.message_retention_period)
-        DelaySeconds = tostring(var.delay_seconds)
-        MaximumMessageSize = tostring(var.maximum_message_size)
-      }
-      tags = var.tags
-    }
-  }
-}
-
-# AWS SQS queue for API integration
-resource "aws_sqs_queue" "api_queue" {
-  name                       = "${var.environment}-${var.name}-api"
+resource "aws_sqs_queue" "queue" {
+  name                       = "${var.environment}-${var.name}"
   visibility_timeout_seconds = var.visibility_timeout
   message_retention_seconds  = var.message_retention_period
   delay_seconds              = var.delay_seconds
@@ -55,8 +13,8 @@ resource "aws_sqs_queue" "api_queue" {
   )
 }
 
-resource "aws_sqs_queue_policy" "api_queue_policy" {
-  queue_url = aws_sqs_queue.api_queue.id
+resource "aws_sqs_queue_policy" "queue_policy" {
+  queue_url = aws_sqs_queue.queue.id
   policy    = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -64,7 +22,7 @@ resource "aws_sqs_queue_policy" "api_queue_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = ["sqs:SendMessage"]
-        Resource  = aws_sqs_queue.api_queue.arn
+        Resource  = aws_sqs_queue.queue.arn
       }
     ]
   })
@@ -109,7 +67,7 @@ resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
       {
         Effect = "Allow"
         Action = ["sqs:SendMessage"]
-        Resource = aws_sqs_queue.api_queue.arn
+        Resource = aws_sqs_queue.queue.arn
       }
     ]
   })
@@ -123,7 +81,7 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
   credentials_arn = aws_iam_role.api_gateway_sqs_role.arn
 
   request_parameters = {
-    "QueueUrl" = aws_sqs_queue.api_queue.url
+    "QueueUrl" = aws_sqs_queue.queue.url
     "MessageBody" = "$request.body"
     "MessageAttributes" = jsonencode({
       "MessageType" = {
@@ -146,4 +104,48 @@ resource "aws_apigatewayv2_route" "events_route" {
   api_id    = aws_apigatewayv2_api.api_gateway.id
   route_key = "POST /events"
   target    = "integrations/${aws_apigatewayv2_integration.sqs_integration.id}"
+}
+
+resource "aws_iam_policy" "sqs_access_policy" {
+  name        = "access-policy-${var.aws_account_id}-${var.environment}-${var.name}"
+  description = "Policy to access the SQS queue"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:SendMessage"
+        ]
+        Resource = aws_sqs_queue.queue.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "sqs_access_role" {
+  name        = "sqs-${var.environment}-${var.name}"
+  description = "Assumed role to access the SQS queue with the given permissions."
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = var.cluster_oidc_provider_arn
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "sqs_access_policy_attachment" {
+  role       = aws_iam_role.sqs_access_role.name
+  policy_arn = aws_iam_policy.sqs_access_policy.arn
 } 
