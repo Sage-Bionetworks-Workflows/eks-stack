@@ -58,7 +58,7 @@ module "synapse_dataset_to_crossiant_metadata" {
 }
 
 module "synapse-webhook-test" {
-  source = "../../../modules/webhook-test-api"
+  source = "../../../modules/aws-sqs"
   environment = "dev"
   name = "synapse-webhook-test"
   queue_name = "synapse-webhook-test"
