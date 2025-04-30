@@ -56,3 +56,13 @@ module "synapse_dataset_to_crossiant_metadata" {
   public_access = true
   enable_cors = true
 }
+
+module "synapse-webhook-test" {
+  source = "../../../modules/webhook-test-api"
+  environment = "dev"
+  name = "synapse-webhook-test"
+  queue_name = "synapse-webhook-test"
+  namespace = "sqs-test"
+  aws_region = var.region
+  ack_controller_role_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+}
