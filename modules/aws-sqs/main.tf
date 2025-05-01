@@ -84,13 +84,13 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
     "QueueUrl" = aws_sqs_queue.queue.url
     "MessageBody" = "$request.body"
     "MessageAttributes" = jsonencode({
-      "MessageType" = {
+      "WebhookMessageType" = {
         "DataType" = "String"
-        "StringValue" = "$request.header.X-Message-Type"
+        "StringValue" = "$request.header.X-Syn-Webhook-Message-Type"
       }
-      "MessageId" = {
+      "WebhookId" = {
         "DataType" = "String"
-        "StringValue" = "$request.header.X-Message-Id"
+        "StringValue" = "$request.header.X-Syn-Webhook-Id"
       }
       "AuthorizationHeader" = {
         "DataType" = "String"

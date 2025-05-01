@@ -15,7 +15,7 @@ output "queue_arn" {
 
 output "api_gateway_url" {
   description = "The URL of the API Gateway endpoint"
-  value       = "${aws_apigatewayv2_api.api_gateway.api_endpoint}/${aws_apigatewayv2_stage.api_gateway_stage.name}"
+  value       = "${aws_apigatewayv2_api.api_gateway.api_endpoint}/events"
 }
 
 output "access_role_arn" {
