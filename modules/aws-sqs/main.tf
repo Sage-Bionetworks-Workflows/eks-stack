@@ -92,7 +92,23 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
         "DataType" = "String"
         "StringValue" = "$request.header.X-Syn-Webhook-Id"
       }
-      "AuthorizationHeader" = {
+      "WebhookMessageId" = {
+        "DataType" = "String"
+        "StringValue" = "$request.header.X-Syn-Webhook-Message-Id"
+      }
+      "WebhookOwnerId" = {
+        "DataType" = "String"
+        "StringValue" = "$request.header.X-Syn-Webhook-Owner-Id"
+      }
+      "ContentType" = {
+        "DataType" = "String"
+        "StringValue" = "$request.header.Content-Type"
+      }
+      "UserAgent" = {
+        "DataType" = "String"
+        "StringValue" = "$request.header.User-Agent"
+      }
+      "Authorization" = {
         "DataType" = "String"
         "StringValue" = "$request.header.Authorization"
       }
