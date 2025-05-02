@@ -72,7 +72,7 @@ module "synapse-sqs-create-queue" {
   cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
   
   # API Gateway integration
-  api_gateway_id = module.api_gateway.api_id
+  api_gateway_id = module.synapse-webhook-api-gateway.api_id
   route_path = "/create"
 }
 
@@ -85,6 +85,6 @@ module "synapse-sqs-delete-queue" {
   cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
   
   # API Gateway integration
-  api_gateway_id = module.api_gateway.api_id
+  api_gateway_id = module.synapse-webhook-api-gateway.api_id
   route_path = "/delete"
 }

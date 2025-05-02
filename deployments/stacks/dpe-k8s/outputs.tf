@@ -53,5 +53,5 @@ output "smtp_password" {
 
 output "synapse_webhook_url" {
   description = "The URL to use for Synapse webhook registration"
-  value       = module.synapse-sqs-test.api_gateway_url
+  value       = "${module.synapse-webhook-api-gateway.api_endpoint}/create"
 }
