@@ -28,19 +28,9 @@ resource "aws_sqs_queue_policy" "queue_policy" {
   })
 }
 
-resource "aws_apigatewayv2_api" "api_gateway" {
-  name          = "${var.environment}-${var.name}-api"
-  protocol_type = "HTTP"
-  description   = "API Gateway for SQS integration"
-}
-
-resource "aws_apigatewayv2_stage" "api_gateway_stage" {
-  api_id = aws_apigatewayv2_api.api_gateway.id
-  name   = "$default"
-  auto_deploy = true
-}
-
+# API Gateway to SQS Integration
 resource "aws_iam_role" "api_gateway_sqs_role" {
+  count = var.api_gateway_id != null ? 1 : 0
   name = "${var.environment}-${var.name}-api-gateway-sqs-role"
 
   assume_role_policy = jsonencode({
@@ -58,8 +48,9 @@ resource "aws_iam_role" "api_gateway_sqs_role" {
 }
 
 resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
+  count = var.api_gateway_id != null ? 1 : 0
   name = "${var.environment}-${var.name}-api-gateway-sqs-policy"
-  role = aws_iam_role.api_gateway_sqs_role.id
+  role = aws_iam_role.api_gateway_sqs_role[0].id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -74,11 +65,12 @@ resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
 }
 
 resource "aws_apigatewayv2_integration" "sqs_integration" {
-  api_id           = aws_apigatewayv2_api.api_gateway.id
+  count = var.api_gateway_id != null ? 1 : 0
+  api_id           = var.api_gateway_id
   integration_type = "AWS_PROXY"
   integration_subtype = "SQS-SendMessage"
   payload_format_version = "1.0"
-  credentials_arn = aws_iam_role.api_gateway_sqs_role.arn
+  credentials_arn = aws_iam_role.api_gateway_sqs_role[0].arn
 
   request_parameters = {
     "QueueUrl" = aws_sqs_queue.queue.url
@@ -93,9 +85,10 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
 }
 
 resource "aws_apigatewayv2_route" "events_route" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "POST /events"
-  target    = "integrations/${aws_apigatewayv2_integration.sqs_integration.id}"
+  count = var.api_gateway_id != null ? 1 : 0
+  api_id    = var.api_gateway_id
+  route_key = "POST ${var.route_path}"
+  target    = "integrations/${aws_apigatewayv2_integration.sqs_integration[0].id}"
 }
 
 resource "aws_iam_policy" "sqs_access_policy" {

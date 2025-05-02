@@ -13,9 +13,14 @@ output "queue_arn" {
   value       = aws_sqs_queue.queue.arn
 }
 
-output "api_gateway_url" {
-  description = "The URL of the API Gateway endpoint"
-  value       = "${aws_apigatewayv2_api.api_gateway.api_endpoint}/events"
+output "api_integration_id" {
+  description = "The ID of the API Gateway integration"
+  value       = var.api_gateway_id != null ? aws_apigatewayv2_integration.sqs_integration[0].id : null
+}
+
+output "api_route_key" {
+  description = "The route key for the API Gateway route"
+  value       = var.api_gateway_id != null ? aws_apigatewayv2_route.events_route[0].route_key : null
 }
 
 output "access_role_arn" {

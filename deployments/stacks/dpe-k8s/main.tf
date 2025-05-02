@@ -57,17 +57,34 @@ module "synapse_dataset_to_crossiant_metadata" {
   enable_cors = true
 }
 
-module "synapse-sqs-test" {
+module "synapse-webhook-api-gateway" {
+  source = "../../../modules/aws-api-gateway"
+  environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
+  name = "synapse-webhook-api-gateway"
+}
+
+module "synapse-sqs-create-queue" {
   source = "../../../modules/aws-sqs"
   environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
-  name = "synapse-sqs-test"
+  name = "synapse-sqs-create-queue"
   aws_account_id = var.aws_account_id
   aws_region = var.region
   cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
   
-  tags = {
-    Environment = var.cluster_name
-    Application = "synapse"
-    ManagedBy   = "terraform"
-  }
+  # API Gateway integration
+  api_gateway_id = module.api_gateway.api_id
+  route_path = "/create"
+}
+
+module "synapse-sqs-delete-queue" {
+  source = "../../../modules/aws-sqs"
+  environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
+  name = "synapse-sqs-delete-queue"
+  aws_account_id = var.aws_account_id
+  aws_region = var.region
+  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  
+  # API Gateway integration
+  api_gateway_id = module.api_gateway.api_id
+  route_path = "/delete"
 }

@@ -52,4 +52,17 @@ variable "tags" {
   description = "A map of tags to assign to the queue"
   type        = map(string)
   default     = {}
+}
+
+# API Gateway Integration Variables
+variable "api_gateway_id" {
+  description = "The ID of the API Gateway to integrate with. If null, no API Gateway integration will be created."
+  type        = string
+  default     = null
+}
+
+variable "route_path" {
+  description = "The path for the API Gateway route (e.g., /events, /messages)"
+  type        = string
+  default     = "/events"
 } 

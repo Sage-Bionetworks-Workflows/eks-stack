@@ -1,40 +1,94 @@
 # AWS SQS Module
 
-This Terraform module creates:
-1. An AWS SQS queue using ACK (AWS Controllers for Kubernetes)
-2. A direct AWS SQS queue for API Gateway integration
-3. An API Gateway endpoint that forwards events to the SQS queue
-
-## Features
-
-- Creates SQS queues using both Kubernetes (ACK) and direct AWS resources
-- Configurable queue attributes like visibility timeout, message retention period, etc.
-- API Gateway integration for event processing
+This module creates an SQS queue with optional API Gateway integration.
 
 ## Usage
 
-```hcl
-module "sqs" {
-  source = "modules/aws-sqs"
+### SQS Queue with API Gateway integration
 
-  environment            = "dev"
-  name                   = "application"
-  queue_name             = "my-queue"
-  namespace              = "default"
-  aws_region             = "us-east-1"
-  aws_account_id         = "123456789012"
-  ack_controller_role_arn = "arn:aws:iam::123456789012:role/ack-sqs-controller"
-  
-  # Optional queue configuration
-  visibility_timeout      = 30
-  message_retention_period = 345600
-  delay_seconds           = 0
-  maximum_message_size    = 262144
+```hcl
+# First, create the API Gateway
+module "api_gateway" {
+  source      = "path/to/modules/aws-api-gateway"
+  environment = "dev"
+  name        = "events-gateway"
   
   tags = {
     Environment = "dev"
-    Application = "my-app"
+    Application = "api-gateway"
+    ManagedBy   = "terraform"
   }
+}
+
+# Then create an SQS queue integrated with the API Gateway
+module "events_queue" {
+  source      = "path/to/modules/aws-sqs"
+  environment = "dev"
+  name        = "events-queue"
+  aws_account_id = "123456789012"
+  aws_region = "us-east-1"
+  cluster_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/..." 
+  
+  # API Gateway integration
+  api_gateway_id = module.api_gateway.api_id
+  route_path = "/events"
+  
+  tags = {
+    Environment = "dev"
+    Application = "events"
+    ManagedBy   = "terraform"
+  }
+}
+```
+
+### Standalone SQS Queue (no API Gateway integration)
+
+```hcl
+module "standalone_queue" {
+  source      = "path/to/modules/aws-sqs"
+  environment = "dev"
+  name        = "standalone-queue"
+  aws_account_id = "123456789012"
+  aws_region = "us-east-1"
+  cluster_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/..."
+  
+  # Do not provide api_gateway_id to skip integration
+  
+  tags = {
+    Environment = "dev"
+    Application = "standalone"
+    ManagedBy   = "terraform"
+  }
+}
+```
+
+## Multiple queues integrated with a single API Gateway
+
+You can create multiple SQS queues that all connect to the same API Gateway, each with their own unique route:
+
+```hcl
+module "api_gateway" {
+  source      = "path/to/modules/aws-api-gateway"
+  environment = "dev"
+  name        = "events-gateway"
+}
+
+module "notifications_queue" {
+  source      = "path/to/modules/aws-sqs"
+  environment = "dev"
+  name        = "notifications-queue"
+  api_gateway_id = module.api_gateway.api_id
+  route_path = "/notifications"
+  # ... other required variables
+}
+
+module "alerts_queue" {
+  source      = "path/to/modules/aws-sqs"
+  environment = "dev"
+  name        = "alerts-queue"
+  api_gateway_id = module.api_gateway.api_id
+  route_path = "/alerts"
+  # ... other required variables
 }
 ```
 
@@ -42,10 +96,8 @@ module "sqs" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.0.0 |
-| aws | ~> 5.0 |
-| helm | ~> 2.0 |
-| kubernetes | ~> 2.0 |
+| terraform | >= 0.14 |
+| aws | >= 3.0 |
 
 ## Inputs
 
@@ -53,16 +105,16 @@ module "sqs" {
 |------|-------------|------|---------|:--------:|
 | environment | The environment name (e.g., dev, staging, prod) | `string` | n/a | yes |
 | name | The name prefix for resources created by this module | `string` | n/a | yes |
-| queue_name | The name of the SQS queue | `string` | n/a | yes |
-| namespace | The Kubernetes namespace to deploy to | `string` | `"default"` | no |
 | aws_region | The AWS region to deploy to | `string` | `"us-east-1"` | no |
 | aws_account_id | The AWS account ID | `string` | n/a | yes |
-| ack_controller_role_arn | The ARN of the IAM role for the ACK controller | `string` | n/a | yes |
+| cluster_oidc_provider_arn | The ARN of the OIDC provider for the EKS cluster | `string` | n/a | yes |
 | visibility_timeout | The visibility timeout for the queue in seconds | `number` | `30` | no |
 | message_retention_period | The message retention period in seconds | `number` | `345600` | no |
 | delay_seconds | The delay in seconds before a message becomes available for processing | `number` | `0` | no |
 | maximum_message_size | The maximum message size in bytes | `number` | `262144` | no |
 | tags | A map of tags to assign to the queue | `map(string)` | `{}` | no |
+| api_gateway_id | The ID of the API Gateway to integrate with. If null, no API Gateway integration will be created | `string` | `null` | no |
+| route_path | The path for the API Gateway route (e.g., /events, /messages) | `string` | `/events` | no |
 
 ## Outputs
 
@@ -70,6 +122,7 @@ module "sqs" {
 |------|-------------|
 | queue_name | The name of the SQS queue |
 | queue_url | The URL of the SQS queue |
-| api_queue_url | The URL of the API SQS queue |
-| api_queue_arn | The ARN of the API SQS queue |
-| api_gateway_url | The URL of the API Gateway endpoint |
+| queue_arn | The ARN of the SQS queue |
+| api_integration_id | The ID of the API Gateway integration |
+| api_route_key | The route key for the API Gateway route |
+| access_role_arn | ARN of the role to access the SQS queue |
