@@ -84,9 +84,9 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
     "QueueUrl" = aws_sqs_queue.queue.url
     "MessageBody" = "$request.body"
     "MessageAttributes" = jsonencode({
-      "ContentType" = {
-        "DataType" = "String"
-        "StringValue" = "$request.header.Content-Type"
+      "ApiSource": {
+        "DataType": "String",
+        "StringValue": "ApiGateway"
       }
     })
   }
