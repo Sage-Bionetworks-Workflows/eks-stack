@@ -30,7 +30,7 @@ resource "aws_sqs_queue_policy" "queue_policy" {
 
 # API Gateway to SQS Integration
 resource "aws_iam_role" "api_gateway_sqs_role" {
-  count = var.api_gateway_id != null ? 1 : 0
+  count = var.enable_api_gateway_integration ? 1 : 0
   name = "${var.environment}-${var.name}-api-gateway-sqs-role"
 
   assume_role_policy = jsonencode({
@@ -48,7 +48,7 @@ resource "aws_iam_role" "api_gateway_sqs_role" {
 }
 
 resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
-  count = var.api_gateway_id != null ? 1 : 0
+  count = var.enable_api_gateway_integration ? 1 : 0
   name = "${var.environment}-${var.name}-api-gateway-sqs-policy"
   role = aws_iam_role.api_gateway_sqs_role[0].id
 
@@ -65,7 +65,7 @@ resource "aws_iam_role_policy" "api_gateway_sqs_policy" {
 }
 
 resource "aws_apigatewayv2_integration" "sqs_integration" {
-  count = var.api_gateway_id != null ? 1 : 0
+  count = var.enable_api_gateway_integration ? 1 : 0
   api_id           = var.api_gateway_id
   integration_type = "AWS_PROXY"
   integration_subtype = "SQS-SendMessage"
@@ -85,7 +85,7 @@ resource "aws_apigatewayv2_integration" "sqs_integration" {
 }
 
 resource "aws_apigatewayv2_route" "events_route" {
-  count = var.api_gateway_id != null ? 1 : 0
+  count = var.enable_api_gateway_integration ? 1 : 0
   api_id    = var.api_gateway_id
   route_key = "POST ${var.route_path}"
   target    = "integrations/${aws_apigatewayv2_integration.sqs_integration[0].id}"

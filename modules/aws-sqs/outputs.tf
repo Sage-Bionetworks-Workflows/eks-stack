@@ -15,12 +15,12 @@ output "queue_arn" {
 
 output "api_integration_id" {
   description = "The ID of the API Gateway integration"
-  value       = var.api_gateway_id != null ? aws_apigatewayv2_integration.sqs_integration[0].id : null
+  value       = var.enable_api_gateway_integration ? aws_apigatewayv2_integration.sqs_integration[0].id : null
 }
 
 output "api_route_key" {
   description = "The route key for the API Gateway route"
-  value       = var.api_gateway_id != null ? aws_apigatewayv2_route.events_route[0].route_key : null
+  value       = var.enable_api_gateway_integration ? aws_apigatewayv2_route.events_route[0].route_key : null
 }
 
 output "access_role_arn" {

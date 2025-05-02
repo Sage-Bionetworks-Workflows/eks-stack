@@ -55,10 +55,16 @@ variable "tags" {
 }
 
 # API Gateway Integration Variables
+variable "enable_api_gateway_integration" {
+  description = "Whether to enable the API Gateway integration"
+  type        = bool
+  default     = false
+}
+
 variable "api_gateway_id" {
-  description = "The ID of the API Gateway to integrate with. If null, no API Gateway integration will be created."
+  description = "The ID of the API Gateway to integrate with. Required if enable_api_gateway_integration is true."
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "route_path" {
