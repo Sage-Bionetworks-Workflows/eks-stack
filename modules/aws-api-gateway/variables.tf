@@ -9,7 +9,9 @@ variable "name" {
 }
 
 variable "tags" {
-  description = "A map of tags to assign to the API Gateway"
+  description = "Tags to apply to the API Gateway"
   type        = map(string)
-  default     = {}
-} 
+  default = {
+    "CostCenter" = "No Program / 000000"
+  }
+}

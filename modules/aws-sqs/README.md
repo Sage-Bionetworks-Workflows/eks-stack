@@ -17,6 +17,7 @@ module "api_gateway" {
     Environment = "dev"
     Application = "api-gateway"
     ManagedBy   = "terraform"
+    CostCenter  = "No Program / 000000"
   }
 }
 
@@ -63,6 +64,11 @@ module "standalone_queue" {
   }
 }
 ```
+
+### Configuring an automated Message Consumer
+
+For the proof of concept, we created an Airflow [DAG](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/dags/synapse-webhook-poc-dag.py) that automatically polled an SQS queue and processed the messages before sending a message to the intended Synapse users. In order to enable this use case,
+we needed to create an IAM user with access to the SQS queue in the account where the queue was deployed and an AWS Secret connection string containing the credentials for the IAM user in the account where Airflow is deployed.
 
 ## Multiple queues integrated with a single API Gateway
 

@@ -14,6 +14,7 @@ module "api_gateway" {
     Environment = "dev"
     Application = "api-gateway"
     ManagedBy   = "terraform"
+    CostCenter  = "No Program / 000000"
   }
 }
 ```

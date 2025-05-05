@@ -49,9 +49,11 @@ variable "maximum_message_size" {
 }
 
 variable "tags" {
-  description = "A map of tags to assign to the queue"
+  description = "Tags to apply to the SQS queue"
   type        = map(string)
-  default     = {}
+  default = {
+    "CostCenter" = "No Program / 000000"
+  }
 }
 
 variable "enable_api_gateway_integration" {
