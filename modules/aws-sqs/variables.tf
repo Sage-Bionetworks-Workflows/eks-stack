@@ -54,7 +54,6 @@ variable "tags" {
   default     = {}
 }
 
-# API Gateway Integration Variables
 variable "enable_api_gateway_integration" {
   description = "Whether to enable the API Gateway integration"
   type        = bool

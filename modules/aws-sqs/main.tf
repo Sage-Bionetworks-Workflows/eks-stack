@@ -28,7 +28,6 @@ resource "aws_sqs_queue_policy" "queue_policy" {
   })
 }
 
-# API Gateway to SQS Integration
 resource "aws_iam_role" "api_gateway_sqs_role" {
   count = var.enable_api_gateway_integration ? 1 : 0
   name = "${var.environment}-${var.name}-api-gateway-sqs-role"
