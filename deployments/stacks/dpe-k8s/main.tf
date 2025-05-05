@@ -56,3 +56,4 @@ module "synapse_dataset_to_crossiant_metadata" {
   public_access = true
   enable_cors = true
 }
+
