@@ -50,3 +50,8 @@ output "smtp_password" {
   sensitive = true
   value     = length(module.sage-aws-ses) > 0 ? module.sage-aws-ses[0].smtp_password : ""
 }
+
+output "synapse_webhook_url" {
+  description = "The URL to use for Synapse webhook registration"
+  value       = "${module.synapse-webhook-api-gateway.api_endpoint}/create"
+}
