@@ -57,3 +57,22 @@ module "synapse_dataset_to_crossiant_metadata" {
   enable_cors = true
 }
 
+module "synapse-webhook-api-gateway" {
+  source = "../../../modules/aws-api-gateway"
+  environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
+  name = "synapse-webhook-api-gateway"
+}
+
+module "synapse-sqs-create-queue" {
+  source = "../../../modules/aws-sqs"
+  environment = var.cluster_name == "dpe-k8s-sandbox" ? "sandbox" : "dev"
+  name = "synapse-sqs-create-queue"
+  aws_account_id = var.aws_account_id
+  aws_region = var.region
+  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
+  
+  # API Gateway integration
+  enable_api_gateway_integration = true
+  api_gateway_id = module.synapse-webhook-api-gateway.api_id
+  route_path = "/create"
+}
