@@ -10,7 +10,41 @@
 # }
 
 locals {
-  git_branch = "main"
+  git_branch = "dpe-1193"
+  my_branch_name = "dpe-1193"
+  my_namespace_name = "linglp-test"
+  my_application_name_in_argocd = "linglp-cool-application"
+}
+
+resource "kubernetes_namespace" "linglp-test-namespace" {
+  metadata {
+    name = local.my_namespace_name
+  }
+}
+
+
+resource "kubectl_manifest" "my-argocd-application" {
+  depends_on = [kubernetes_namespace.linglp-test-namespace]
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${local.my_application_name_in_argocd}
+  namespace: argocd
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+  sources:
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${local.my_branch_name}
+    path: deployments/stacks/dpe-k8s-deployments
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ${local.my_namespace_name}
+YAML
 }
 
 resource "spacelift_stack" "root_administrative_stack" {
