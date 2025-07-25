@@ -6,7 +6,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "Version of K8 cluster"
   type        = string
-  default     = "1.32"
+  default     = "1.33"
 }
 
 variable "region" {
