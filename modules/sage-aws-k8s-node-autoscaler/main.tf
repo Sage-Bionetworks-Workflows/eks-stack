@@ -104,6 +104,23 @@ resource "helm_release" "ocean-kubernetes-controller" {
 }
 
 
+# -----------patch-------------------------
+# --- Discover the current cluster version ---
+data "aws_eks_cluster" "this" {
+  name = var.cluster_name
+}
+
+locals {
+  # Use var.cluster_version if set, else detect from live cluster
+  k8s_version = coalesce(var.cluster_version, data.aws_eks_cluster.this.version)
+}
+
+# --- Lookup recommended AL2 AMI from SSM ---
+data "aws_ssm_parameter" "eks_worker_ami" {
+  name = "/aws/service/eks/optimized-ami/${local.k8s_version}/amazon-linux-2/recommended/image_id"
+}
+# -----------patch-------------------------
+
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.4.0"
