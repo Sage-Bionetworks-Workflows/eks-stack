@@ -21,3 +21,12 @@ variable "namespace" {
   type        = string
 }
 
+variable "region" {
+  description = "AWS region for External Secrets"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS account ID for IRSA role"
+  type        = string
+}
