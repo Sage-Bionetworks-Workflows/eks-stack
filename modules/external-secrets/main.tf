@@ -15,9 +15,11 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
+  %{if var.auto_deploy}
   syncPolicy:
     automated:
-      prune: true
+      prune: ${var.auto_prune}
+  %{endif}
   sources:
   - repoURL: 'https://charts.external-secrets.io'
     chart: external-secrets
@@ -33,12 +35,4 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
 YAML
-}
-
-resource "local_file" "eso_values" {
-  content = templatefile(
-    "${path.module}/templates/values.yaml.tmpl",
-    { account_id = data.aws_caller_identity.current.account_id }
-  )
-  filename = "${path.module}/templates/values.yaml"
 }
