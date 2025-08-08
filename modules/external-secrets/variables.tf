@@ -19,7 +19,7 @@ variable "auto_prune" {
 variable "namespace" {
   description = "The namespace to deploy into"
   type        = string
-  default     = "external_secrets"
+  default     = "external-secrets"
 }
 
 variable "region" {

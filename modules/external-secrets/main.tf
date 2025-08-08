@@ -1,10 +1,10 @@
-resource "kubernetes_namespace" "external_secrets" {
+resource "kubernetes_namespace" "external-secrets" {
   metadata { name =  var.namespace }
 }
 
 
 # Argo CD Application that installs ESO from the official Helm repo
-resource "kubectl_manifest" "external_secrets_app" {
+resource "kubectl_manifest" "external-secrets-app" {
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
