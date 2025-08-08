@@ -30,7 +30,7 @@ module "argo-cd" {
 }
 
 module "external_secrets" {
-  source      = "../../modules/external-secrets"
+  source      = "../../../modules/external-secrets"
   region      = var.region
   aws_account_id = var.aws_account_id
 }
