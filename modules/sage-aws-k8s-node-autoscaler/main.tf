@@ -104,7 +104,6 @@ resource "helm_release" "ocean-kubernetes-controller" {
 }
 
 module "ocean-aws-k8s" {
-  count  = var.enable_autoscaler ? 1 : 0
   source  = "spotinst/ocean-aws-k8s/spotinst"
   version = "1.4.0"
 

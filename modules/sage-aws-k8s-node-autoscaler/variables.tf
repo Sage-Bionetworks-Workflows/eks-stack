@@ -54,8 +54,3 @@ variable "single_az" {
   description = "Single AZ"
   type        = bool
 }
-
-variable "enable_autoscaler" {
-  type    = bool
-  default = true
-}
