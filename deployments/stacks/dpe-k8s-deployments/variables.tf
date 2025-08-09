@@ -119,8 +119,3 @@ variable "docker_access_token" {
   type        = string
   default     = ""
 }
-
-variable "enable_autoscaler" {
-  type    = bool
-  default = true
-}

@@ -2,7 +2,6 @@ locals {
   git_revision = var.git_revision
 }
 module "sage-aws-eks-autoscaler" {
-  count = var.enable_autoscaler ? 1 : 0
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
   cluster_name           = var.cluster_name
