@@ -14,3 +14,4 @@ resource "helm_release" "argo-cd" {
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
 }
+
