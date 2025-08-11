@@ -104,8 +104,7 @@ resource "helm_release" "ocean-kubernetes-controller" {
 }
 
 module "ocean-aws-k8s" {
-  source  = "git::https://github.com/spotinst/terraform-spotinst-ocean-aws-k8s.git?ref=7a30a60b4d0af3a7847467ac373511f3da58e40a"
-  version = "1.4.0"
+  source  = git::https://github.com/spotinst/terraform-spotinst-ocean-aws-k8s.git?ref=7a30a60b4d0af3a7847467ac373511f3da58e40a
 
   # Configuration
   cluster_name                     = var.cluster_name
