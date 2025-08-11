@@ -29,6 +29,13 @@ module "argo-cd" {
   source = "../../../modules/argo-cd"
 }
 
+module "external-secrets" {
+  source      = "../../../modules/external-secrets"
+  region      = var.region
+  aws_account_id = var.aws_account_id
+  namespace = "external-secrets"
+}
+
 module "flux-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
   source     = "../../../modules/flux-cd"
