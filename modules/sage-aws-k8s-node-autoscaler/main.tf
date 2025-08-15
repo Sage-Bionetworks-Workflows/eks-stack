@@ -106,7 +106,7 @@ resource "helm_release" "ocean-kubernetes-controller" {
 
 module "ocean-aws-k8s" {
   source  = "spotinst/ocean-aws-k8s/spotinst"
-  version = "1.4.0"
+  version = "1.11.0"
 
   # Configuration
   cluster_name                     = var.cluster_name
@@ -148,3 +148,4 @@ module "ocean-aws-k8s" {
     virtualization_types    = null
   }
 }
+
