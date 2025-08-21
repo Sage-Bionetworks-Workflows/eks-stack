@@ -1,6 +1,44 @@
 locals {
   git_revision = var.git_revision
+
+  # Rename this to the name of your branch
+  my_branch_name = "dpe-1193"
+  # Set this to a unique name
+  my_namespace_name = "linglp-cool-namespace"
+  # Set this to a unique name
+  my_application_name_in_argocd = "linglp-cool-application"
 }
+
+resource "kubernetes_namespace" "linglp-cool-resource" {
+  metadata {
+    name = local.my_namespace_name
+  }
+}
+
+resource "kubectl_manifest" "my-argocd-application" {
+  depends_on = [kubernetes_namespace.linglp-cool-resource]
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${local.my_application_name_in_argocd}
+  namespace: argocd
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+  sources:
+  - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
+    targetRevision: ${local.my_branch_name}
+    path: deployments/stacks/dpe-k8s-deployments
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ${local.my_namespace_name}
+YAML
+}
+
 module "sage-aws-eks-autoscaler" {
   source                 = "spacelift.io/sagebionetworks/sage-aws-eks-autoscaler/aws"
   version                = "0.9.0"
