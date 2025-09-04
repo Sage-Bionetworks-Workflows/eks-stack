@@ -9,8 +9,8 @@ terraform {
       version = "~> 2.0"
     }
     spotinst = {
-      source  = "spotinst/spotinst"
-      version = "1.172.0" # Specify the version you wish to use
+      source  = "opentofu/spotinst"
+      version = "1.225.0" # Specify the version you wish to use
     }
     helm = {
       source  = "hashicorp/helm"
