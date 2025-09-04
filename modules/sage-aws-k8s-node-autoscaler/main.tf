@@ -82,7 +82,7 @@ resource "helm_release" "ocean-kubernetes-controller" {
   repository       = "https://charts.spot.io"
   chart            = "ocean-kubernetes-controller"
   namespace        = "spot-system"
-  version          = "0.1.59"
+  version          = "0.1.66"
   create_namespace = true
 
   values = [templatefile("${path.module}/templates/values.yaml", {})]
