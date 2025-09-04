@@ -8,8 +8,8 @@ spotinst:
   # -- Spot Token. (Required)
   # Ref: https://docs.spot.io/administration/api/create-api-token
   token: ""
-  # -- Spot Account. (Required)
-  # Ref: https://docs.spot.io/administration/organizations?id=account
+  # -- Spot Account ID. (Required)
+  # Example: `act-123abcd`
   account: ""
   # -- Unique identifier used by the Ocean Controller to connect (Required)
   # between the Ocean backend and the Kubernetes cluster.
@@ -34,6 +34,8 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+initContainers: []
 
 imagePullSecrets: []
 
@@ -79,9 +81,9 @@ commonLabels: {}
 # Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
 podSecurityContext:
   runAsNonRoot: true
-  runAsUser: 10001
-  runAsGroup: 10001
-  fsGroup: 10001
+  runAsUser: 1000690000
+  runAsGroup: 1000690000
+  fsGroup: 1000690000
 
 # -- Priority class name for the controller pod.
 priorityClassName: system-node-critical
@@ -99,6 +101,8 @@ securityContext:
   capabilities:
     drop:
     - ALL
+
+command: []
 
 args: []
 #  - --test
@@ -203,7 +207,7 @@ logShipping:
   # -- Specifies the log shipping container image. (Optional)
   image:
     repository: ghcr.io/fluent/fluent-bit
-    tag: "3.0.7"
+    tag: "3.1.9"
     pullPolicy: IfNotPresent
 
   # -- Log shipping destination configuration.
@@ -211,6 +215,16 @@ logShipping:
     host: api.spotinst.io
     port: 443
     tls: true
+
+  extraVolumeMounts: []
+
+  extraEnv: []
+
+  command:
+    - /fluent-bit/bin/fluent-bit
+    - -c
+    - /tmp/fluent-bit.conf
+    - -q
 
 # Auto Update process configuration.
 autoUpdate:
@@ -230,9 +244,9 @@ autoUpdate:
   # Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
   podSecurityContext:
     runAsNonRoot: true
-    runAsUser: 10001
-    runAsGroup: 10001
-    fsGroup: 10001
+    runAsUser: 1000690000
+    runAsGroup: 1000690000
+    fsGroup: 1000690000
 
   # -- Security Context for the auto-updater container. (Optional)
   securityContext:
