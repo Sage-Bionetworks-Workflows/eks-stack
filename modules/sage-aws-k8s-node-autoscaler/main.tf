@@ -164,10 +164,6 @@ spec:
     certificateAuthority: ${data.aws_eks_cluster.cluster.certificate_authority[0].data}
     cidr: ${data.aws_eks_cluster.cluster.kubernetes_network_config[0].service_ipv4_cidr}
     name: ${var.cluster_name}
-  kubelet:
-    config:
-      clusterDNS:
-      - ${cidrhost(data.aws_vpc.cluster_vpc.cidr_block, 2)}
 --//--
 EOF
   )
