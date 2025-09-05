@@ -147,5 +147,29 @@ module "ocean-aws-k8s" {
     root_device_types       = null
     virtualization_types    = null
   }
+  
+  user_data = base64encode(<<-EOF
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="//"
+
+--//
+Content-Type: application/node.eks.aws
+
+---
+apiVersion: node.eks.aws/v1alpha1
+kind: NodeConfig
+spec:
+  cluster:
+    apiServerEndpoint: ${data.aws_eks_cluster.cluster.endpoint}
+    certificateAuthority: ${data.aws_eks_cluster.cluster.certificate_authority[0].data}
+    cidr: ${data.aws_eks_cluster.cluster.kubernetes_network_config[0].service_ipv4_cidr}
+    name: ${var.cluster_name}
+  kubelet:
+    config:
+      clusterDNS:
+      - ${cidrhost(data.aws_vpc.cluster_vpc.cidr_block, 2)}
+--//--
+EOF
+  )
 }
 
