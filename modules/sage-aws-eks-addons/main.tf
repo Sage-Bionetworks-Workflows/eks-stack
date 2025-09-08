@@ -93,7 +93,7 @@ resource "aws_iam_role" "guardduty_agent_role" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated = var.cluster_oidc_provider_arn
+          Federated = data.aws_iam_openid_connect_provider.eks.arn
         }
         Condition = {
           StringEquals = {

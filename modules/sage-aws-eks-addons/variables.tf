@@ -22,11 +22,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "cluster_oidc_provider_arn" {
-  description = "EKS cluster ARN for the OIDC provider"
-  type        = string
-}
-
 variable "private_subnet_ids" {
   description = "Private subnet IDs"
   type        = list(string)
