@@ -2634,10 +2634,10 @@ dags:
     # ssh example: git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
     repo: https://github.com/Sage-Bionetworks-Workflows/orca-recipes
-    branch: main
+    branch: new-dag-branch
     rev: HEAD
     # The git revision (branch, tag, or hash) to check out, v4 only
-    ref: main
+    ref: new-dag-branch
     depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
