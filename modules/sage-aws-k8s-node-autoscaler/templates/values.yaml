@@ -8,8 +8,8 @@ spotinst:
   # -- Spot Token. (Required)
   # Ref: https://docs.spot.io/administration/api/create-api-token
   token: ""
-  # -- Spot Account. (Required)
-  # Ref: https://docs.spot.io/administration/organizations?id=account
+  # -- Spot Account ID. (Required)
+  # Example: `act-123abcd`
   account: ""
   # -- Unique identifier used by the Ocean Controller to connect (Required)
   # between the Ocean backend and the Kubernetes cluster.
@@ -25,6 +25,10 @@ spotinst:
   enableCsrApproval: true
   # -- Disable automatic RightSizing. (Optional)
   disableAutomaticRightSizing: false
+  # -- Disable TLS certificate validation. (Optional)
+  insecureSkipTLSVerify: false
+  # -- Sets the controller to read-only mode, removing write permissions and disabling autoscaling. (Optional)
+  readonly: false
 
 # -- Configure the amount of replicas for the controller (Optional)
 replicas: 2
@@ -32,8 +36,14 @@ replicas: 2
 image:
   repository: us-docker.pkg.dev/spotit-today/container-labs/spotinst-kubernetes-controller
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Overrides the image tag whose default is the chart appVersion.
   tag: ""
+  # -- Set to `true` to use an FIPS-140 compliant image. This flag adds `-fips` suffix to the image tag,
+  # therefore it should not be used together with the `--image.tag` flag.
+  # Ref: https://go.dev/doc/security/fips140
+  fips: false
+
+initContainers: []
 
 imagePullSecrets: []
 
@@ -79,9 +89,9 @@ commonLabels: {}
 # Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
 podSecurityContext:
   runAsNonRoot: true
-  runAsUser: 10001
-  runAsGroup: 10001
-  fsGroup: 10001
+  runAsUser: 1000690000
+  runAsGroup: 1000690000
+  fsGroup: 1000690000
 
 # -- Priority class name for the controller pod.
 priorityClassName: system-node-critical
@@ -99,6 +109,8 @@ securityContext:
   capabilities:
     drop:
     - ALL
+
+command: []
 
 args: []
 #  - --test
@@ -190,8 +202,7 @@ metrics-server:
     pullPolicy: IfNotPresent
 
   # -- Arguments to pass to metrics-server on start up. (Optional)
-  args:
-  - --logtostderr
+  # args:
   # enable this if you have self-signed certificates, see: https://github.com/kubernetes-incubator/metrics-server
   #  - --kubelet-insecure-tls
 
@@ -200,10 +211,12 @@ logShipping:
   # -- Specifies whether to send the controller logs to Spot for analysis. (Optional)
   enabled: false
 
-  # -- Specifies the log shipping container image. (Optional)
   image:
+    # -- Image repository. (Optional)
     repository: ghcr.io/fluent/fluent-bit
-    tag: "3.0.7"
+    # -- Overrides the image tag. (Optional)
+    tag: "3.1.9"
+    # -- Image pull policy. (Optional)
     pullPolicy: IfNotPresent
 
   # -- Log shipping destination configuration.
@@ -211,6 +224,26 @@ logShipping:
     host: api.spotinst.io
     port: 443
     tls: true
+
+  extraVolumeMounts: []
+
+  extraEnv: []
+
+  # -- Log shipping container command. (Optional)
+  command:
+    - /fluent-bit/bin/fluent-bit
+    - -c
+    - /tmp/fluent-bit.conf
+    - -q
+
+  # -- Log Shipping container security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+      - ALL
 
 # Auto Update process configuration.
 autoUpdate:
@@ -230,9 +263,9 @@ autoUpdate:
   # Ref: https://kubernetes.io/docs/concepts/security/pod-security-standards/
   podSecurityContext:
     runAsNonRoot: true
-    runAsUser: 10001
-    runAsGroup: 10001
-    fsGroup: 10001
+    runAsUser: 1000690000
+    runAsGroup: 1000690000
+    fsGroup: 1000690000
 
   # -- Security Context for the auto-updater container. (Optional)
   securityContext:
