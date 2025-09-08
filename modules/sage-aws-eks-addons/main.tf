@@ -56,39 +56,75 @@ module "vpc-endpoints-guard-duty" {
 
 }
 
-data "aws_iam_policy_document" "restrict-vpc-endpoint-usage" {
-  statement {
-    effect    = "Allow"
-    actions   = ["*"]
-    resources = ["*"]
+resource "aws_iam_policy" "guardduty_agent_policy" {
+  name        = "${var.cluster_name}-guardduty-agent-policy"
+  description = "IAM policy for the GuardDuty EKS Runtime Monitoring agent."
 
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-  }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "eks:DescribeCluster"
+        ],
+        Resource = data.aws_eks_cluster.cluster.arn
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "guardduty:SendSecurityTelemetry"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
 
-  statement {
-    effect    = "Deny"
-    actions   = ["*"]
-    resources = ["*"]
+  tags = var.tags
+}
 
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:Principal"
-      values   = [var.aws_account_id]
-    }
+resource "aws_iam_role" "guardduty_agent_role" {
+  name = "${var.cluster_name}-guardduty-agent-role"
 
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-  }
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = data.aws_iam_openid_connect_provider.eks.arn
+        }
+        Condition = {
+          StringEquals = {
+            "${replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub" = "system:serviceaccount:amazon-guardduty:aws-guardduty-agent"
+            "${replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+
+resource "aws_iam_role_policy_attachment" "guardduty_agent_attachment" {
+  policy_arn = aws_iam_policy.guardduty_agent_policy.arn
+  role       = aws_iam_role.guardduty_agent_role.name
 }
 
 
 resource "aws_eks_addon" "aws-guardduty" {
-  cluster_name = var.cluster_name
-  addon_name   = "aws-guardduty-agent"
-  tags         = var.tags
+  cluster_name                = var.cluster_name
+  addon_name                  = "aws-guardduty-agent"
+  addon_version               = "v1.11.0-eksbuild.4"
+  resolve_conflicts_on_update = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
+  service_account_role_arn    = aws_iam_role.guardduty_agent_role.arn
+  tags                        = var.tags
+
+  depends_on = [
+    aws_iam_role_policy_attachment.guardduty_agent_attachment
+  ]
 }
