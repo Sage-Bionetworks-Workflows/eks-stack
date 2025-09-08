@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "restrict-vpc-endpoint-usage" {
 
     condition {
       test     = "StringNotEquals"
-      variable = "aws:Principal"
+      variable = "aws:PrincipalAccount"
       values   = [var.aws_account_id]
     }
 
