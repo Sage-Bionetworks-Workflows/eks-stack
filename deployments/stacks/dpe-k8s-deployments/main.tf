@@ -13,11 +13,12 @@ module "sage-aws-eks-autoscaler" {
 }
 
 module "sage-aws-eks-addons" {
-  source             = "../../../modules/sage-aws-eks-addons"
-  cluster_name       = var.cluster_name
-  aws_account_id     = var.aws_account_id
-  vpc_id             = var.vpc_id
-  private_subnet_ids = var.private_subnet_ids_eks_worker_nodes
+  source                    = "../../../modules/sage-aws-eks-addons"
+  cluster_name              = var.cluster_name
+  aws_account_id            = var.aws_account_id
+  vpc_id                    = var.vpc_id
+  private_subnet_ids        = var.private_subnet_ids_eks_worker_nodes
+  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
 }
 
 module "argo-cd" {
