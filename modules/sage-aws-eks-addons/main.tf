@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "restrict-vpc-endpoint-usage" {
 
     condition {
       test     = "StringNotEquals"
-      variable = "aws:Principal"
+      variable = "aws:PrincipalAccount"
       values   = [var.aws_account_id]
     }
 
@@ -88,7 +88,11 @@ data "aws_iam_policy_document" "restrict-vpc-endpoint-usage" {
 
 
 resource "aws_eks_addon" "aws-guardduty" {
-  cluster_name = var.cluster_name
-  addon_name   = "aws-guardduty-agent"
-  tags         = var.tags
+  cluster_name                = var.cluster_name
+  addon_name                  = "aws-guardduty-agent"
+  tags                        = var.tags
+  addon_version               = "v1.11.0-eksbuild.4"
+  resolve_conflicts_on_update = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
 }
+
