@@ -66,6 +66,6 @@ module "synapse_data_catalog_minimal_jsonld" {
   aws_account_id = var.aws_account_id
   cluster_name = var.cluster_name
   cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
-  public_access = false
+  public_access = true
   enable_cors = true
 }
