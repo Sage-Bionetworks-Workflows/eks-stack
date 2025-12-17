@@ -359,7 +359,7 @@ This document describes the abbreviated process below:
 				"iam:*OpenIDConnectProvider",
 				"iam:*InstanceProfile",
 				"iam:ListPolicyVersions",
-            "iam:UpdateOpenIDConnectProviderThumbprint",
+                "iam:UpdateOpenIDConnectProviderThumbprint",
 				"iam:ListGroupsForUser",
                 "iam:ListAttachedUserPolicies"
 			],
