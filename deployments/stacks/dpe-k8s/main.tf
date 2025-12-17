@@ -61,7 +61,7 @@ module "synapse_data_catalog_minimal_jsonld" {
   # This points to the prod cluster - The only location where we want to create the bucket
   count  = var.cluster_name == "dpe-k8" ? 1 : 0
   source      = "../../../modules/s3-bucket"
-  bucket_name = "synapse-data-catalog-jsonld"
+  bucket_name = "synapse-croissant-metadata-minimal"
   enable_versioning = true
   aws_account_id = var.aws_account_id
   cluster_name = var.cluster_name
