@@ -38,31 +38,6 @@ module "dpe-sandbox-spacelift-development" {
   k8s_stack_deployments_name         = "DPE DEV Kubernetes Deployments"
   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
-  auth0_stack_name         = "DPE DEV Auth0"
-  auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain             = "dev-sage-dpe.us.auth0.com"
-  auth0_clients = [
-    {
-      name        = "bfauble - automation"
-      description = "App for testing signoz"
-      app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
-    },
-    {
-      name        = "schematic - Github Actions"
-      description = "Client for Github Actions to export telemetry data"
-      app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
-    },
-    {
-      name        = "schematic - Dev"
-      description = "Client for schematic deployed to AWS DEV to export telemetry data"
-      app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
-    },
-  ]
-  auth0_identifier = "https://dev.sagedpe.org"
-
   aws_account_id = "631692904429"
   region         = "us-east-1"
 
@@ -81,9 +56,6 @@ module "dpe-sandbox-spacelift-development" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "dev.sagedpe.org"
-  auth0_jwks_uri         = "https://dev-sage-dpe.us.auth0.com/.well-known/jwks.json"
-  deploy_auth0           = true
-
   ses_email_identities = ["aws-dpe-dev@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "aws-dpe-dev@sagebase.org"
@@ -107,19 +79,6 @@ module "dpe-sandbox-spacelift-staging" {
   k8s_stack_deployments_name         = "DPE Staging Kubernetes Deployments"
   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
-  auth0_stack_name         = "DPE Staging Auth0"
-  auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain             = "staging-sage-dpe.us.auth0.com"
-  auth0_clients = [
-    {
-      name        = "schematic - Staging"
-      description = "Client for schematic deployed to AWS Staging to export telemetry data"
-      app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
-    },
-  ]
-  auth0_identifier = "https://staging.sagedpe.org"
-
   aws_account_id = "766808016710"
   region         = "us-east-1"
 
@@ -138,9 +97,6 @@ module "dpe-sandbox-spacelift-staging" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "staging.sagedpe.org"
-  auth0_jwks_uri         = "https://staging-sage-dpe.us.auth0.com/.well-known/jwks.json"
-  deploy_auth0           = true
-
   ses_email_identities = []
   smtp_from            = ""
 }
@@ -163,19 +119,6 @@ module "dpe-sandbox-spacelift-production" {
   k8s_stack_deployments_name         = "DPE Kubernetes Deployments"
   k8s_stack_deployments_project_root = "deployments/stacks/dpe-k8s-deployments"
 
-  auth0_stack_name         = "DPE Auth0"
-  auth0_stack_project_root = "deployments/stacks/dpe-auth0"
-  auth0_domain             = "prod-sage-dpe.us.auth0.com"
-  auth0_clients = [
-    {
-      name        = "schematic - Prod"
-      description = "Client for schematic deployed to AWS Prod to export telemetry data"
-      app_type    = "non_interactive"
-      scopes      = ["write:telemetry"]
-    },
-  ]
-  auth0_identifier = "https://prod.sagedpe.org"
-
   aws_account_id = "766808016710"
   region         = "us-east-1"
 
@@ -194,9 +137,6 @@ module "dpe-sandbox-spacelift-production" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "prod.sagedpe.org"
-  auth0_jwks_uri         = "https://prod-sage-dpe.us.auth0.com/.well-known/jwks.json"
-  deploy_auth0           = true
-
   ses_email_identities = ["dpe@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "dpe@sagebase.org"

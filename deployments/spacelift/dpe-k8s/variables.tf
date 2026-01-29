@@ -153,47 +153,6 @@ variable "ssl_hostname" {
   type        = string
 }
 
-variable "deploy_auth0" {
-  description = "Determines if a stack for Auth0 should be deployed"
-  type        = bool
-  default     = false
-}
-
-variable "auth0_jwks_uri" {
-  description = "The JWKS URI for Auth0"
-  type        = string
-}
-
-variable "auth0_stack_name" {
-  description = "Name of the auth0 stack"
-  type        = string
-}
-
-variable "auth0_stack_project_root" {
-  description = "Project root of the auth0 stack"
-  type        = string
-}
-
-variable "auth0_domain" {
-  description = "Auth0 domain"
-  type        = string
-}
-
-variable "auth0_clients" {
-  description = "List of clients to create in Auth0."
-  type = list(object({
-    name        = string
-    description = string
-    app_type    = string
-    scopes      = list(string)
-  }))
-}
-
-variable "auth0_identifier" {
-  description = "Auth0 identifier for the created API."
-  type        = string
-}
-
 variable "ses_email_identities" {
   type        = list(string)
   description = "List of email identities to be added to SES"
