@@ -1,3 +1,7 @@
+# This config manages Spacelift pipelines for:
+#   - deployments/stacks/dpe-k8s/              (VPC + EKS infrastructure)
+#   - deployments/stacks/dpe-k8s-deployments/  (K8s-internal deployments)
+
 locals {
   k8s_stack_environment_variables = {
     aws_account_id                         = var.aws_account_id

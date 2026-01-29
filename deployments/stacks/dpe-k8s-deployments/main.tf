@@ -1,3 +1,5 @@
+# Spacelift pipeline config: deployments/spacelift/dpe-k8s/
+
 locals {
   git_revision = var.git_revision
 }

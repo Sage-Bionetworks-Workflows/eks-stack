@@ -1,104 +1,181 @@
 # Purpose
 
-This repo is used to deploy an EKS cluster to AWS. CI/CD is managed through Spacelift.
+This repo manages cloud infrastructure deployed to AWS via [Spacelift](https://spacelift.io/) CI/CD using [OpenTofu](https://opentofu.org/). While originally focused on EKS, it now also manages additional AWS services including S3, and SES.
 
-# Directory Structure
+## Directory Structure
 ```
-.:  Contains references to all the "Things" that are going to be deployed
-├── common-resources: Resources that are environment independent
-│   ├── contexts: Contexts that we'll attach across environments
-│   └── policies: Rego policies that can be attached to 0..* spacelift stacks
-├── dev: Development/sandbox environment
-│   ├── spacelift: Terraform scripts to manage spacelift resources
-│   │   └── dpe-k8s/dpe-sandbox: Spacelift specific resources to manage the CI/CD pipeline
-│   └── stacks: The deployable cloud resources
-│       ├── dpe-auth0: Stack used to provision and setup auth0 IDP (Identity Provider) settings
-│       ├── dpe-sandbox-k8s: K8s + supporting AWS resources
-│       └── dpe-sandbox-k8s-deployments: Resources deployed inside of a K8s cluster
-└── modules: Templatized collections of terraform resources that are used in a stack
-    ├── apache-airflow: K8s deployment for apache airflow
-    │   └── templates: Resources used during deployment of airflow
-    ├── argo-cd: K8s deployment for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
-    │   └── templates: Resources used during deployment of this helm chart
-    ├── cert-manager: Handles provisioning TLS certificates for the cluster
-    ├── envoy-gateway: API Gateway for the cluster securing and providing secure traffic into the cluster
-    ├── postgres-cloud-native: Used to provision a postgres instance
-    ├── postgres-cloud-native-operator: Operator that manages the lifecycle of postgres instances on the cluster
-    ├── demo-network-policies: K8s deployment for a demo showcasing how to use network policies
-    ├── demo-pod-level-security-groups-strict: K8s deployment for a demo showcasing how to use pod level security groups in strict mode
-    ├── sage-aws-eks: Sage specific EKS cluster for AWS
-    ├── sage-aws-eks-addons: Sets up additional resources that need to be installed post creation of the EKS cluster
-    ├── sage-aws-k8s-node-autoscaler: K8s node autoscaler using spotinst ocean
-    ├── sage-aws-ses: AWS SES (Simple email service) setup
-    ├── sage-aws-vpc: Sage specific VPC for AWS
-    ├── signoz: SigNoz provides APM, logs, traces, metrics, exceptions, & alerts in a single tool
-    ├── trivy-operator: K8s deployment for trivy, along with a few supporting charts for security scanning
-    │   └── templates: Resources used during deployment of these helm charts
-    ├── victoria-metrics: K8s deployment for victoria metrics, a promethus like tool for cluster metric collection
-    │   └── templates: Resources used during deployment of these helm charts
+eks-stack/
+  main.tf                      # Root Spacelift administrative stack
+  provider.tf                  # Spacelift provider config
+  common-resources/            # Shared Spacelift policies, contexts, AWS integrations
+  deployments/
+    main.tf                    # Wires spacelift pipeline configs per environment (dev/staging/prod)
+    spacelift/                 # CI pipeline definitions (HOW things get deployed)
+      dpe-k8s/                 # Pipeline config for EKS stacks
+    stacks/                    # Cloud resource definitions (WHAT gets deployed)
+      dpe-k8s/                 # VPC, EKS cluster, SES, S3 buckets
+      dpe-k8s-deployments/     # K8s-internal: ArgoCD, Airflow, monitoring, etc.
+  modules/                     # Reusable Terraform modules
+  docs/                        # Workshop materials
+  scripts/                     # Utility scripts
 ```
 
-This root `main.tf` contains all the "Things" that are going to be deployed. 
-In this top level directory you'll find that the terraform files are bringing together 
-everything that should be deployed in spacelift declerativly. The items declared in 
-this top level directory are as follows:
+## How Deployment Works
 
-1) A single root administrative stack that is responsible for taking each and every resource to deploy it to spacelift.
-2) A spacelift space that everything is deployed under called `environment`.
-3) Reference to the `terraform-registry` modules directory.
-4) Reference to `common-resources` or reusable resources that are not environment specific.
-5) The environment specific resources such as `dev`, `staging`, or `prod`
+Deploying a resource involves a **two-step process**:
 
-This structure is looking to https://github.com/antonbabenko/terraform-best-practices/tree/master/examples for inspiration.
+1. **`deployments/spacelift/<name>/`** defines the **CI pipeline** in Spacelift. This controls _which_ stacks can be deployed, to _which_ AWS account, with _what_ environment variables. Think of this as the build server job configuration.
 
-## AWS VPC
-The VPC used in this project is created with the [AWS VPC Terraform module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest).
-It contains a number of defaults for our use-case at sage. Head on over to the module
-definition to learn more.
+2. **`deployments/stacks/<name>/`** defines **what cloud resources** are provisioned when that pipeline runs. Each stack is a Terraform root module that typically sources reusable modules from `modules/`. Think of this as the infrastructure blueprint.
 
-## AWS EKS
+When Spacelift runs a pipeline, it executes `tofu plan/apply` against the corresponding stack directory.
 
-[AWS EKS](https://aws.amazon.com/eks/) is a managed kubernetes cluster that handles
-many of the tasks around running a k8s cluster. On-top of it we are providing the
-configurable parameters in order to run a number of workloads.
+### Architecture Diagram
 
-### EKS API access
-API access to the kubernetes cluster endpoint is set to `Public and private`. 
+```mermaid
+graph TD
+    ROOT["main.tf<br/><i>Root Administrative Stack</i>"] --> COMMON["module 'common'<br/>common-resources/"]
+    ROOT --> REGISTRY["module 'terraform-registry'<br/>modules/"]
+    ROOT --> DEPLOY["module 'deployments'<br/>deployments/main.tf"]
+
+    COMMON ~~~ NOTE_C["Shared policies, contexts,<br/>and AWS integrations"]
+    REGISTRY ~~~ NOTE_R["Registers reusable modules<br/>in Spacelift's module registry"]
+
+    DEPLOY --> DEV["spacelift_space<br/><b>development</b>"]
+    DEPLOY --> STG["spacelift_space<br/><b>staging</b>"]
+    DEPLOY --> PROD["spacelift_space<br/><b>production</b>"]
+
+    DEV --> DEV_MOD["module 'dpe-sandbox-spacelift-development'<br/>source = ./spacelift/dpe-k8s"]
+    STG --> STG_MOD["module 'dpe-sandbox-spacelift-staging'<br/>source = ./spacelift/dpe-k8s"]
+    PROD --> PROD_MOD["module 'dpe-sandbox-spacelift-production'<br/>source = ./spacelift/dpe-k8s"]
+
+    DEV_MOD --> STACKS["deployments/stacks/dpe-k8s/<br/>deployments/stacks/dpe-k8s-deployments/"]
+    STG_MOD --> STACKS
+    PROD_MOD --> STACKS
+
+    style ROOT fill:#4a90d9,color:#fff
+    style STACKS fill:#2ecc71,color:#fff
+    style NOTE_C fill:none,stroke:none
+    style NOTE_R fill:none,stroke:none
+```
+
+## Adding a New Stack
+
+Follow these steps to add a new independently-deployed resource:
+
+### 1. Create the Terraform module
+
+Create a new directory in `modules/<your-module>/` with at minimum:
+- `main.tf` - the cloud resources to create
+- `variables.tf` - configurable inputs
+- `outputs.tf` - values other stacks may need
+- `versions.tf` - required providers
+
+See the [modules README](./modules/README.md) for guidelines.
+
+### 2. Create the deployment stack
+
+Create a new directory in `deployments/stacks/<your-stack>/` with:
+- `main.tf` - sources your module: `source = "../../../modules/<your-module>"`
+- `variables.tf` - environment-specific inputs (passed as `TF_VAR_*` from Spacelift)
+- `outputs.tf` - values to export
+- `provider.tf` - AWS provider configuration
+- `versions.tf` - required providers and OpenTofu version
+
+### 3. Create the Spacelift pipeline config
+
+Create a new directory in `deployments/spacelift/<your-stack>/` with:
+- `main.tf` - defines:
+  - `spacelift_space` - a logical grouping in Spacelift
+  - `spacelift_stack` - points `project_root` to your stack directory
+  - `spacelift_environment_variable` - passes `TF_VAR_*` variables
+  - `spacelift_aws_integration_attachment` - binds AWS credentials
+- `variables.tf` - inputs from the parent module
+- `outputs.tf` - stack IDs for reference
+- `versions.tf` - Spacelift provider
+
+
+### 4. Wire it into `deployments/main.tf`
+
+Add a `module` block in `deployments/main.tf` that sources your new spacelift config and passes the required variables (`parent_space_id`, `admin_stack_id`, `aws_integration_id`, `git_branch`, etc.).
+
+### 5. Commit, PR, merge
+
+Once merged to `main`, the root administrative stack detects the changes and creates the new Spacelift stacks automatically.
+
+## Modules
+
+Reusable Terraform modules in `modules/`:
+
+**AWS Infrastructure**
+- `sage-aws-vpc` - VPC with public/private subnets
+- `sage-aws-eks` - EKS cluster provisioning
+- `sage-aws-eks-addons` - Post-creation EKS addons (CoreDNS, EBS CSI, GuardDuty)
+- `sage-aws-ses` - Simple Email Service setup
+- `s3-bucket` - S3 bucket with optional public access and IRSA
+
+**Kubernetes Cluster Management**
+- `sage-aws-k8s-node-autoscaler` - Node autoscaling via Spot.io Ocean
+- `cert-manager` - TLS certificate provisioning
+- `envoy-gateway` - API Gateway with TLS termination
+
+**Application Deployment (K8s)**
+- `apache-airflow` - Workflow orchestration
+- `argo-cd` - GitOps continuous delivery
+- `flux-cd` - Alternative GitOps tool
+- `postgres-cloud-native` - PostgreSQL instance via CloudNativePG
+- `postgres-cloud-native-operator` - CloudNativePG operator
+
+**Monitoring and Security**
+- `victoria-metrics` - Prometheus-compatible metrics collection
+- `trivy-operator` - Container security scanning
+
+**API and Messaging**
+- `aws-api-gateway` - API Gateway resources
+- `aws-sqs` - Simple Queue Service
+
+**CI/CD**
+- `spacelift-private-worker` - Spacelift private worker setup
+
+**Demos**
+- `demo-network-policies` - Kubernetes network policy examples
+- `demo-pod-level-security-groups-strict` - Pod-level security group examples
+
+---
+
+## EKS Cluster Documentation
+
+The following sections apply specifically to the EKS cluster stacks (`dpe-k8s` and `dpe-k8s-deployments`).
+
+### AWS VPC
+The VPC is created with the [AWS VPC Terraform module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest). It contains a number of defaults for our use-case at Sage. See the module definition for details.
+
+### AWS EKS
+
+[AWS EKS](https://aws.amazon.com/eks/) is a managed Kubernetes cluster. We provide configurable parameters to run workloads on top of it.
+
+#### EKS API Access
+API access to the Kubernetes cluster endpoint is set to `Public and private`.
 
 Reading:
-
 - <https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/network_connectivity.md>
 
-#### Public
-This allows one outside of the VPC to connect via `kubectl` and related tools to 
-interact with kubernetes resources. By default, this API server endpoint is public to 
-the internet, and access to the API server is secured using a combination of AWS 
-Identity and Access Management (IAM) and native Kubernetes Role Based Access Control 
-(RBAC).
+**Public:** Allows connections via `kubectl` from outside the VPC. Access is secured using a combination of AWS IAM and native Kubernetes RBAC.
 
-#### Private
-You can enable private access to the Kubernetes API server so that all communication 
-between your worker nodes and the API server stays within your VPC. You can limit the 
-IP addresses that can access your API server from the internet, or completely disable 
-internet access to the API server.
-
+**Private:** All communication between worker nodes and the API server stays within the VPC. You can limit the IP addresses that can access the API server from the internet, or completely disable internet access to it.
 
 ### EKS VPC CNI Plugin
-This section describes the VPC CNI (Container Network Interface) that is being used
-within the EKS cluster. The plugin is responsible for allocating VPC IP addresses to 
-Kubernetes nodes and configuring the necessary networking for Pods on each node.
+The VPC CNI (Container Network Interface) plugin allocates VPC IP addresses to Kubernetes nodes and configures networking for Pods on each node.
 
+### Security Groups for Pods
+Allows assigning EC2 security groups directly to pods running in EKS. This can be used as an alternative or in conjunction with Kubernetes network policies.
 
-### Security groups for pods
-Allows us to assign EC2 security groups directly to pods running in AWS EKS clusters.
-This can be used as an alternative or in conjunction with `Kubernetes network policies`.
+See `modules/demo-pod-level-security-groups-strict` for an example.
 
-See `modules/demo-pod-level-security-groups-strict` for more context on how this works.
+### Kubernetes Network Policies
+Controls network traffic within the cluster (e.g., pod-to-pod traffic).
 
-### Kubernetes network policies
-Controls network traffic within the cluster, for example pod to pod traffic.
-
-See `modules/demo-network-policies` for more context on how this works.
+See `modules/demo-network-policies` for an example.
 
 Further reading:
 - https://docs.aws.amazon.com/eks/latest/userguide/cni-network-policy.html
@@ -106,141 +183,88 @@ Further reading:
 - https://aws.amazon.com/blogs/containers/introducing-security-groups-for-pods/
 - https://kubernetes.io/docs/concepts/services-networking/network-policies/
 
-
 ### EKS Autoscaler
 
-We use spot.io to manage the nodes attached to each of the EKS cluster. This tool has
-scale-to-zerio capabilities and will dynamically add or removes nodes from the cluster
-depending on the required demand. The autoscaler is templatized and provided as a
-terraform module to be used within an EKS stack.
+We use [Spot.io](https://spot.io/) to manage EKS cluster nodes. It has scale-to-zero capabilities and dynamically adds or removes nodes based on demand. The autoscaler is provided as a Terraform module (`sage-aws-k8s-node-autoscaler`).
 
-Setup of spotio (Manual per AWS Account):
+**Spot.io setup (manual, per AWS account):**
 
-* Subscribe through the AWS Marketplace: <https://aws.amazon.com/marketplace/saas/ordering?productId=bc241ac2-7b41-4fdd-89d1-6928ec6dae15>
-* "Set up your account" on the spotio website and link it to an existing organization
-* Link the account through the AWS UI:
-* Create a policy (See the JSON in the spotio UI)
-* Create a role (See instructions in the spotio UI)
+1. Subscribe through the AWS Marketplace: <https://aws.amazon.com/marketplace/saas/ordering?productId=bc241ac2-7b41-4fdd-89d1-6928ec6dae15>
+2. "Set up your account" on the Spot.io website and link it to an existing organization
+3. Link the account through the AWS UI:
+   - Create a policy (see the JSON in the Spot.io UI)
+   - Create a role (see instructions in the Spot.io UI)
+4. Get an API token:
+   - Log into the Spot UI: <https://console.spotinst.com/settings/v2/tokens/permanent>
+   - Create a new Permanent token named `{AWS-Account-Name}-token`
+   - Copy the token and create an `AWS Secrets Manager` Plaintext secret named `spotinst_token` with description `Spot.io token`
 
-After this has been setup the last item is to get an API token from the spotio UI and
-add it to the AWS secret manager.
+### Connecting to an EKS Cluster
 
-* Log into the spot UI and go to <https://console.spotinst.com/settings/v2/tokens/permanent>
-* Create a new Permanent token, name it `{AWS-Account-Name}-token` or similar
-* Copy the token and create an `AWS Secrets Manager` Plaintext secret named `spotinst_token` with a description `Spot.io token`
+To connect via `kubectl`, ensure you have SSO set up for the target account:
 
-
-### Connecting to an EKS cluster for kubectl commands
-
-To connect to the EKS stack running in AWS you'll need to make sure that you have
-SSO setup for the account you'll be using. Once setup run the commands below:
-```
-# Login with the profile you're using to authenticate. For example mine is called 
-# `dpe-prod-admin`
+```bash
+# Login with your SSO profile (e.g., dpe-prod-admin)
 aws sso login --profile dpe-prod-admin
 
-# Update your kubeconfig with the proper values. This is saying "Authenticate with 
-# AWS using my SSO session for the profile `dpe-prod-admin`. After authenticated 
-# assuming that we want to use the `role/eks_admin_role` to connect to the k8s 
-# cluster". This will update your kubeconfig with permissions to access the cluster.
+# Update kubeconfig to authenticate using the SSO profile and assume the eks_admin_role
 aws eks update-kubeconfig --region us-east-1 --name dpe-k8 --profile dpe-prod-admin
 ```
 
-### Security and Audits in place for the EKS cluster
-AWS Guard duty is being used to perform audit trails for the EKS cluster, it involves 2
-components for the cluster:
+### Security and Audits
 
+AWS GuardDuty provides audit trails for the EKS cluster with two components:
 1. [EKS Audit Log Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html)
 2. [GuardDuty Runtime Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring-configuration.html)
 
+Initial configuration is handled through the `securitycentral` IT account. Runtime Monitoring is installed via Terraform modules so it can be torn down with the VPC and EKS cluster.
 
-The initial configuration of these is handled through the `securitycentral` IT account.
-Runtime Monitoring is installed manually via terraform modules, allowing it to be torn
-down when we destroy the VPC and EKS cluster.
+We also use the [trivy-operator](https://github.com/aquasecurity/trivy-operator) for Kubernetes-native security scanning. As resources are deployed, Trivy generates vulnerability reports. [policy-reporter](https://github.com/kyverno/policy-reporter) provides a UI for reviewing results. SBOM (Software Bill of Materials) reports are used to track security advisories.
 
+### Deploying Applications to the Cluster
 
-In addition to this scanning that is in place we are also taking advantage of the
-[trivy-operator](https://github.com/aquasecurity/trivy-operator), a 
-"Kubernetes-native security toolkit". The use of this tool will give us regular scans
-of the resources that we are deploying to the kubernetes cluster. As resources are added
-trivy will spin up and add more to the existing reports. In addition 
-[policy-report](https://github.com/kyverno/policy-reporter) has been installed to the
-cluster to give a UI to review the results without needing to dig into kubernetes
-resources. The use of these reports will be regularly reviewed as new applications are
-added to the cluster, in addition the use of the SBOM (Software bill of materials) will
-allow us to review for any security advisories.
+Deployment of applications to the Kubernetes cluster uses Terraform, Spacelift, and ArgoCD or FluxCD.
 
-### Deploying an application to the kubernetes cluster
-Deployment of applications to the kubernetes cluster is handled through the combination
-of terraform (.tf) scripts, spacelift (CICD tool), and ArgoCd or Flux CD (Declarative definitions 
-for applications).
+#### Creating the Terraform module
 
-To start of the deployment journey the first step is to create a new terraform module
-that encapsulating everything that is required to deploy any cloud resources, in
-addition to defining any kubernetes specific resources that will be deployed to the
-cluster.
+See the [modules README](./modules/README.md) for supplemental information.
 
-#### Creating the terraform module
-This is supplemental information to what is defined within the [modules readme](./modules/README.md)
+1. Create a new directory in `./modules` named after what you are deploying
+2. At minimum define `main.tf` and `versions.tf` with the cloud resources and required providers
+3. Add any additional [files](https://opentofu.org/docs/language/files/) and [resources](https://opentofu.org/docs/language/resources/syntax/) as needed
 
-1. Create a new directory for your module within `./modules`, it should be named after what you are deploying.
-2. At a minimum you must define a `main.tf` and `versions.tf` script that define:
-   1. What cloud resources you are deploying
-   2. The providers required for deploying those cloud resources
-3. You may also define any number of additional [files](https://opentofu.org/docs/language/files/) and [resources](https://opentofu.org/docs/language/resources/syntax/) that are specific to the module you are creating.
+#### Deploying via ArgoCD
 
-#### Deploying a kubernetes resource to the cluster (ArgoCD)
-Deployment of applications and kubernetes specific resources to the cluster is handled
-via Argo CD, which is a declarative, GitOps continuous delivery tool for Kubernetes. The
-usage of this tool instead of terraform allows for continous monitoring of Kubernetes
-resources to align expected state with the actual state of the cluster. It has extensive
-support to deploy helm charts, and Kubernetes yaml files.
+[ArgoCD](https://argo-cd.readthedocs.io/en/stable/) is a declarative GitOps continuous delivery tool for Kubernetes. It continuously monitors Kubernetes resources to align expected state with actual state, with support for Helm charts and Kubernetes YAML files.
 
-The [declarative setup for ArgoCD](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup)
-is done through defining specific Kubernetes resources as defined in the [ArgoCD Custom Resource Definition (CRD)](https://github.com/argoproj/argo-cd/tree/master/manifests/crds).
+The [declarative setup](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup) uses [ArgoCD CRDs](https://github.com/argoproj/argo-cd/tree/master/manifests/crds). We typically create an [Application Specification](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/) and use [Multiple Sources for an Application](https://argo-cd.readthedocs.io/en/stable/user-guide/multiple_sources/) to install public Helm charts with custom `values.yaml` files. See the [Apache Airflow module README](./modules/apache-airflow/README.md) for a real example.
 
-For our use cases we will typically be creating an [Application Specification](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/)
-which defines a number of pointers and configuration elements for ArgoCD to deploy to
-the Kubernetes cluster. In addition we are taking advantage of [Multiple Sources for an Application](https://argo-cd.readthedocs.io/en/stable/user-guide/multiple_sources/)
-to install public helm charts with our custom `values.yaml` files without the need to
-create our own helm chart and host it in our repository. See the following [readme for a real example](./modules/apache-airflow/README.md)
-we are using for deploying out `Apache Airflow` instance. 
+### Accessing Resources on the Cluster
 
-### Access resources on the kubernetes cluster
-As of August 2024 the only access to resources on the kubernetes cluster is occuring
-through kubectl port forward sessions. No internet facing load balancers are avaiable
-to connect to.
+As of August 2024, access to resources on the Kubernetes cluster is through `kubectl port-forward` sessions. No internet-facing load balancers are available.
 
-Using a tool like `K9s` navigate to the pod in question and start a port forward session.
-Then open up a browser and go to the `localhost` and port you have specified in your
-port forward session. 
+Using a tool like [K9s](https://k9scli.io/), navigate to the pod and start a port-forward session, then open `localhost` at the specified port in your browser.
 
-(Area of future work to have better secrets management): https://sagebionetworks.jira.com/browse/IBCDPE-1038
+(Future work for better secrets management: https://sagebionetworks.jira.com/browse/IBCDPE-1038)
 
-Most, but not all, resources will have a login page where you'll
-need to enter in a username and password. These resources will have a Kubernetes secret
-in base64 that you'll be able to look at and get the appropriate username/password to
-log into the tool. Once you obtain the Base64 data you'll need to decode it and then 
-log into the tool. Examples:
+Most resources have a login page requiring username and password stored as base64-encoded Kubernetes secrets:
+- **ArgoCD:** Secret `argocd-initial-admin-secret`, username `admin`
+- **Grafana:** Secret `victoria-metrics-k8s-stack-grafana`, username `admin`
 
-- ArgoCD: Secret is named `argocd-initial-admin-secret` with a default username of `admin`
-- Grafana: Secret is named `victoria-metrics-k8s-stack-grafana` with a default username of `admin`
+### Authenticated Docker Pulls
 
-### Authenticated docker pulls
-As docker limits the number of unauthenticated pulls for images for anonymous accounts
-we are using a DPE service account named `dpesagebionetworks` to authenticate all pulls
-from docker. To accomplish this task the following steps were taken:
+We use a DPE service account (`dpesagebionetworks`) to authenticate Docker Hub pulls, avoiding anonymous rate limits.
 
-1) Log into docker hub with credentials stored in lastpass
-2) Create a new Personal access token for the account
-3) Copy the personal access token into the Spacelift stack for "Kubernetes Deployments" as an environment variable named "TF_VAR_docker_access_token"
-4) Update the `variables.tf` in the relevant module to include the variable as shown below
-5) Update the `main.tf` to add a new kubernetes secret (Below) for all namespaces where an authenticated docker pull needs to occur
-6) Update any helm charts to reference the authentication as described in [this document](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
-7) Deploy the changes via terraform to the kubernetes cluster and apply the changes via ArgoCD or FluxCD
+Setup steps:
+1. Log into Docker Hub with credentials stored in LastPass
+2. Create a new Personal Access Token
+3. Add it to the Spacelift "Kubernetes Deployments" stack as `TF_VAR_docker_access_token`
+4. Add the variable to `variables.tf` in the relevant module
+5. Add a Kubernetes secret to `main.tf` for each namespace needing authenticated pulls
+6. Update Helm charts to reference the secret per [this guide](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
+7. Deploy via Terraform and apply via ArgoCD or FluxCD
 
-
-To add to `variables.tf`
+`variables.tf`:
 ```terraform
 variable "docker_server" {
   description = "The docker registry URL"
@@ -264,10 +288,9 @@ variable "docker_email" {
   default     = "dpe@sagebase.org"
   type        = string
 }
-
 ```
 
-To add to `main.tf`
+`main.tf`:
 ```terraform
 resource "kubernetes_secret" "docker-cfg" {
   metadata {
@@ -292,29 +315,25 @@ resource "kubernetes_secret" "docker-cfg" {
 }
 ```
 
+### Tearing Down EKS Stacks
 
-## Tear down of EKS stacks
-If you need to fully tear down all of the infra start at the smallest point and work
-outwards. Destroy items in this order:
+To fully tear down EKS infrastructure, destroy in this order:
+1. Go into the ArgoCD UI and delete all applications
+2. Run `tofu destroy --auto-approve` as a task in Spacelift for the Kubernetes Deployments stack
+3. Run `tofu destroy --auto-approve` as a task in Spacelift for the Infrastructure stack
 
-- Go into the argoCD UI and delete all applications
-- Run `tofu destroy --auto-approve` as a task in spacelift for the Kubernetes Deployments stack
-- Run `tofu destroy --auto-approve` as a task in spacelift for the infrastructure deployment stack
+---
 
-## Spacelift
-Here are some instructions on setting up spacelift.
+## Spacelift Setup
 
+### Connecting a New AWS Account
 
-#### Connecting a new AWS account for cloud integration
+Reference: <https://docs.spacelift.io/integrations/cloud-providers/aws#setup-guide>
 
-This document describes the abbreviated process below:
-<https://docs.spacelift.io/integrations/cloud-providers/aws#setup-guide>
+1. Create a new IAM role (e.g., `spacelift-admin-role`) with description: "Role for Spacelift CI/CD to assume when deploying resources managed by Terraform"
+2. Use this custom trust policy:
 
-- Create a new role and set it's name to something unique within the account, such as `spacelift-admin-role`
-- Description: "Role for spacelift CICD to assume when deploying resources managed by terraform"
-- Use the custom trust policy below:
-
-```
+```json
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -341,30 +360,31 @@ This document describes the abbreviated process below:
 }
 ```
 
-- Attach a few policies to the role:
-  - `PowerUserAccess`
-  - Create an inline policy to allow interaction with IAM (Needed if TF is going to be creating, editing, and deleting IAM roles/policies):
-```
+3. Attach these policies to the role:
+   - `PowerUserAccess`
+   - An inline policy for IAM operations (needed if Terraform creates/edits/deletes IAM roles/policies):
+
+```json
 {
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Effect": "Allow",
-			"Action": [
-				"iam:*Role",
-				"iam:*RolePolicy",
-				"iam:*RolePolicies",
-				"iam:*Policy",
-				"iam:*PolicyVersion",
-				"iam:*OpenIDConnectProvider",
-				"iam:*InstanceProfile",
-				"iam:ListPolicyVersions",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:*Role",
+                "iam:*RolePolicy",
+                "iam:*RolePolicies",
+                "iam:*Policy",
+                "iam:*PolicyVersion",
+                "iam:*OpenIDConnectProvider",
+                "iam:*InstanceProfile",
+                "iam:ListPolicyVersions",
                 "iam:UpdateOpenIDConnectProviderThumbprint",
-				"iam:ListGroupsForUser",
+                "iam:ListGroupsForUser",
                 "iam:ListAttachedUserPolicies"
-			],
-			"Resource": "*"
-		},
+            ],
+            "Resource": "*"
+        },
         {
             "Effect": "Allow",
             "Action": [
@@ -380,8 +400,8 @@ This document describes the abbreviated process below:
             ],
             "Resource": "arn:aws:iam::{{AWS ACCOUNT ID}}:user/smtp_user"
         }
-	]
+    ]
 }
 ```
-- Add a new `spacelift_aws_integration` resources to the `common-resources/aws-integrations` directory.
 
+4. Add a new `spacelift_aws_integration` resource to the `common-resources/aws-integrations` directory.

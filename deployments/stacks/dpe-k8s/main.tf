@@ -1,3 +1,5 @@
+# Spacelift pipeline config: deployments/spacelift/dpe-k8s/
+
 module "sage-aws-vpc" {
   # source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
   # version  = "0.4.2"
