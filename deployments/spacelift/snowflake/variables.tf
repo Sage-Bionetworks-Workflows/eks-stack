@@ -1,0 +1,52 @@
+variable "aws_account_id" {
+  description = "AWS account ID where S3 resources will be created"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region for S3 bucket and related resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "snowflake_bucket_name" {
+  description = "Name of the S3 bucket for Snowflake data storage"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name (e.g., dev, staging, prod)"
+  type        = string
+}
+
+variable "auto_deploy" {
+  description = "Automatically deploy the stack when changes are detected"
+  type        = bool
+  default     = false
+}
+
+variable "git_branch" {
+  description = "Git branch to track for deployments"
+  type        = string
+}
+
+variable "snowflake_stack_name" {
+  description = "Name of the Snowflake S3 stack in Spacelift"
+  type        = string
+}
+
+variable "snowflake_stack_project_root" {
+  description = "Project root directory containing the S3 Terraform code"
+  type        = string
+}
+
+variable "opentofu_version" {
+  description = "Version of OpenTofu to use for deployments"
+  type        = string
+  default     = "1.8.6"
+}
+
+variable "aws_integration_id" {
+  description = "ID of the AWS integration in Spacelift"
+  type        = string
+}
