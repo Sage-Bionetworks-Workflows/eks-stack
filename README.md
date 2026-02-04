@@ -20,6 +20,15 @@ eks-stack/
   scripts/                     # Utility scripts
 ```
 
+## Prerequisites
+
+Before modifying modules, stacks, or configs:
+
+1. **Spacelift access** — Request access to the [Spacelift UI](https://sagebionetworks.app.spacelift.io/) from Lingling or Bryan
+2. **AWS SSO** — Configure SSO profiles for the target AWS accounts (see [Connecting to an EKS Cluster](#connecting-to-an-eks-cluster))
+3. **OpenTofu** — Install [OpenTofu](https://opentofu.org/docs/intro/install/) for local development/testing
+4. **kubectl** (optional) — For Kubernetes cluster access, install [kubectl](https://kubernetes.io/docs/tasks/tools/)
+
 ## How Deployment Works
 
 Deploying a resource involves a **two-step process**:
@@ -58,6 +67,16 @@ graph TD
     style NOTE_C fill:none,stroke:none
     style NOTE_R fill:none,stroke:none
 ```
+
+## When to Add a Module vs. Create a New Stack
+
+| Scenario | Where to Add | Example |
+|----------|--------------|---------|
+| Kubernetes application/service that runs inside the EKS cluster | Add module to `deployments/stacks/dpe-k8s-deployments/` | ArgoCD, Airflow, monitoring tools |
+| Core AWS infrastructure or EKS cluster configuration | Add module to `deployments/stacks/dpe-k8s/` | VPC, EKS addons, S3 buckets |
+| Independent resource with its own deployment lifecycle | Create a new stack (follow "Adding a New Stack" below) | Standalone SES config, separate API Gateway |
+
+**Rule of thumb:** If your resource needs to be deployed/destroyed independently from the EKS cluster, create a new stack. If it's a Kubernetes workload, add it to `dpe-k8s-deployments`. If it's AWS infrastructure that the cluster depends on, add it to `dpe-k8s`.
 
 ## Adding a New Stack
 
@@ -102,6 +121,13 @@ Add a `module` block in `deployments/main.tf` that sources your new spacelift co
 ### 5. Commit, PR, merge
 
 Once merged to `main`, the root administrative stack detects the changes and creates the new Spacelift stacks automatically.
+
+### 6. View your new resources
+
+To see your newly created stacks and monitor deployments:
+
+- **Spacelift UI** — Log into the [Spacelift UI](https://sagebionetworks.app.spacelift.io/) to view stacks, runs, and logs. As of February 2026, a common DPE team account has not been created — contact Lingling or Bryan for access.
+- **AWS Console** — Log into the [AWS Console via JumpCloud](https://console.jumpcloud.com/userconsole#/) for the target account to view the deployed cloud resources directly.
 
 ## Modules
 

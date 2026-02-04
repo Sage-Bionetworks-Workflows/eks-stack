@@ -10,6 +10,8 @@ The `main.tf` in this directory wires each spacelift config into the appropriate
 
 ## How They Relate
 
+> For the full architectural overview with diagrams, see [How Deployment Works](../README.md#how-deployment-works) in the root README.
+
 Each spacelift config points to one or more stack directories via the `project_root` attribute on its `spacelift_stack` resources:
 
 | Spacelift Config | Stack(s) Targeted | Purpose |
