@@ -86,16 +86,6 @@ variable "ssl_hostname" {
   type        = string
 }
 
-variable "auth0_jwks_uri" {
-  description = "The JWKS URI for Auth0"
-  type        = string
-}
-
-variable "auth0_identifier" {
-  description = "Auth0 identifier for the API. Used to verify the audience in the JWT."
-  type        = string
-}
-
 variable "smtp_user" {
   description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
   type        = string

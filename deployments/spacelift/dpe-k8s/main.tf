@@ -1,3 +1,7 @@
+# This config manages Spacelift pipelines for:
+#   - deployments/stacks/dpe-k8s/              (VPC + EKS infrastructure)
+#   - deployments/stacks/dpe-k8s-deployments/  (K8s-internal deployments)
+
 locals {
   k8s_stack_environment_variables = {
     aws_account_id                         = var.aws_account_id
@@ -25,16 +29,7 @@ locals {
     enable_cluster_ingress = var.enable_cluster_ingress
     enable_otel_ingress    = var.enable_otel_ingress
     ssl_hostname           = var.ssl_hostname
-    auth0_jwks_uri         = var.auth0_jwks_uri
     smtp_from              = var.smtp_from
-    auth0_identifier       = var.auth0_identifier
-  }
-
-  auth0_stack_variables = {
-    cluster_name     = var.cluster_name
-    auth0_domain     = var.auth0_domain
-    auth0_clients    = var.auth0_clients
-    auth0_identifier = var.auth0_identifier
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
@@ -194,41 +189,3 @@ resource "spacelift_aws_integration_attachment" "k8s-deployments-aws-integration
   write          = true
 }
 
-resource "spacelift_stack" "auth0" {
-  count = var.deploy_auth0 ? 1 : 0
-  github_enterprise {
-    namespace = "Sage-Bionetworks-Workflows"
-    id        = "sage-bionetworks-workflows-gh"
-  }
-
-  depends_on = [
-    spacelift_space.dpe-space
-  ]
-
-  administrative          = false
-  autodeploy              = var.auto_deploy
-  branch                  = var.git_branch
-  description             = "Stack used to create and manage Auth0 for authentication"
-  name                    = var.auth0_stack_name
-  project_root            = var.auth0_stack_project_root
-  repository              = "eks-stack"
-  terraform_version       = var.opentofu_version
-  terraform_workflow_tool = "OPEN_TOFU"
-  space_id                = spacelift_space.dpe-space.id
-  additional_project_globs = [
-    "deployments/"
-  ]
-}
-
-resource "spacelift_environment_variable" "auth0-stack-environment-variables" {
-  depends_on = [
-    spacelift_stack.auth0
-  ]
-
-  for_each = { for k, v in local.auth0_stack_variables : k => v if var.deploy_auth0 }
-
-  stack_id   = spacelift_stack.auth0[0].id
-  name       = "TF_VAR_${each.key}"
-  value      = try(tostring(each.value), jsonencode(each.value))
-  write_only = false
-}
