@@ -17,6 +17,7 @@ Each spacelift config points to one or more stack directories via the `project_r
 | Spacelift Config | Stack(s) Targeted | Purpose |
 |---|---|---|
 | `spacelift/dpe-k8s/` | `stacks/dpe-k8s/`, `stacks/dpe-k8s-deployments/` | EKS cluster infrastructure and in-cluster deployments |
+| `spacelift/snowflake/` | `stacks/snowflake/` | Creates an S3 bucket that stores Synapse platform RDS snapshots |
 
 ## Adding a New Deployment
 
