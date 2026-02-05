@@ -155,8 +155,8 @@ module "snowflake-spacelift-development" {
   region                 = "us-east-1"
   snowflake_bucket_name  = "snowflake-rds-landing"
   environment            = "development"
-  source_account_id      = "<TODO>"
-  source_bucket_arn      = "arn:aws:s3:::<TODO>"
+  source_account_id      = "449435941126"
+  source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
   
   # Spacelift stack configuration
   snowflake_stack_name         = "Snowflake S3 Development"
@@ -178,8 +178,8 @@ module "snowflake-spacelift-production" {
   region                 = "us-east-1"
   snowflake_bucket_name  = "snowflake-rds-landing"
   environment            = "production"
-  source_account_id      = "<TODO>"
-  source_bucket_arn      = "arn:aws:s3:::<TODO>"
+  source_account_id      = "325565585839"
+  source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
   
   # Spacelift stack configuration
   snowflake_stack_name         = "Snowflake S3 Production"
