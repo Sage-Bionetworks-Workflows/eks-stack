@@ -141,3 +141,49 @@ module "dpe-sandbox-spacelift-production" {
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "dpe@sagebase.org"
 }
+
+module "snowflake-spacelift-development" {
+  source = "./spacelift/snowflake"
+  
+  # Spacelift configuration
+  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
+  
+  # Snowflake-specific variables
+  aws_account_id         = "631692904429"
+  region                 = "us-east-1"
+  snowflake_bucket_name  = "snowflake-rds-landing"
+  environment            = "development"
+  source_account_id      = "<TODO>"
+  source_bucket_arn      = "arn:aws:s3:::<TODO>"
+  
+  # Spacelift stack configuration
+  snowflake_stack_name         = "Snowflake S3 Development"
+  snowflake_stack_project_root = "deployments/stacks/snowflake"
+  opentofu_version            = "1.8.6"
+  existing_space_id           = spacelift_space.development.id
+}
+
+module "snowflake-spacelift-production" {
+  source = "./spacelift/snowflake"
+  
+  # Spacelift configuration
+  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
+  
+  # Snowflake-specific variables
+  aws_account_id         = "766808016710"
+  region                 = "us-east-1"
+  snowflake_bucket_name  = "snowflake-rds-landing"
+  environment            = "production"
+  source_account_id      = "<TODO>"
+  source_bucket_arn      = "arn:aws:s3:::<TODO>"
+  
+  # Spacelift stack configuration
+  snowflake_stack_name         = "Snowflake S3 Production"
+  snowflake_stack_project_root = "deployments/stacks/snowflake"
+  opentofu_version            = "1.8.6"
+  existing_space_id           = spacelift_space.production.id
+}
