@@ -1,6 +1,14 @@
 module "create_bucket_snowflake_rds_landing" {
-  source      = "../../../modules/s3-bucket"
-  bucket_name = "snowflake_rds_landing"
+  source            = "../../../modules/snowflake-s3-bucket"
+  bucket_name       = "snowflake-rds-landing-${var.aws_account_id}"
+  aws_account_id    = var.aws_account_id
+  region            = var.region
   enable_versioning = true
-  aws_account_id = var.aws_account_id
+  source_account_id = var.source_account_id
+  source_bucket_arn = var.source_bucket_arn
+  
+  tags = {
+    Purpose     = "Snowflake Data Landing"
+    ManagedBy   = "Terraform"
+  }
 }
