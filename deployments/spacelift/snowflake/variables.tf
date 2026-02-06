@@ -55,3 +55,13 @@ variable "aws_integration_id" {
   description = "ID of the AWS integration in Spacelift"
   type        = string
 }
+
+variable "source_account_id" {
+  description = "AWS account ID of the Synapse platform source bucket for cross-account access"
+  type        = string
+}
+
+variable "source_bucket_arn" {
+  description = "ARN of the source S3 bucket containing Synapse platform RDS backups"
+  type        = string
+}
