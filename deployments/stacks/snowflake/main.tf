@@ -1,6 +1,6 @@
 module "create_bucket_snowflake_rds_landing" {
   source            = "../../../modules/snowflake-s3-bucket"
-  bucket_name       = "snowflake-rds-landing-${var.aws_account_id}"
+  bucket_name       = "snowflake-rds-landing"
   aws_account_id    = var.aws_account_id
   region            = var.region
   enable_versioning = true
@@ -8,7 +8,7 @@ module "create_bucket_snowflake_rds_landing" {
   source_bucket_arn = var.source_bucket_arn
   
   tags = {
-    Purpose     = "Snowflake Data Landing"
+    Purpose     = "Synapse RDS snapshots to ingest into snowflake"
     ManagedBy   = "Terraform"
   }
 }
