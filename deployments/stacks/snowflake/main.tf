@@ -10,5 +10,6 @@ module "create_bucket_snowflake_rds_landing" {
   tags = {
     Purpose     = "Synapse RDS snapshots to ingest into snowflake"
     ManagedBy   = "Terraform"
+    CostCenter  = "No Program / 000000"
   }
 }
