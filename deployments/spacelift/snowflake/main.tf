@@ -1,8 +1,10 @@
 locals {
   snowflake_stack_variables = {
-    aws_account_id = var.aws_account_id
-    region         = var.region
-    bucket_name    = var.snowflake_bucket_name
+    aws_account_id    = var.aws_account_id
+    region            = var.region
+    bucket_name       = var.snowflake_bucket_name
+    source_account_id = var.source_account_id
+    source_bucket_arn = var.source_bucket_arn
   }
 }
 
