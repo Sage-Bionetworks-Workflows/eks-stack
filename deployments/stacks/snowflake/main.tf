@@ -1,6 +1,6 @@
 module "create_bucket_snowflake_rds_landing" {
   source            = "../../../modules/snowflake-s3-bucket"
-  bucket_name       = "snowflake-rds-landing"
+  bucket_name       = var.bucket_name
   aws_account_id    = var.aws_account_id
   region            = var.region
   enable_versioning = true

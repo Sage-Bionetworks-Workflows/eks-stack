@@ -149,6 +149,7 @@ module "snowflake-spacelift-development" {
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
   auto_deploy        = false
   git_branch         = var.git_branch
+  parent_space_id    = spacelift_space.development.id
   
   # Snowflake-specific variables
   aws_account_id         = "631692904429"
@@ -161,29 +162,26 @@ module "snowflake-spacelift-development" {
   # Spacelift stack configuration
   snowflake_stack_name         = "Snowflake S3 Development"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
-  opentofu_version            = "1.8.6"
-  existing_space_id           = spacelift_space.development.id
 }
 
 module "snowflake-spacelift-production" {
   source = "./spacelift/snowflake"
   
-  # Spacelift configuration
-  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
-  auto_deploy        = false
-  git_branch         = var.git_branch
-  
-  # Snowflake-specific variables
+  # Snowflake-Spacelift config variables
+  # (these variables are fed to /deployments/spacelift/snowflake/*)
+  aws_integration_id     = var.org_sagebase_dpe_prod_aws_integration_id
+  auto_deploy            = false
+  git_branch             = var.git_branch
+  parent_space_id        = spacelift_space.production.id
+  space_name             = "snowflake"
   aws_account_id         = "766808016710"
   region                 = "us-east-1"
-  snowflake_bucket_name  = "snowflake-rds-landing"
-  environment            = "production"
-  source_account_id      = "325565585839"
-  source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
-  
-  # Spacelift stack configuration
+  snowflake_bucket_name  = "snowflake-rds-landing-prod"
   snowflake_stack_name         = "Snowflake S3 Production"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
-  opentofu_version            = "1.8.6"
-  existing_space_id           = spacelift_space.production.id
+  
+  # Snowflake stack config variables
+  # (these variables are fed to /deployments/stacks/snowflake/*)
+  source_account_id      = "325565585839"
+  source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
 }
