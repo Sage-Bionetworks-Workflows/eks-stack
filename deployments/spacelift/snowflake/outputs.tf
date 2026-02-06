@@ -1,21 +1,21 @@
-variable "parent_space_id" {
+output "parent_space_id" {
   description = "ID of the parent spacelift space"
-  type        = string
+  value       = var.parent_space_id
 }
 
-variable "space_name" {
+output "space_name" {
   description = "Name of the spacelift space to create all of the resources under"
-  type        = string
+  value       = var.space_name
 }
 
-variable "snowflake_bucket_name" {
+output "snowflake_bucket_name" {
   description = "Name of the S3 bucket for Snowflake data storage"
-  type        = string
+  value       = var.snowflake_bucket_name
 }
 
-variable "git_branch" {
+output "git_branch" {
   description = "Git branch to track for deployments"
-  type        = string
+  value       = var.git_branch
 }
 
 output "snowflake_stack_name" {
