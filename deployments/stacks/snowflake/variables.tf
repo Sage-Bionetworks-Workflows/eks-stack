@@ -3,6 +3,11 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "bucket_name" {
+  description = "Name of the S3 bucket for Snowflake data storage"
+  type        = string
+}
+
 variable "region" {
   description = "AWS region for S3 bucket"
   type        = string
