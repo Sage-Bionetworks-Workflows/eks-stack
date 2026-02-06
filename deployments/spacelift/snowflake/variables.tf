@@ -1,3 +1,13 @@
+variable "parent_space_id" {
+  description = "ID of the parent spacelift space"
+  type        = string
+}
+
+variable "space_name" {
+  description = "Name of the spacelift space to create all of the resources under"
+  type        = string
+}
+
 variable "aws_account_id" {
   description = "AWS account ID where S3 resources will be created"
   type        = string
@@ -11,11 +21,6 @@ variable "region" {
 
 variable "snowflake_bucket_name" {
   description = "Name of the S3 bucket for Snowflake data storage"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
   type        = string
 }
 

@@ -3,8 +3,15 @@ locals {
     aws_account_id = var.aws_account_id
     region         = var.region
     bucket_name    = var.snowflake_bucket_name
-    environment    = var.environment
   }
+}
+
+# TODO: This resource is being created for each Spacelift config. Abstraction warranted?
+resource "spacelift_space" "dpe-space" {
+  name             = var.space_name
+  parent_space_id  = var.parent_space_id
+  description      = "Contains resources for the DPE team."
+  inherit_entities = true
 }
 
 resource "spacelift_stack" "snowflake-stack" {
