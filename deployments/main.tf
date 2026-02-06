@@ -150,38 +150,38 @@ module "snowflake-spacelift-development" {
   auto_deploy        = false
   git_branch         = var.git_branch
   parent_space_id    = spacelift_space.development.id
-  
-  # Snowflake-specific variables
-  aws_account_id         = "631692904429"
-  region                 = "us-east-1"
-  snowflake_bucket_name  = "snowflake-rds-landing"
-  environment            = "development"
-  source_account_id      = "449435941126"
-  source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
-  
-  # Spacelift stack configuration
+  space_name         = "snowflake-dev"
+
+  # Snowflake stack deployment configuration
   snowflake_stack_name         = "Snowflake S3 Development"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
+
+  # AWS configuration
+  aws_account_id         = "631692904429"
+  region                 = "us-east-1"
+  source_account_id      = "449435941126"
+  source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
+  snowflake_bucket_name  = "snowflake-rds-landing-dev"
 }
 
 module "snowflake-spacelift-production" {
   source = "./spacelift/snowflake"
   
-  # Snowflake-Spacelift config variables
-  # (these variables are fed to /deployments/spacelift/snowflake/*)
+  # Spacelift configuration
   aws_integration_id     = var.org_sagebase_dpe_prod_aws_integration_id
   auto_deploy            = false
   git_branch             = var.git_branch
   parent_space_id        = spacelift_space.production.id
-  space_name             = "snowflake"
-  aws_account_id         = "766808016710"
-  region                 = "us-east-1"
-  snowflake_bucket_name  = "snowflake-rds-landing-prod"
+  space_name             = "snowflake-prod"
+
+  # Snowflake stack deployment configuration
   snowflake_stack_name         = "Snowflake S3 Production"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
-  
-  # Snowflake stack config variables
-  # (these variables are fed to /deployments/stacks/snowflake/*)
+
+  # AWS configuration
+  aws_account_id         = "766808016710"
+  region                 = "us-east-1"
   source_account_id      = "325565585839"
   source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
+  snowflake_bucket_name  = "snowflake-rds-landing-prod"
 }
