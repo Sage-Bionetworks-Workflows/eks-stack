@@ -1,3 +1,86 @@
+# KMS key for RDS export to S3 encryption
+resource "aws_kms_key" "rds_export_key" {
+  description = "KMS key to encrypt RDS snapshot export objects"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowAccountAdministration"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowSsoAdminFullControl"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_Administrator_c848162860f9e172"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowSourceExportRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.source_account_id}:role/rds-export-to-s3-role"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey",
+          "kms:CreateGrant"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowRdsService"
+        Effect = "Allow"
+        Principal = {
+          Service = "export.rds.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey",
+          "kms:CreateGrant"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowSourceAccountDescribeKey"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.source_account_id}:root"
+        }
+        Action   = "kms:DescribeKey"
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name    = "rds-export-to-s3"
+      Purpose = "KMS key to encrypt RDS snapshot export objects"
+    }
+  )
+}
+
+resource "aws_kms_alias" "rds_export_key" {
+  name          = "alias/rds-export-to-s3"
+  target_key_id = aws_kms_key.rds_export_key.key_id
+}
+
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
   tags = merge(
@@ -92,7 +175,7 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
         Condition = {
           StringEquals = {
             "s3:x-amz-server-side-encryption" = "aws:kms"
-            "s3:x-amz-server-side-encryption-aws-kms-key-id" = aws_kms_key.dpe_encryption_key.arn
+            "s3:x-amz-server-side-encryption-aws-kms-key-id" = aws_kms_key.rds_export_key.arn
           }
         }
       },
@@ -111,86 +194,14 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
   })
 }
 
-# Customer-managed KMS key for S3 encryption
-resource "aws_kms_key" "dpe_encryption_key" {
-  description = "KMS key for S3 encryption in ${var.bucket_name}"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      # Statement 1: Destination (DPE) Account Admin permissions
-      {
-        Sid    = "AllowAdminInDestinationAccount"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${var.aws_account_id}:root"
-        }
-        Action   = "kms:*"
-        Resource = "*"
-      },
-
-      # Statement 2: Source (Platform) Account permissions
-      {
-        Sid    = "AllowCrossAccountReplicationRoleAccess"
-        Effect = "Allow"
-        # TODO: Tighten this up to just grant permissions to the
-        #       source account's replication role
-        Principal = {
-          AWS = "arn:aws:iam::${var.source_account_id}:root"
-        }
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:ReEncrypt*",
-          "kms:GenerateDataKey",
-          "kms:DescribeKey"
-        ]
-        Resource = "*"
-      },
-
-      # Statement 3: S3 Service cryptographic permissions
-      {
-        Sid    = "AllowS3ServiceAccess"
-        Effect = "Allow"
-        Principal = {
-          Service = "s3.amazonaws.com"
-        }
-        Action = [
-          "kms:Decrypt",
-          "kms:GenerateDataKey"
-        ]
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "kms:ViaService" = "s3.${var.region}.amazonaws.com"
-          }
-        }
-      }
-    ]
-  })
-
-  tags = merge(
-    var.tags,
-    {
-      Name    = "dpe_encryption_key"
-      Purpose = "S3 encryption for DPE Snowflake bucket ${var.bucket_name}"
-    }
-  )
-}
-
-resource "aws_kms_alias" "dpe_encryption_key_alias" {
-  name          = "alias/${var.bucket_name}-encryption"
-  target_key_id = aws_kms_key.dpe_encryption_key.key_id
-}
-
-# Set up encryption using customer-managed KMS
+# Set up encryption using existing KMS key
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
   bucket = aws_s3_bucket.bucket.id
 
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = aws_kms_key.dpe_encryption_key.arn
+      kms_master_key_id = aws_kms_key.rds_export_key.arn
     }
     bucket_key_enabled = true
   }
