@@ -86,8 +86,7 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
           AWS = "arn:aws:iam::${var.source_account_id}:root"
         }
         Action = [
-          "s3:PutObject",
-          "s3:PutObjectAcl"
+          "s3:PutObject"
         ]
         Resource = "${aws_s3_bucket.bucket.arn}/*"
         Condition = {
@@ -96,6 +95,17 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
             "s3:x-amz-server-side-encryption-aws-kms-key-id" = aws_kms_key.dpe_encryption_key.arn
           }
         }
+      },
+      {
+        Sid    = "AllowCrossAccountObjectAcl"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.source_account_id}:root"
+        }
+        Action = [
+          "s3:PutObjectAcl"
+        ]
+        Resource = "${aws_s3_bucket.bucket.arn}/*"
       }
     ]
   })
