@@ -146,7 +146,7 @@ module "snowflake-spacelift-development" {
   source = "./spacelift/snowflake"
   
   # Spacelift configuration
-  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
+  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
   auto_deploy        = false
   git_branch         = var.git_branch
   parent_space_id    = spacelift_space.development.id
