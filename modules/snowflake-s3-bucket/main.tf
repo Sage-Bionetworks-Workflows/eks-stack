@@ -163,7 +163,7 @@ resource "aws_kms_key" "dpe_encryption_key" {
     var.tags,
     {
       Name    = "dpe_encryption_key"
-      Purpose = "S3 encryption for DPE Snowflake bucket $(var.bucket_name)"
+      Purpose = "S3 encryption for DPE Snowflake bucket ${var.bucket_name}"
     }
   )
 }
