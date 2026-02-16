@@ -146,18 +146,18 @@ module "snowflake-spacelift-development" {
   source = "./spacelift/snowflake"
   
   # Spacelift configuration
-  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
+  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
   auto_deploy        = false
   git_branch         = var.git_branch
-  parent_space_id    = spacelift_space.development.id
-  space_name         = "snowflake-dev"
+  parent_space_id    = spacelift_space.production.id
+  space_name         = "synapse-dev-to-snowflake"
 
   # Snowflake stack deployment configuration
-  snowflake_stack_name         = "Snowflake S3 Development"
+  snowflake_stack_name         = "Synapse Dev RDS Snapshots"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
-  aws_account_id         = "631692904429"
+  aws_account_id         = "766808016710"
   region                 = "us-east-1"
   source_account_id      = "449435941126"
   source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
@@ -172,10 +172,10 @@ module "snowflake-spacelift-production" {
   auto_deploy            = false
   git_branch             = var.git_branch
   parent_space_id        = spacelift_space.production.id
-  space_name             = "snowflake-prod"
+  space_name             = "synapse-prod-to-snowflake"
 
   # Snowflake stack deployment configuration
-  snowflake_stack_name         = "Snowflake S3 Production"
+  snowflake_stack_name         = "Synapse Prod RDS Snapshots"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
