@@ -137,7 +137,6 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
           "s3:GetBucketVersioning",
           "s3:GetEncryptionConfiguration",
           "s3:PutEncryptionConfiguration",
-          "s3:GetBucketPolicy",
           "s3:PutBucketPolicy"
         ]
         Resource = aws_s3_bucket.bucket.arn
