@@ -137,6 +137,21 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowSpaceliftAdminRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/spacelift-admin-role"
+        }
+        Action = [
+          "s3:GetBucketVersioning",
+          "s3:GetEncryptionConfiguration",
+          "s3:PutEncryptionConfiguration",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPolicy"
+        ]
+        Resource = aws_s3_bucket.bucket.arn
+      },
+      {
         Sid    = "AllowCrossAccountReplication"
         Effect = "Allow"
         Principal = {
