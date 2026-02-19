@@ -60,7 +60,7 @@ resource "aws_kms_key" "rds_export_key" {
   tags = merge(
     var.tags,
     {
-      Name    = "rds-export-to-s3"
+      Name    = "rds-to-snowflake-${var.bucket_name}"
       Purpose = "KMS key to encrypt RDS snapshot export objects"
     }
   )
