@@ -1,4 +1,3 @@
-# KMS key for RDS export to S3 encryption
 resource "aws_kms_key" "rds_export_key" {
   description = "KMS key to encrypt RDS snapshot export objects"
   
@@ -10,15 +9,6 @@ resource "aws_kms_key" "rds_export_key" {
         Effect = "Allow"
         Principal = {
           AWS = "arn:aws:iam::${var.aws_account_id}:root"
-        }
-        Action   = "kms:*"
-        Resource = "*"
-      },
-      {
-        Sid    = "AllowSsoAdminFullControl"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_Administrator_c848162860f9e172"
         }
         Action   = "kms:*"
         Resource = "*"
@@ -124,6 +114,7 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
 
 resource "aws_s3_bucket_versioning" "versioning" {
   bucket = aws_s3_bucket.bucket.id
+  depends_on = [aws_s3_bucket_policy.replication_destination_policy]
   versioning_configuration {
     status = var.enable_versioning ? "Enabled" : "Disabled"
   }
@@ -212,6 +203,7 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
 # Set up encryption using existing KMS key
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
   bucket = aws_s3_bucket.bucket.id
+  depends_on = [aws_s3_bucket_policy.replication_destination_policy]
 
   rule {
     apply_server_side_encryption_by_default {
