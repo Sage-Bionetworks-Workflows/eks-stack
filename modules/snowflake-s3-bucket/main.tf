@@ -258,14 +258,6 @@ resource "aws_iam_role" "snowflake_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AllowRDSExportService"
-        Effect = "Allow"
-        Principal = {
-          Service = "export.rds.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      },
-      {
         Sid    = "AllowSnowflake"
         Effect = "Allow"
         Principal = {
