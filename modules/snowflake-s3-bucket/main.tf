@@ -110,7 +110,7 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
 
 resource "aws_s3_bucket_versioning" "versioning" {
   bucket = aws_s3_bucket.bucket.id
-  depends_on = [aws_s3_bucket_policy.replication_destination_policy]
+  depends_on = [aws_s3_bucket.bucket]
   versioning_configuration {
     status = var.enable_versioning ? "Enabled" : "Disabled"
   }
