@@ -37,3 +37,8 @@ output "kms_key_alias" {
   description = "Alias of the KMS key used for S3 encryption"
   value       = aws_kms_alias.rds_export_key.name
 }
+
+output "snowflake_role_arn" {
+  description = "ARN of the IAM role that Snowflake can assume"
+  value       = aws_iam_role.snowflake_role.arn
+}

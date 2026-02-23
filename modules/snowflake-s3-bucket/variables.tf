@@ -47,3 +47,14 @@ variable "enable_cors" {
   type        = bool
   default     = false
 }
+
+variable "snowflake_principal_arn" {
+  description = "ARN of the Snowflake principal (user or role) that will assume the role"
+  type        = string
+}
+
+variable "snowflake_external_id" {
+  description = "External ID for Snowflake role assumption"
+  type        = string
+  sensitive   = true
+}

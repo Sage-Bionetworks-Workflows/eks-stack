@@ -201,3 +201,88 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
     bucket_key_enabled = true
   }
 }
+
+resource "aws_iam_policy" "snowflake_s3_access_policy" {
+  name        = "snowflake-s3-access-${var.bucket_name}"
+  description = "IAM policy for Snowflake to access S3 bucket and KMS key"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "S3ExportWriteAndRead"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:DeleteObject"
+        ]
+        Resource = [
+          aws_s3_bucket.bucket.arn,
+          "${aws_s3_bucket.bucket.arn}/*"
+        ]
+      },
+      {
+        Sid    = "KMSForSSEKMSObjects"
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey",
+          "kms:CreateGrant"
+        ]
+        Resource = [
+          aws_kms_key.rds_export_key.arn
+        ]
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name    = "snowflake-s3-access-${var.bucket_name}"
+      Purpose = "Snowflake S3 and KMS access policy"
+    }
+  )
+}
+
+resource "aws_iam_role" "snowflake_role" {
+  name        = "snowflake-role-${var.bucket_name}"
+  description = "IAM role for Snowflake to access S3 bucket"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowSnowflake"
+        Effect = "Allow"
+        Principal = {
+          AWS = var.snowflake_principal_arn
+        }
+        Action = "sts:AssumeRole"
+        Condition = {
+          StringEquals = {
+            "sts:ExternalId" = var.snowflake_external_id
+          }
+        }
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name    = "snowflake-role-${var.bucket_name}"
+      Purpose = "Snowflake S3 access role"
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "snowflake_policy_attachment" {
+  role       = aws_iam_role.snowflake_role.name
+  policy_arn = aws_iam_policy.snowflake_s3_access_policy.arn
+}
