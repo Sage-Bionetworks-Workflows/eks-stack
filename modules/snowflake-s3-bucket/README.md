@@ -7,33 +7,64 @@ The following diagram shows the resource dependency flow within this module:
 
 ```mermaid
 graph TD
-    A[aws_kms_key.rds_export_key] --> B[aws_kms_alias.rds_export_key]
-    A --> F[aws_s3_bucket_server_side_encryption_configuration.encryption]
+    %% Step 1 - Independent resources
+    A[aws_kms_key.rds_export_key<br/>Step 1] 
+    C[aws_s3_bucket.bucket<br/>Step 1]
+    H[aws_iam_role.snowflake_role<br/>Step 1]
     
-    C[aws_s3_bucket.bucket] --> D[aws_s3_bucket_versioning.versioning]
-    C --> E[aws_s3_bucket_policy.replication_destination_policy]
-    C --> G[aws_iam_policy.snowflake_s3_access_policy]
+    %% Step 2 - Resources dependent on Step 1
+    A --> B[aws_kms_alias.rds_export_key<br/>Step 2]
+    C --> D[aws_s3_bucket_ownership_controls.ownership<br/>Step 2]
+    C --> E[aws_s3_bucket_public_access_block.access_block<br/>Step 2]
+    C --> J[aws_s3_bucket_versioning.versioning<br/>Step 2]
+    C --> K[aws_s3_bucket_policy.replication_destination_policy<br/>Step 2]
+    A --> G[aws_iam_policy.snowflake_s3_access_policy<br/>Step 2]
+    C --> G
     
+    %% Step 3 - Resources dependent on Step 2
+    D --> F[aws_s3_bucket_acl.bucket_acl<br/>Step 3]
     E --> F
-    A --> G
+    K --> L[aws_s3_bucket_server_side_encryption_configuration.encryption<br/>Step 3]
+    A --> L
+    G --> I[aws_iam_role_policy_attachment.snowflake_policy_attachment<br/>Step 3]
+    H --> I
     
-    H[aws_iam_role.snowflake_role] --> I[aws_iam_role_policy_attachment.snowflake_policy_attachment]
-    G --> I
-    
+    %% Styling by step
     style A fill:#e1f5fe
     style C fill:#e8f5e8
     style H fill:#fff3e0
+    
+    style B fill:#e1f5fe
+    style D fill:#e8f5e8
+    style E fill:#e8f5e8
+    style J fill:#e8f5e8
+    style K fill:#e8f5e8
+    style G fill:#fff3e0
+    
     style F fill:#fce4ec
+    style L fill:#fce4ec
     style I fill:#fce4ec
 ```
 
-## Resource Flow Description
+## Resource Execution Steps
 
-1. **KMS Key Creation**: Creates the customer-managed KMS key for encryption
-2. **S3 Bucket Creation**: Creates the destination bucket for Snowflake data
-3. **Bucket Configuration**: Sets up versioning and bucket policy for cross-account access
-4. **Encryption Setup**: Configures bucket encryption using the KMS key (depends on both bucket policy and KMS key)
-5. **IAM Resources**: Creates Snowflake access policy and role, then attaches them
+**Step 1 (Independent):**
+- `aws_kms_key.rds_export_key` - KMS key creation
+- `aws_s3_bucket.bucket` - S3 bucket creation  
+- `aws_iam_role.snowflake_role` - IAM role creation
+
+**Step 2 (Dependent on Step 1):**
+- `aws_kms_alias.rds_export_key` - KMS alias (needs key)
+- `aws_s3_bucket_ownership_controls.ownership` - Ownership controls (needs bucket)
+- `aws_s3_bucket_public_access_block.access_block` - Public access block (needs bucket)
+- `aws_s3_bucket_versioning.versioning` - Bucket versioning (needs bucket)
+- `aws_s3_bucket_policy.replication_destination_policy` - Bucket policy (needs bucket)
+- `aws_iam_policy.snowflake_s3_access_policy` - IAM policy (needs bucket + KMS key)
+
+**Step 3 (Dependent on Step 2):**
+- `aws_s3_bucket_acl.bucket_acl` - Bucket ACL (needs ownership + access block)
+- `aws_s3_bucket_server_side_encryption_configuration.encryption` - Encryption config (needs bucket policy + KMS key)
+- `aws_iam_role_policy_attachment.snowflake_policy_attachment` - Policy attachment (needs role + policy)
 ## Usage
 
 ```hcl
