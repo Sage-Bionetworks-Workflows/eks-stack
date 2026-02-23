@@ -187,7 +187,10 @@ resource "aws_s3_bucket_policy" "replication_destination_policy" {
 # Set up encryption using existing KMS key
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
   bucket = aws_s3_bucket.bucket.id
-  depends_on = [aws_s3_bucket_policy.replication_destination_policy]
+  depends_on = [
+    aws_s3_bucket_policy.replication_destination_policy,
+    aws_kms_key.rds_export_key
+  ]
 
   rule {
     apply_server_side_encryption_by_default {
