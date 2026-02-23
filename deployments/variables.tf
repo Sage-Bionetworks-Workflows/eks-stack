@@ -22,3 +22,14 @@ variable "git_branch" {
   description = "The branch to deploy"
   type        = string
 }
+
+variable "snowflake_principal_arn" {
+  description = "ARN of the Snowflake principal (user or role) that will assume the role"
+  type        = string
+}
+
+variable "snowflake_external_id" {
+  description = "External ID for Snowflake role assumption"
+  type        = string
+  sensitive   = true
+}

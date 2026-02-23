@@ -162,6 +162,10 @@ module "snowflake-spacelift-development" {
   source_account_id      = "449435941126"
   source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
   snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-dev"
+  
+  # Snowflake authentication
+  snowflake_principal_arn = var.snowflake_principal_arn
+  snowflake_external_id   = var.snowflake_external_id
 }
 
 module "snowflake-spacelift-production" {
@@ -184,4 +188,8 @@ module "snowflake-spacelift-production" {
   source_account_id      = "325565585839"
   source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
   snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-prod"
+  
+  # Snowflake authentication
+  snowflake_principal_arn = var.snowflake_principal_arn
+  snowflake_external_id   = var.snowflake_external_id
 }
