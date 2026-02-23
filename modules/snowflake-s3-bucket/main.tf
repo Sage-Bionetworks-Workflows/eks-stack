@@ -63,7 +63,7 @@ resource "aws_kms_key" "rds_export_key" {
 }
 
 resource "aws_kms_alias" "rds_export_key" {
-  name          = "alias/rds-export-to-s3"
+  name          = "alias/rds-export-to-s3-${var.bucket_name}"
   target_key_id = aws_kms_key.rds_export_key.key_id
 }
 
