@@ -30,18 +30,14 @@ resource "aws_kms_key" "rds_export_key" {
         Resource = "*"
       },
       {
-        Sid    = "AllowRdsService"
+        Sid    = "AllowSnowflakeRole"
         Effect = "Allow"
         Principal = {
-          Service = "export.rds.amazonaws.com"
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/snowflake-s3-access-role"
         }
         Action = [
-          "kms:Encrypt",
           "kms:Decrypt",
-          "kms:ReEncrypt*",
-          "kms:GenerateDataKey*",
-          "kms:DescribeKey",
-          "kms:CreateGrant"
+          "kms:DescribeKey"
         ]
         Resource = "*"
       },
