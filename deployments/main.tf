@@ -161,7 +161,7 @@ module "snowflake-spacelift-development" {
   region                 = "us-east-1"
   source_account_id      = "449435941126"
   source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
-  source_iam_role        = "test-rds-repl-role"
+  source_iam_role        = "dev-rds-repl-role"
   snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-dev"
   
   # Snowflake authentication
