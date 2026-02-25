@@ -157,10 +157,11 @@ module "snowflake-spacelift-development" {
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
-  aws_account_id         = "449435941126" #"766808016710"
+  aws_account_id         = "766808016710"
   region                 = "us-east-1"
   source_account_id      = "449435941126"
   source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
+  source_iam_role        = "test-rds-repl-role"
   snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-dev"
   
   # Snowflake authentication
@@ -187,6 +188,7 @@ module "snowflake-spacelift-production" {
   region                 = "us-east-1"
   source_account_id      = "325565585839"
   source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
+  source_iam_role        = "rds-export-to-s3-role"
   snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-prod"
   
   # Snowflake authentication

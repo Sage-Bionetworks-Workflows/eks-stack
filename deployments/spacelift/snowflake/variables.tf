@@ -76,3 +76,8 @@ variable "snowflake_external_id" {
   type        = string
   sensitive   = true
 }
+
+variable "source_iam_role" {
+  description = "Name of the IAM role in the source account that will have KMS permissions"
+  type        = string
+}

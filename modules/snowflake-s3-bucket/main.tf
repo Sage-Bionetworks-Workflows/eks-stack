@@ -17,7 +17,7 @@ resource "aws_kms_key" "rds_export_key" {
         Sid    = "AllowSourceExportRole"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${var.source_account_id}:role/test-rds-repl-role"
+          AWS = "arn:aws:iam::${var.source_account_id}:role/${var.source_iam_role}"
         }
         Action = [
           "kms:Encrypt",
