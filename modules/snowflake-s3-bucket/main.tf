@@ -56,14 +56,14 @@ resource "aws_kms_key" "rds_export_key" {
   tags = merge(
     var.tags,
     {
-      Name    = "rds-to-snowflake-${var.bucket_name}"
+      Name    = "kms-${var.bucket_name}"
       Purpose = "KMS key to encrypt RDS snapshot export objects"
     }
   )
 }
 
 resource "aws_kms_alias" "rds_export_key" {
-  name          = "alias/rds-export-to-s3-${var.bucket_name}"
+  name          = "alias/kms-${var.bucket_name}"
   target_key_id = aws_kms_key.rds_export_key.key_id
 }
 
