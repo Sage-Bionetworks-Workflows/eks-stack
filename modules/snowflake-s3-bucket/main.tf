@@ -33,7 +33,7 @@ resource "aws_kms_key" "rds_export_key" {
         Sid    = "AllowSnowflakeRole"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${var.aws_account_id}:role/snowflake-s3-access-${var.bucket_name}"
+          AWS = aws_iam_role.snowflake_role.arn
         }
         Action = [
           "kms:Decrypt",
