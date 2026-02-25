@@ -157,7 +157,7 @@ module "snowflake-spacelift-development" {
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
-  aws_account_id         = "766808016710"
+  aws_account_id         = "449435941126" #"766808016710"
   region                 = "us-east-1"
   source_account_id      = "449435941126"
   source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
