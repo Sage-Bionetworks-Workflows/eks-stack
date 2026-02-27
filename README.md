@@ -29,6 +29,14 @@ Before modifying modules, stacks, or configs:
 3. **OpenTofu** — Install [OpenTofu](https://opentofu.org/docs/intro/install/) for local development/testing
 4. **kubectl** (optional) — For Kubernetes cluster access, install [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
+## Development Guidelines
+
+### Branch Targeting and deployments/main.tf Changes
+
+⚠️ **Important**: Don't introduce changes to `deployments/main.tf` unless your branch is pointed at `main`.
+
+When working on feature branches that target other feature branches (rather than `main`), Spacelift may not recognize changes to `deployments/main.tf` because it reads configuration from the targeted branch. This can cause variable resolution errors where required variables appear undefined even though they're properly configured in your branch.
+
 ## How Deployment Works
 
 Deploying a resource involves a **two-step process**:
