@@ -166,7 +166,7 @@ module "snowflake-spacelift-development" {
   
   # Snowflake authentication
   snowflake_principal_arn = "arn:aws:iam::365909334157:user/m2nb0000-s"
-  snowflake_external_id   = "UO70315_SFCRole=2_GRDdJ9TIxVXMrnrttRmyKYRfCwE="
+  snowflake_external_id   = "UO70315_SFCRole=2_0VqqeWxjpuUoM4zVlbsAl5vnp/o="
 }
 
 module "snowflake-spacelift-production" {
@@ -193,5 +193,5 @@ module "snowflake-spacelift-production" {
   
   # Snowflake authentication
   snowflake_principal_arn = "arn:aws:iam::365909334157:user/m2nb0000-s"
-  snowflake_external_id   = "UO70315_SFCRole=2_GRDdJ9TIxVXMrnrttRmyKYRfCwE="
+  snowflake_external_id   = "UO70315_SFCRole=2_QLtciGyxAkOBnGt020rTOOLSjZ8="
 }
