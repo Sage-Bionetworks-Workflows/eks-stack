@@ -140,8 +140,8 @@ This will provide you with the `STORAGE_AWS_IAM_USER_ARN` (use for `snowflake_pr
 | enable_versioning | Enable versioning on the S3 bucket | `bool` | `true` | no |
 | source_account_id | AWS account ID that will replicate TO this bucket | `string` | n/a | yes |
 | source_bucket_arn | ARN of the source bucket that will replicate to this bucket | `string` | n/a | yes |
-| snowflake_principal_arn | ARN of the Snowflake principal (user or role) that will assume the role | `string` | n/a | yes |
-| snowflake_external_id | External ID for Snowflake role assumption | `string` | n/a | yes |
+| snowflake_principal_arn | ARN of the Snowflake principal (user) that will assume the IAM role for ingesting RDS snapshots from the S3 bucket. <br> <br>This can be retrieved on Snowflake via the SQL command `DESC STORAGE INTEGRATION <integration_name>` with the property listed as `STORAGE_AWS_IAM_USER_ARN`.| `string` | n/a | yes |
+| snowflake_external_id | The externald ID that Snowflake uses to establish a trust relationship with AWS. You must specify the same external ID in the trust policy of the IAM role that you configured for this storage integration. <br> <br>This can be retrieved on Snowflake via the SQL command `DESC STORAGE INTEGRATION <integration_name>`. | `string` | n/a | yes |
 | tags | Additional tags for the S3 bucket | `map(string)` | `{}` | no |
 | public_access | Enable public access to the bucket | `bool` | `false` | no |
 | enable_cors | Enable CORS configuration | `bool` | `false` | no |
