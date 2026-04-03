@@ -166,7 +166,7 @@ module "snowflake-spacelift-development" {
   
   # Snowflake authentication
   snowflake_principal_arn = "arn:aws:iam::365909334157:user/m2nb0000-s"
-  snowflake_external_id   = "UO70315_SFCRole=2_0VqqeWxjpuUoM4zVlbsAl5vnp/o="
+  snowflake_external_id   = "UO70315_SFCRole=2_PQyc1mUCluvv6W2lycbjCbYbjjI="
 }
 
 module "snowflake-spacelift-production" {
