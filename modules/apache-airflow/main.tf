@@ -71,6 +71,11 @@ spec:
       releaseName: airflow
       valueFiles:
       - $values/modules/apache-airflow/templates/values.yaml
+      parameters:
+      - name: dags.gitSync.branch
+        value: ${var.dags_git_branch}
+      - name: dags.gitSync.ref
+        value: ${var.dags_git_branch}
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values

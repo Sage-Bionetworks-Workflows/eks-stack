@@ -175,3 +175,9 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "dags_git_branch" {
+  description = "The orca-recipes branch to sync DAGs from"
+  type        = string
+  default     = "main"
+}

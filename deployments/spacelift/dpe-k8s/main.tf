@@ -30,6 +30,7 @@ locals {
     enable_otel_ingress    = var.enable_otel_ingress
     ssl_hostname           = var.ssl_hostname
     smtp_from              = var.smtp_from
+    dags_git_branch        = var.dags_git_branch
   }
 
   # Variables to be passed from the k8s stack to the deployments stack
