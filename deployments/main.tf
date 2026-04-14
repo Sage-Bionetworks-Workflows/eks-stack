@@ -29,6 +29,7 @@ module "dpe-sandbox-spacelift-development" {
   auto_deploy        = false
   auto_prune         = true
   git_branch         = var.git_branch
+  dags_git_branch    = "develop"
 
   space_name = "dpe-sandbox"
 
@@ -110,6 +111,7 @@ module "dpe-sandbox-spacelift-production" {
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
   auto_deploy        = false
   git_branch         = var.git_branch
+  dags_git_branch    = "main"
 
   space_name = "dpe-k8s"
 

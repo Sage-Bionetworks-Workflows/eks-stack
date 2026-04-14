@@ -43,3 +43,9 @@ variable "docker_email" {
   default     = "dpe@sagebase.org"
   type        = string
 }
+
+variable "dags_git_branch" {
+  description = "The orca-recipes branch to sync DAGs from"
+  type        = string
+  default     = "main"
+}

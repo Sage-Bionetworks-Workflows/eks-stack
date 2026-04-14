@@ -64,6 +64,7 @@ module "airflow" {
   git_revision        = local.git_revision
   namespace           = "airflow"
   docker_access_token = var.docker_access_token
+  dags_git_branch     = var.dags_git_branch
 }
 
 module "postgres-cloud-native-operator" {
