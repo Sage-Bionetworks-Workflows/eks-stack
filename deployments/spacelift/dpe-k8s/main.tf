@@ -19,17 +19,18 @@ locals {
   }
 
   k8s_stack_deployments_variables = {
-    spotinst_account       = var.spotinst_account
-    vpc_cidr_block         = var.vpc_cidr_block
-    cluster_name           = var.cluster_name
-    auto_deploy            = var.auto_deploy
-    auto_prune             = var.auto_prune
-    git_revision           = var.git_branch
-    aws_account_id         = var.aws_account_id
-    enable_cluster_ingress = var.enable_cluster_ingress
-    enable_otel_ingress    = var.enable_otel_ingress
-    ssl_hostname           = var.ssl_hostname
-    smtp_from              = var.smtp_from
+    spotinst_account         = var.spotinst_account
+    vpc_cidr_block           = var.vpc_cidr_block
+    cluster_name             = var.cluster_name
+    auto_deploy              = var.auto_deploy
+    auto_prune               = var.auto_prune
+    git_revision             = var.git_branch
+    aws_account_id           = var.aws_account_id
+    enable_cluster_ingress   = var.enable_cluster_ingress
+    enable_otel_ingress      = var.enable_otel_ingress
+    ssl_hostname             = var.ssl_hostname
+    smtp_from                = var.smtp_from
+    eks_min_ami_release_date = var.eks_min_ami_release_date
   }
 
   # Variables to be passed from the k8s stack to the deployments stack

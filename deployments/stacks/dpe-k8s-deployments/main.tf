@@ -12,6 +12,7 @@ module "sage-aws-eks-autoscaler" {
   spotinst_account       = var.spotinst_account
   single_az              = false
   desired_capacity       = 3
+  min_ami_release_date   = var.eks_min_ami_release_date
 }
 
 module "sage-aws-eks-addons" {

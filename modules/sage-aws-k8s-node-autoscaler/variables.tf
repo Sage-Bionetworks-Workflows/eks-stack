@@ -54,3 +54,8 @@ variable "single_az" {
   description = "Single AZ"
   type        = bool
 }
+
+variable "min_ami_release_date" {
+  description = "Minimum AL2023 EKS-optimized AMI release date (YYYYMMDD). Acts as a floor for the aws_ami name-prefix filter; Spot Ocean uses the resolved AMI ID for new node launches."
+  type        = string
+}

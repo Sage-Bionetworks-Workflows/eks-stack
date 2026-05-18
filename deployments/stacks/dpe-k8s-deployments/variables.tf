@@ -109,3 +109,8 @@ variable "docker_access_token" {
   type        = string
   default     = ""
 }
+
+variable "eks_min_ami_release_date" {
+  description = "Minimum AL2023 EKS-optimized AMI release date (YYYYMMDD)."
+  type        = string
+}

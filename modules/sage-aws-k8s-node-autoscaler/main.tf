@@ -114,6 +114,7 @@ module "ocean-aws-k8s" {
   subnet_ids                       = var.single_az ? [var.private_vpc_subnet_ids[0]] : var.private_vpc_subnet_ids
   worker_instance_profile_arn      = aws_iam_instance_profile.profile.arn
   security_groups                  = [var.node_security_group_id]
+  ami_id                           = data.aws_ami.eks_worker_al2023.id
   is_aggressive_scale_down_enabled = true
   max_scale_down_percentage        = 33
   tags                             = var.tags
