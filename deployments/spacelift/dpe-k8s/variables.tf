@@ -175,3 +175,8 @@ variable "smtp_from" {
   type        = string
   default     = ""
 }
+
+variable "eks_min_ami_release_date" {
+  description = "Minimum AL2023 EKS-optimized AMI release date (YYYYMMDD). Acts as a floor for the aws_ami lookup that pins the Spot Ocean image_id."
+  type        = string
+}

@@ -1,3 +1,10 @@
+locals {
+  # Minimum AL2023 EKS-optimized AMI release date (YYYYMMDD).
+  # Acts as a floor for the Spot Ocean worker AMI lookup. Bump for kernel CVE
+  # remediations (e.g., CVE-2026-31431 → v20260505 or later).
+  eks_min_ami_release_date = "20260505"
+}
+
 resource "spacelift_space" "development" {
   name             = "development"
   parent_space_id  = var.parent_space_id
@@ -59,6 +66,8 @@ module "dpe-sandbox-spacelift-development" {
   ses_email_identities = ["aws-dpe-dev@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "aws-dpe-dev@sagebase.org"
+
+  eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
 module "dpe-sandbox-spacelift-staging" {
@@ -99,6 +108,8 @@ module "dpe-sandbox-spacelift-staging" {
   ssl_hostname           = "staging.sagedpe.org"
   ses_email_identities = []
   smtp_from            = ""
+
+  eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
 module "dpe-sandbox-spacelift-production" {
@@ -140,6 +151,8 @@ module "dpe-sandbox-spacelift-production" {
   ses_email_identities = ["dpe@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "dpe@sagebase.org"
+
+  eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
 module "snowflake-spacelift-development" {
