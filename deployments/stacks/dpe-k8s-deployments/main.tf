@@ -59,12 +59,15 @@ module "airflow" {
   depends_on = [module.victoria-metrics, module.argo-cd]
   # source       = "spacelift.io/sagebionetworks/airflow/aws"
   # version      = "0.4.0"
-  source              = "../../../modules/apache-airflow"
-  auto_deploy         = var.auto_deploy
-  auto_prune          = var.auto_prune
-  git_revision        = local.git_revision
-  namespace           = "airflow"
-  docker_access_token = var.docker_access_token
+  source                    = "../../../modules/apache-airflow"
+  auto_deploy               = var.auto_deploy
+  auto_prune                = var.auto_prune
+  git_revision              = local.git_revision
+  namespace                 = "airflow"
+  docker_access_token       = var.docker_access_token
+  cluster_name              = var.cluster_name
+  aws_account_id            = var.aws_account_id
+  cluster_oidc_provider_arn = var.cluster_oidc_provider_arn
 }
 
 module "postgres-cloud-native-operator" {

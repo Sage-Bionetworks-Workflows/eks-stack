@@ -21,6 +21,22 @@ variable "namespace" {
   type        = string
 }
 
+variable "cluster_name" {
+  description = "EKS cluster name. The croissant IRSA role and its service account annotations are only created on the prod cluster (dpe-k8)."
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+}
+
+variable "cluster_oidc_provider_arn" {
+  description = "ARN of the EKS cluster OIDC provider, used as the federated principal for the croissant IRSA role."
+  type        = string
+  default     = ""
+}
+
 variable "docker_server" {
   description = "The docker registry URL"
   default     = "https://index.docker.io/v1/"

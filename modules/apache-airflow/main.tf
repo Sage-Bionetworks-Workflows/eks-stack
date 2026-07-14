@@ -71,6 +71,25 @@ spec:
       releaseName: airflow
       valueFiles:
       - $values/modules/apache-airflow/templates/values.yaml
+%{if local.create_croissant_irsa}
+      values: |
+        workers:
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: ${local.croissant_role_arn}
+        scheduler:
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: ${local.croissant_role_arn}
+        triggerer:
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: ${local.croissant_role_arn}
+        webserver:
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: ${local.croissant_role_arn}
+%{endif}
   - repoURL: 'https://github.com/Sage-Bionetworks-Workflows/eks-stack.git'
     targetRevision: ${var.git_revision}
     ref: values
