@@ -22,7 +22,7 @@ variable "namespace" {
 }
 
 variable "cluster_name" {
-  description = "EKS cluster name. The croissant IRSA role and its service account annotations are only created on the prod cluster (dpe-k8)."
+  description = "EKS cluster name. The airflow IRSA role and its service account annotations are only created on the prod cluster (dpe-k8)."
   type        = string
 }
 
@@ -32,7 +32,7 @@ variable "aws_account_id" {
 }
 
 variable "cluster_oidc_provider_arn" {
-  description = "ARN of the EKS cluster OIDC provider, used as the federated principal for the croissant IRSA role."
+  description = "ARN of the EKS cluster OIDC provider, used as the federated principal for the airflow IRSA role."
   type        = string
   default     = ""
 }

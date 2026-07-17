@@ -1,6 +1,6 @@
 locals {
-  # Only provisioned on the prod cluster, matching the croissant S3 buckets.
-  create_croissant_irsa = var.cluster_name == "dpe-k8"
+  # Only provisioned on the prod cluster, matching the S3 buckets below.
+  create_airflow_irsa = var.cluster_name == "dpe-k8"
 
   # The trust policy condition keys are the OIDC provider URL without the scheme.
   oidc_provider_url = replace(
@@ -9,26 +9,28 @@ locals {
     ""
   )
 
-  croissant_service_account_subjects = [
+  airflow_service_account_subjects = [
     "system:serviceaccount:${var.namespace}:airflow-worker",
     "system:serviceaccount:${var.namespace}:airflow-scheduler",
     "system:serviceaccount:${var.namespace}:airflow-triggerer",
     "system:serviceaccount:${var.namespace}:airflow-webserver",
   ]
 
-  croissant_buckets = [
+  # S3 buckets the airflow workloads are permitted to access. Add buckets here as
+  # new workloads require them.
+  airflow_s3_buckets = [
     "synapse-croissant-metadata",
     "synapse-croissant-metadata-minimal",
   ]
 
-  croissant_role_arn = local.create_croissant_irsa ? aws_iam_role.airflow_croissant[0].arn : ""
+  airflow_irsa_role_arn = local.create_airflow_irsa ? aws_iam_role.airflow_irsa[0].arn : ""
 }
 
-resource "aws_iam_role" "airflow_croissant" {
-  count = local.create_croissant_irsa ? 1 : 0
+resource "aws_iam_role" "airflow_irsa" {
+  count = local.create_airflow_irsa ? 1 : 0
 
-  name        = "airflow-croissant"
-  description = "IRSA role assumed by Airflow pods to read airflow/* secrets and CRUD the croissant S3 buckets."
+  name        = "airflow-irsa"
+  description = "IRSA role assumed by Airflow pods to read airflow/* secrets and CRUD the permitted S3 buckets."
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -42,7 +44,7 @@ resource "aws_iam_role" "airflow_croissant" {
         Condition = {
           StringEquals = {
             "${local.oidc_provider_url}:aud" = "sts.amazonaws.com"
-            "${local.oidc_provider_url}:sub" = local.croissant_service_account_subjects
+            "${local.oidc_provider_url}:sub" = local.airflow_service_account_subjects
           }
         }
       }
@@ -50,32 +52,32 @@ resource "aws_iam_role" "airflow_croissant" {
   })
 }
 
-resource "aws_iam_policy" "airflow_croissant" {
-  count = local.create_croissant_irsa ? 1 : 0
+resource "aws_iam_policy" "airflow_irsa" {
+  count = local.create_airflow_irsa ? 1 : 0
 
-  name        = "airflow-croissant"
-  description = "Read airflow/* secrets and CRUD the croissant S3 buckets. Replaces the airflow-secrets-backend IAM user access keys."
+  name        = "airflow-irsa"
+  description = "Read airflow/* secrets and CRUD the permitted S3 buckets. Replaces the airflow-secrets-backend IAM user access keys."
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "CroissantBucketObjects"
+        Sid    = "AirflowBucketObjects"
         Effect = "Allow"
         Action = [
           "s3:PutObject",
           "s3:GetObject",
           "s3:DeleteObject",
         ]
-        Resource = [for bucket in local.croissant_buckets : "arn:aws:s3:::${bucket}/*"]
+        Resource = [for bucket in local.airflow_s3_buckets : "arn:aws:s3:::${bucket}/*"]
       },
       {
-        Sid    = "CroissantBucketList"
+        Sid    = "AirflowBucketList"
         Effect = "Allow"
         Action = [
           "s3:ListBucket",
         ]
-        Resource = [for bucket in local.croissant_buckets : "arn:aws:s3:::${bucket}"]
+        Resource = [for bucket in local.airflow_s3_buckets : "arn:aws:s3:::${bucket}"]
       },
       {
         Sid    = "AirflowSecretsRead"
@@ -100,9 +102,9 @@ resource "aws_iam_policy" "airflow_croissant" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "airflow_croissant" {
-  count = local.create_croissant_irsa ? 1 : 0
+resource "aws_iam_role_policy_attachment" "airflow_irsa" {
+  count = local.create_airflow_irsa ? 1 : 0
 
-  role       = aws_iam_role.airflow_croissant[0].name
-  policy_arn = aws_iam_policy.airflow_croissant[0].arn
+  role       = aws_iam_role.airflow_irsa[0].name
+  policy_arn = aws_iam_policy.airflow_irsa[0].arn
 }

@@ -80,3 +80,12 @@ Transitive dependencies may also need to be updated when building a new image fo
 airflow, for example `py-orca` was updated in this example PR: <https://github.com/Sage-Bionetworks-Workflows/py-orca/pull/45>.
 Additionally, this PR covers what was completed in order to update the 
 requirements/dockerfile: <https://github.com/Sage-Bionetworks-Workflows/orca-recipes/pull/71>.
+
+## Granting AWS permissions to airflow workloads
+Airflow pods assume an IRSA role (see `iam.tf`) to access AWS resources. Whenever a
+workload needs to read or write an AWS resource that the role does not already permit —
+for example a new S3 bucket, a new secret prefix, or a different AWS service — the IAM
+policy in `iam.tf` must be updated to grant those actions. Anything AWS-permission
+related is not covered automatically, so watch for it when adding new stacks or DAGs.
+The current buckets/permissions in `iam.tf` are one such example: they were added so
+those DAGs could read/write/delete their data.
