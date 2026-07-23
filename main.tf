@@ -19,7 +19,6 @@ resource "spacelift_stack" "root_administrative_stack" {
     id        = "sage-bionetworks-workflows-gh"
   }
 
-  administrative          = true
   autodeploy              = false
   branch                  = local.git_branch
   description             = "Manages other spacelift resources"
@@ -33,6 +32,18 @@ resource "spacelift_stack" "root_administrative_stack" {
     "modules/*",
     "modules/**/*",
   ]
+}
+
+
+resource "spacelift_role" "stack_admin" {
+  name    = "Stack admin"
+  actions = ["SPACE_ADMIN"]
+}
+
+resource "spacelift_role_attachment" "spacelift-admin-operator" {
+  stack_id = spacelift_stack.root_administrative_stack.id
+  role_id  = spacelift_role.stack_admin.id
+  space_id = "root"
 }
 
 resource "spacelift_space" "environment" {
