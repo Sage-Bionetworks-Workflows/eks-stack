@@ -172,7 +172,14 @@ module "mwaa-spacelift-development" {
   # AWS configuration
   region = "us-east-1"
 
-  # No AWS resources are created until this is true, along with vpc_id and subnet_ids
+  vpc_name       = "mwaa-dev"
+  vpc_cidr_block = "10.52.48.0/22"
+  azs            = ["us-east-1a", "us-east-1b"]
+  # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway
+  private_subnet_cidrs = ["10.52.48.0/24", "10.52.49.0/24"]
+  public_subnet_cidrs  = ["10.52.50.0/24", "10.52.51.0/24"]
+
+  # No AWS resources are created until this is true
   enabled   = true
   mwaa_name = "mwaa-dev"
 }

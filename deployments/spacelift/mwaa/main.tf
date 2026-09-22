@@ -1,10 +1,13 @@
 locals {
   mwaa_stack_variables = {
-    enabled    = var.enabled
-    name       = var.mwaa_name
-    region     = var.region
-    vpc_id     = var.vpc_id
-    subnet_ids = var.subnet_ids
+    enabled              = var.enabled
+    name                 = var.mwaa_name
+    region               = var.region
+    vpc_name             = var.vpc_name
+    vpc_cidr_block       = var.vpc_cidr_block
+    azs                  = var.azs
+    private_subnet_cidrs = var.private_subnet_cidrs
+    public_subnet_cidrs  = var.public_subnet_cidrs
   }
 }
 
