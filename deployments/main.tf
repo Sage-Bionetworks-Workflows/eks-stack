@@ -63,7 +63,7 @@ module "dpe-sandbox-spacelift-development" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "dev.sagedpe.org"
-  ses_email_identities = ["aws-dpe-dev@sagebase.org"]
+  ses_email_identities   = ["aws-dpe-dev@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "aws-dpe-dev@sagebase.org"
 
@@ -106,8 +106,8 @@ module "dpe-sandbox-spacelift-staging" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "staging.sagedpe.org"
-  ses_email_identities = []
-  smtp_from            = ""
+  ses_email_identities   = []
+  smtp_from              = ""
 
   eks_min_ami_release_date = local.eks_min_ami_release_date
 }
@@ -148,16 +148,46 @@ module "dpe-sandbox-spacelift-production" {
   enable_cluster_ingress = true
   enable_otel_ingress    = true
   ssl_hostname           = "prod.sagedpe.org"
-  ses_email_identities = ["dpe@sagebase.org"]
+  ses_email_identities   = ["dpe@sagebase.org"]
   # Defines the email address that will be used as the sender of the email alerts
   smtp_from = "dpe@sagebase.org"
 
   eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
+module "mwaa-spacelift-development" {
+  source = "./spacelift/mwaa"
+
+  # Spacelift configuration
+  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
+  parent_space_id    = spacelift_space.development.id
+  space_name         = "mwaa-dev"
+
+  # MWAA stack deployment configuration
+  mwaa_stack_name         = "DPE DEV Managed Airflow"
+  mwaa_stack_project_root = "deployments/stacks/mwaa"
+
+  # AWS configuration
+  region = "us-east-1"
+
+  vpc_name       = "mwaa-dev"
+  vpc_cidr_block = "10.52.48.0/22"
+  azs            = ["us-east-1a", "us-east-1b"]
+  # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway
+  private_subnet_cidrs = ["10.52.48.0/24", "10.52.49.0/24"]
+  public_subnet_cidrs  = ["10.52.50.0/24", "10.52.51.0/24"]
+
+  # No AWS resources are created until this is true
+  enabled = true
+  # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
+  mwaa_name = "synapse-mwaa-dev"
+}
+
 module "snowflake-spacelift-development" {
   source = "./spacelift/snowflake"
-  
+
   # Spacelift configuration
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
   auto_deploy        = false
@@ -170,13 +200,13 @@ module "snowflake-spacelift-development" {
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
-  aws_account_id         = "766808016710"
-  region                 = "us-east-1"
-  source_account_id      = "449435941126"
-  source_bucket_arn      = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
-  source_iam_role        = "dev-rds-repl-role"
-  snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-dev"
-  
+  aws_account_id        = "766808016710"
+  region                = "us-east-1"
+  source_account_id     = "449435941126"
+  source_bucket_arn     = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
+  source_iam_role       = "dev-rds-repl-role"
+  snowflake_bucket_name = "synapse-snowflake-rds-snapshots-dev"
+
   # Snowflake authentication
   snowflake_principal_arn = "arn:aws:iam::365909334157:user/m2nb0000-s"
   snowflake_external_id   = "UO70315_SFCRole=2_QYIb43i20hlGZ/yzhC8zoAzsE8E="
@@ -184,26 +214,26 @@ module "snowflake-spacelift-development" {
 
 module "snowflake-spacelift-production" {
   source = "./spacelift/snowflake"
-  
+
   # Spacelift configuration
-  aws_integration_id     = var.org_sagebase_dpe_prod_aws_integration_id
-  auto_deploy            = false
-  git_branch             = var.git_branch
-  parent_space_id        = spacelift_space.production.id
-  space_name             = "synapse-prod-to-snowflake"
+  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
+  parent_space_id    = spacelift_space.production.id
+  space_name         = "synapse-prod-to-snowflake"
 
   # Snowflake stack deployment configuration
   snowflake_stack_name         = "Synapse Prod RDS Snapshots"
   snowflake_stack_project_root = "deployments/stacks/snowflake"
 
   # AWS configuration
-  aws_account_id         = "766808016710"
-  region                 = "us-east-1"
-  source_account_id      = "325565585839"
-  source_bucket_arn      = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
-  source_iam_role        = "prod-rds-repl-role"
-  snowflake_bucket_name  = "synapse-snowflake-rds-snapshots-prod"
-  
+  aws_account_id        = "766808016710"
+  region                = "us-east-1"
+  source_account_id     = "325565585839"
+  source_bucket_arn     = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
+  source_iam_role       = "prod-rds-repl-role"
+  snowflake_bucket_name = "synapse-snowflake-rds-snapshots-prod"
+
   # Snowflake authentication
   snowflake_principal_arn = "arn:aws:iam::365909334157:user/m2nb0000-s"
   snowflake_external_id   = "UO70315_SFCRole=2_MrT3ubydhclba/9w8Kq1btbWsBc="
