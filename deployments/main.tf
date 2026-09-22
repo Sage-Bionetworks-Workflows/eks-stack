@@ -155,6 +155,28 @@ module "dpe-sandbox-spacelift-production" {
   eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
+module "mwaa-spacelift-development" {
+  source = "./spacelift/mwaa"
+
+  # Spacelift configuration
+  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
+  auto_deploy        = false
+  git_branch         = var.git_branch
+  parent_space_id    = spacelift_space.development.id
+  space_name         = "mwaa-dev"
+
+  # MWAA stack deployment configuration
+  mwaa_stack_name         = "DPE DEV Managed Airflow"
+  mwaa_stack_project_root = "deployments/stacks/mwaa"
+
+  # AWS configuration
+  region = "us-east-1"
+
+  # No AWS resources are created until this is true, along with vpc_id and subnet_ids
+  enabled   = true
+  mwaa_name = "mwaa-dev"
+}
+
 module "snowflake-spacelift-development" {
   source = "./spacelift/snowflake"
   
