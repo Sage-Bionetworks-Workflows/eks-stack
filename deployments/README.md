@@ -18,6 +18,7 @@ Each spacelift config points to one or more stack directories via the `project_r
 |---|---|---|
 | `spacelift/dpe-k8s/` | `stacks/dpe-k8s/`, `stacks/dpe-k8s-deployments/` | EKS cluster infrastructure and in-cluster deployments |
 | `spacelift/snowflake/` | `stacks/snowflake/` | Creates an S3 bucket that stores Synapse platform RDS snapshots |
+| `spacelift/mwaa/` | `stacks/mwaa/` | Creates an Amazon MWAA (Managed Airflow) environment |
 
 ## Adding a New Deployment
 
