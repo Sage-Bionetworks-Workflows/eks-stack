@@ -183,6 +183,8 @@ module "mwaa-spacelift-development" {
   enabled = true
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-dev"
+  # Matches the Airflow version orca-recipes is built and tested against
+  airflow_version = "2.10.5"
 }
 
 module "snowflake-spacelift-development" {

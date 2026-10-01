@@ -32,3 +32,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "airflow_version" {
+  description = "Airflow version of the MWAA environment. Empty uses the latest version MWAA supports. MWAA cannot downgrade an existing environment, so lowering this requires replacing it"
+  type        = string
+  default     = ""
+}

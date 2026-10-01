@@ -39,3 +39,9 @@ variable "public_subnet_cidrs" {
   description = "Public subnet CIDR values, used for the NAT gateway"
   type        = list(string)
 }
+
+variable "airflow_version" {
+  description = "Airflow version of the MWAA environment. Empty uses the latest version MWAA supports. MWAA cannot downgrade an existing environment, so lowering this requires replacing it"
+  type        = string
+  default     = ""
+}
