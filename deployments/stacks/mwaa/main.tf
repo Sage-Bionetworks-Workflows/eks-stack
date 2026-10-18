@@ -38,7 +38,8 @@ module "mwaa" {
   vpc_id     = one(module.vpc[*].vpc_id)
   subnet_ids = flatten(module.vpc[*].private_subnets)
 
-  airflow_version = var.airflow_version
+  airflow_version      = var.airflow_version
+  requirements_s3_path = var.requirements_s3_path
 
   tags = local.tags
 }

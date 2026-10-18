@@ -9,6 +9,7 @@ locals {
     private_subnet_cidrs = var.private_subnet_cidrs
     public_subnet_cidrs  = var.public_subnet_cidrs
     airflow_version      = var.airflow_version
+    requirements_s3_path = var.requirements_s3_path
   }
 }
 

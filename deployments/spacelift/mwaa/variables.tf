@@ -87,3 +87,9 @@ variable "airflow_version" {
   type        = string
   default     = ""
 }
+
+variable "requirements_s3_path" {
+  description = "Path of the requirements.txt file relative to the root of the bucket. Empty installs no extra packages. The file must already exist in the bucket when this is set"
+  type        = string
+  default     = ""
+}
