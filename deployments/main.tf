@@ -184,7 +184,7 @@ module "mwaa-spacelift-development" {
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-dev"
   # AWS MWAA-supported Airflow version (Python 3.12).
-  airflow_version = "2.11.0"
+  airflow_version = "2.11.2"
   # The latest version of the file is installed on each stack run
   requirements_s3_path = "requirements.txt"
 }
