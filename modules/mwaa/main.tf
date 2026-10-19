@@ -20,6 +20,10 @@ module "mwaa" {
 
   airflow_version = var.airflow_version
 
+  # Dev has no VPN or bastion into the VPC, so the UI must be public to be reachable.
+  # Login is still IAM-only
+  webserver_access_mode = "PUBLIC_ONLY"
+
   # Always the latest version of the file in the bucket, so uploading a new requirements
   # file and re-running the stack is enough to install it
   requirements_s3_path           = var.requirements_s3_path != "" ? var.requirements_s3_path : null
