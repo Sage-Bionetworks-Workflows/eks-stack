@@ -7,6 +7,35 @@ data "aws_s3_object" "requirements" {
   key    = var.requirements_s3_path
 }
 
+data "aws_caller_identity" "current" {}
+
+locals {
+  # Same prefixes as the EKS Airflow deployment (modules/apache-airflow) so secrets follow one
+  # naming scheme
+  secrets_connections_prefix = "airflow/connections"
+  secrets_variables_prefix   = "airflow/variables"
+}
+
+# Lets the execution role read Airflow connections and variables from Secrets Manager
+data "aws_iam_policy_document" "secrets" {
+  statement {
+    sid     = "AirflowSecretsRead"
+    effect  = "Allow"
+    actions = ["secretsmanager:GetSecretValue"]
+    resources = [
+      "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:${local.secrets_connections_prefix}/*",
+      "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:${local.secrets_variables_prefix}/*",
+    ]
+  }
+
+  statement {
+    sid       = "AirflowSecretsList"
+    effect    = "Allow"
+    actions   = ["secretsmanager:ListSecrets"]
+    resources = ["*"]
+  }
+}
+
 module "mwaa" {
   source  = "cloudposse/mwaa/aws"
   version = "0.16.0"
@@ -34,6 +63,16 @@ module "mwaa" {
   scheduler_logs_enabled = true
   worker_logs_enabled    = true
   task_logs_enabled      = true
+
+  # Connections and Variables are looked up in Secrets Manager first, then the metadata database
+  airflow_configuration_options = {
+    "secrets.backend" = "airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend"
+    "secrets.backend_kwargs" = jsonencode({
+      connections_prefix = local.secrets_connections_prefix
+      variables_prefix   = local.secrets_variables_prefix
+    })
+  }
+  additionals_policy_documents = [data.aws_iam_policy_document.secrets.json]
 
   # Workers finish running tasks (up to 12 hours) before being replaced on update.
   # Must be set: the upstream variable validation fails under OpenTofu when it is null.

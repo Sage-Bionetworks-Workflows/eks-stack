@@ -3,6 +3,7 @@
 - [Purpose](#purpose)
 - [Usage](#usage)
 - [Accessing the Airflow UI](#accessing-the-airflow-ui)
+- [Airflow connections and variables](#airflow-connections-and-variables)
 - [Troubleshooting](#troubleshooting)
   - [DAG uploaded to S3 does not appear in the Airflow UI](#dag-uploaded-to-s3-does-not-appear-in-the-airflow-ui)
   - [`ModuleNotFoundError` in a task for a package listed in requirements.txt](#modulenotfounderror-in-a-task-for-a-package-listed-in-requirementstxt)
@@ -48,6 +49,20 @@ The web server uses `PUBLIC_ONLY` access: the URL is reachable from the internet
 The Airflow role (`Admin`, `Op`, `User`, `Viewer`) is set by the resource the permission is
 granted on, e.g. `arn:aws:airflow:us-east-1:<account>:role/synapse-mwaa-dev/Viewer` for view-only
 access.
+
+# Airflow connections and variables
+
+Airflow reads connections and variables from AWS Secrets Manager in the same account and region
+as the environment, using the same prefixes as the EKS Airflow deployment:
+
+| Airflow lookup | Secret name |
+| --- | --- |
+| Connection `<conn_id>` | `airflow/connections/<conn_id>` |
+| `Variable.get("<name>")` | `airflow/variables/<name>` |
+
+Anything not found in Secrets Manager falls back to the values added in the Airflow UI under
+**Admin** → **Connections** / **Variables**. Secrets encrypted with a customer-managed KMS key
+also need `kms:Decrypt` added to the execution role.
 
 # Troubleshooting
 
