@@ -6,7 +6,7 @@ locals {
 
   # orca-recipes commit whose requirements-airflow.txt and mwaa/constraints.txt are installed
   # on MWAA. Shared by dev and prod so they cannot diverge. Bump it, confirm the dev MWAA
-  # stack run and verify, then confirm the prod run
+  # stack run and verify, then confirm the prod run. Prod only accepts a commit on main
   mwaa_orca_recipes_sha = "be6f043c926fc01ab922cde0f599af358727f56f"
 }
 

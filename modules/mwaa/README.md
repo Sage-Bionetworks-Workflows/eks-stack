@@ -73,15 +73,18 @@ The module downloads `requirements-airflow.txt` from orca-recipes at `orca_recip
 `requirements.txt` in the bucket. Do not upload `requirements.txt` manually. The next stack run
 replaces it.
 
-To change the installed packages:
+To change the installed packages, follow
+[Changing dependencies](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies)
+in orca-recipes. In summary:
 
-1. Merge the change to `requirements-airflow.txt` (and `mwaa/constraints.txt` if needed) in
-   orca-recipes.
-2. Set `mwaa_orca_recipes_sha` in `deployments/main.tf` to the merged commit. Dev and prod both
-   use this value.
-3. Confirm the dev MWAA stack run. The environment update takes 20–30 minutes.
-4. Make sure the install succeeded and the DAGs work in dev.
-5. Confirm the prod MWAA stack run.
+1. Set `mwaa_orca_recipes_sha` in `deployments/main.tf` to the orca-recipes commit. Dev and
+   prod both use this value. A commit on an orca-recipes pull request branch is allowed, to
+   test the change on dev before it merges.
+2. Confirm the dev MWAA stack run. The environment update takes 20–30 minutes.
+3. Make sure the install succeeded and the DAGs work in dev.
+4. If the SHA is not on orca-recipes `main`, bump it to the merged commit and repeat steps 2–3.
+5. Confirm the prod MWAA stack run. The prod plan fails if the SHA is not on orca-recipes
+   `main`. The check uses the GitHub compare API.
 
 # Accessing the Airflow UI
 

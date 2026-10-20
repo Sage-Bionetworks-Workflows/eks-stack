@@ -26,6 +26,21 @@ data "http" "requirements" {
   }
 }
 
+# Dev may install requirements from a feature branch commit. Prod only installs commits on main
+data "http" "orca_recipes_sha_on_main" {
+  count = var.enabled && var.deployment_environment == "prod" ? 1 : 0
+
+  url             = "https://api.github.com/repos/Sage-Bionetworks-Workflows/orca-recipes/compare/${var.orca_recipes_sha}...main?per_page=1"
+  request_headers = { Accept = "application/vnd.github+json" }
+
+  lifecycle {
+    postcondition {
+      condition     = contains(["ahead", "identical"], try(jsondecode(self.response_body).status, ""))
+      error_message = "orca-recipes commit ${var.orca_recipes_sha} is not on main. Bump orca_recipes_sha to a main commit before deploying prod"
+    }
+  }
+}
+
 resource "aws_s3_object" "requirements" {
   count = var.enabled ? 1 : 0
 
