@@ -1,4 +1,5 @@
 locals {
+  # Inputs for deployments/stacks/mwaa. Each is set on the stack as TF_VAR_<key>
   mwaa_stack_variables = {
     enabled              = var.enabled
     name                 = var.mwaa_name
@@ -13,6 +14,7 @@ locals {
   }
 }
 
+# Spacelift space holding the MWAA stack
 resource "spacelift_space" "mwaa-space" {
   name             = var.space_name
   parent_space_id  = var.parent_space_id
@@ -20,6 +22,7 @@ resource "spacelift_space" "mwaa-space" {
   inherit_entities = true
 }
 
+# Runs the Terraform code in project_root, from the tracked branch of this repo
 resource "spacelift_stack" "mwaa-stack" {
   github_enterprise {
     namespace = "Sage-Bionetworks-Workflows"
@@ -42,6 +45,8 @@ resource "spacelift_stack" "mwaa-stack" {
   space_id                = spacelift_space.mwaa-space.id
 }
 
+# Passes mwaa_stack_variables to the stack. Lists are JSON encoded, which Terraform parses
+# back into lists
 resource "spacelift_environment_variable" "mwaa-stack-environment-variables" {
   for_each = local.mwaa_stack_variables
 
@@ -51,6 +56,7 @@ resource "spacelift_environment_variable" "mwaa-stack-environment-variables" {
   write_only = false
 }
 
+# Gives the stack read and write credentials for the AWS account it deploys to
 resource "spacelift_aws_integration_attachment" "mwaa-aws-integration-attachment" {
   integration_id = var.aws_integration_id
   stack_id       = spacelift_stack.mwaa-stack.id
