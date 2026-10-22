@@ -11,8 +11,11 @@ locals {
   bucket_name       = trimprefix(module.mwaa.s3_bucket_arn, "arn:aws:s3:::")
 }
 
-# DAG dependencies live in orca-recipes. MWAA installs them with the constraints file from the
-# same commit, since the upstream Airflow constraints cannot install synapseclient
+# Download the MWAA Python requirements from the pinned orca-recipes commit.
+# This ensures the dependencies deployed to MWAA come from the exact commit
+# specified by var.orca_recipes_sha. Fail early if the file does not exist.
+# MWAA installs them with the constraints file from the same commit, since the upstream
+# Airflow constraints cannot install synapseclient
 data "http" "requirements" {
   count = var.enabled ? 1 : 0
 
@@ -41,6 +44,7 @@ data "http" "orca_recipes_sha_on_main" {
   }
 }
 
+# Build and upload the requirements file that MWAA will install.
 resource "aws_s3_object" "requirements" {
   count = var.enabled ? 1 : 0
 
@@ -92,7 +96,9 @@ module "mwaa" {
   # Login is still IAM-only
   webserver_access_mode = "PUBLIC_ONLY"
 
-  # A new object version, from a new orca_recipes_sha, makes MWAA install the requirements again
+  # Pin MWAA to the S3 version of the generated requirements file.
+  # When orca_recipes_sha changes, Terraform uploads new requirements content,
+  # producing a new S3 version ID that causes MWAA to install the updated dependencies.
   requirements_s3_path           = local.requirements_path
   requirements_s3_object_version = one(aws_s3_object.requirements[*].version_id)
 
@@ -121,15 +127,18 @@ module "mwaa" {
   tags = var.tags
 }
 
-# Lets the orca-recipes GitHub Actions deploy job for this environment replace the DAGs. Only
-# jobs running in the matching GitHub environment, which only allows the main branch, can
-# assume it
+# Look up the AWS OIDC provider for GitHub Actions. organizations-infra creates it in every
+# account
 data "aws_iam_openid_connect_provider" "github" {
   count = var.enabled ? 1 : 0
 
   url = "https://token.actions.githubusercontent.com"
 }
 
+# Define who is allowed to assume the DAG deployment role.
+# Only GitHub Actions jobs from orca-recipes running in the matching
+# GitHub environment (mwaa-dev or mwaa-prod) can assume the role. Both environments only
+# allow workflows from the main branch
 data "aws_iam_policy_document" "dag_deploy_trust" {
   count = var.enabled ? 1 : 0
 
@@ -155,7 +164,9 @@ data "aws_iam_policy_document" "dag_deploy_trust" {
   }
 }
 
-# Only the dags/ prefix. requirements.txt is owned by this module
+# Define what the GitHub Actions deployment role can do after assuming it.
+# Limit access to the dags/ prefix so CI can deploy and remove DAGs without
+# modifying requirements.txt or other objects
 data "aws_iam_policy_document" "dag_deploy" {
   count = var.enabled ? 1 : 0
 
@@ -176,6 +187,8 @@ data "aws_iam_policy_document" "dag_deploy" {
   }
 }
 
+# Create the AWS role that the orca-recipes GitHub Actions deployment job
+# assumes through OIDC
 resource "aws_iam_role" "dag_deploy" {
   count = var.enabled ? 1 : 0
 
@@ -185,6 +198,8 @@ resource "aws_iam_role" "dag_deploy" {
   tags = var.tags
 }
 
+# Attach the S3 permissions above to the deployment role. This determines
+# what the GitHub Actions job can do after it has successfully assumed the role.
 resource "aws_iam_role_policy" "dag_deploy" {
   count = var.enabled ? 1 : 0
 

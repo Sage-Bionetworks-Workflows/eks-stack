@@ -5,8 +5,8 @@ locals {
   eks_min_ami_release_date = "20260505"
 
   # orca-recipes commit whose requirements-airflow.txt and mwaa/constraints.txt are installed
-  # on MWAA. Shared by dev and prod so they cannot diverge. Bump it, confirm the dev MWAA
-  # stack run and verify, then confirm the prod run. Prod only accepts a commit on main
+  # on MWAA. Shared by dev and prod so they cannot diverge. To bump it, follow
+  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
   mwaa_orca_recipes_sha = "be6f043c926fc01ab922cde0f599af358727f56f"
 }
 
@@ -177,7 +177,10 @@ module "mwaa-spacelift-development" {
   # AWS configuration
   region = "us-east-1"
 
-  vpc_name       = "mwaa-dev"
+  vpc_name = "mwaa-dev"
+  # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
+  # Picked with IPAM as described in https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC
+  # Changing it replaces the VPC and the MWAA environment
   vpc_cidr_block = "10.52.48.0/22"
   azs            = ["us-east-1a", "us-east-1b"]
   # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway
@@ -211,7 +214,10 @@ module "mwaa-spacelift-production" {
   # AWS configuration
   region = "us-east-1"
 
-  vpc_name       = "mwaa-prod"
+  vpc_name = "mwaa-prod"
+  # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
+  # Picked with IPAM as described in https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC
+  # Changing it replaces the VPC and the MWAA environment
   vpc_cidr_block = "10.52.52.0/22"
   azs            = ["us-east-1a", "us-east-1b"]
   # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway

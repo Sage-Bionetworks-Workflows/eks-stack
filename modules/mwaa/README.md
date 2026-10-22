@@ -75,16 +75,8 @@ replaces it.
 
 To change the installed packages, follow
 [Changing dependencies](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies)
-in orca-recipes. In summary:
-
-1. Set `mwaa_orca_recipes_sha` in `deployments/main.tf` to the orca-recipes commit. Dev and
-   prod both use this value. A commit on an orca-recipes pull request branch is allowed, to
-   test the change on dev before it merges.
-2. Confirm the dev MWAA stack run. The environment update takes 20–30 minutes.
-3. Make sure the install succeeded and the DAGs work in dev.
-4. If the SHA is not on orca-recipes `main`, bump it to the merged commit and repeat steps 2–3.
-5. Confirm the prod MWAA stack run. The prod plan fails if the SHA is not on orca-recipes
-   `main`. The check uses the GitHub compare API.
+in orca-recipes. The prod plan fails if `orca_recipes_sha` is not on orca-recipes `main`. The
+check uses the GitHub compare API.
 
 # Accessing the Airflow UI
 
@@ -154,12 +146,12 @@ aws s3 cp s3://<bucket>/requirements.txt - | head -1
   then re-run the MWAA stack.
 - **Expected commit**: the install failed. MWAA keeps running with the previous requirements.
   The pip error is in the `requirements_install_*` stream of the Scheduler log group. Fix it in
-  orca-recipes as described in its `mwaa/README.md`, then bump the SHA again.
+  orca-recipes as described in its `mwaa/README.md`, then bump the SHA through a PR again.
 
 ## MWAA stack run fails downloading requirements-airflow.txt
 
 `orca_recipes_sha` must be a full commit SHA that has been pushed to orca-recipes. Open
-`https://raw.githubusercontent.com/Sage-Bionetworks-Workflows/orca-recipes/<sha>/requirements-airflow.txt`
+`https://raw.githubusercontent.com/Sage-Bionetworks-Workflows/orca-recipes/<orca_recipes_sha>/requirements-airflow.txt`
 to check.
 
 ## Root stack changes for MWAA are not deployed from a feature branch
