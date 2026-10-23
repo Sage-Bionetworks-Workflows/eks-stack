@@ -46,8 +46,12 @@ variable "airflow_version" {
   default     = ""
 }
 
-variable "requirements_s3_path" {
-  description = "Path of the requirements.txt file relative to the root of the bucket. Empty installs no extra packages. The file must already exist in the bucket when this is set"
+variable "orca_recipes_sha" {
+  description = "Commit SHA of orca-recipes whose requirements-airflow.txt and mwaa/constraints.txt are installed on the environment"
   type        = string
-  default     = ""
+}
+
+variable "deployment_environment" {
+  description = "dev or prod. Exposed to DAGs as AIRFLOW__ORCA__ENVIRONMENT, and selects the orca-recipes GitHub environment (mwaa-<value>) allowed to deploy DAGs"
+  type        = string
 }

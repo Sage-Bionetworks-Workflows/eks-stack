@@ -413,6 +413,7 @@ Reference: <https://docs.spacelift.io/integrations/cloud-providers/aws#setup-gui
                 "iam:*OpenIDConnectProvider",
                 "iam:*InstanceProfile",
                 "iam:ListPolicyVersions",
+                "iam:ListOpenIDConnectProviders",
                 "iam:UpdateOpenIDConnectProviderThumbprint",
                 "iam:ListGroupsForUser",
                 "iam:ListAttachedUserPolicies"

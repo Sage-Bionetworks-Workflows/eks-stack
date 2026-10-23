@@ -1,16 +1,17 @@
 locals {
   # Inputs for deployments/stacks/mwaa. Each is set on the stack as TF_VAR_<key>
   mwaa_stack_variables = {
-    enabled              = var.enabled
-    name                 = var.mwaa_name
-    region               = var.region
-    vpc_name             = var.vpc_name
-    vpc_cidr_block       = var.vpc_cidr_block
-    azs                  = var.azs
-    private_subnet_cidrs = var.private_subnet_cidrs
-    public_subnet_cidrs  = var.public_subnet_cidrs
-    airflow_version      = var.airflow_version
-    requirements_s3_path = var.requirements_s3_path
+    enabled                = var.enabled
+    name                   = var.mwaa_name
+    region                 = var.region
+    vpc_name               = var.vpc_name
+    vpc_cidr_block         = var.vpc_cidr_block
+    azs                    = var.azs
+    private_subnet_cidrs   = var.private_subnet_cidrs
+    public_subnet_cidrs    = var.public_subnet_cidrs
+    airflow_version        = var.airflow_version
+    orca_recipes_sha       = var.orca_recipes_sha
+    deployment_environment = var.deployment_environment
   }
 }
 
