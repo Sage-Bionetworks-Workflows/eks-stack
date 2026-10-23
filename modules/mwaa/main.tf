@@ -1,8 +1,6 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  # Same prefixes as the EKS Airflow deployment (modules/apache-airflow) so secrets follow one
-  # naming scheme
   secrets_connections_prefix = "airflow/connections"
   secrets_variables_prefix   = "airflow/variables"
 
@@ -79,6 +77,8 @@ data "aws_iam_policy_document" "secrets" {
   }
 }
 
+# The MWAA environment, plus the S3 bucket, execution role and security group the upstream
+# module creates for it
 module "mwaa" {
   source  = "cloudposse/mwaa/aws"
   version = "0.16.0"

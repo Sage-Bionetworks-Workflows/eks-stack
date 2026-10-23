@@ -86,14 +86,10 @@ The web server uses `PUBLIC_ONLY` access: the URL is reachable from the internet
    `org_sagebase_dnt_dev` account and that is the only one currently available) via JumpCloud.
 2. Open **Amazon MWAA** → **Environments** in `us-east-1`, select the environment `synapse-mwaa-dev` for dev and click **Open Airflow UI**.
 
-The Airflow role (`Admin`, `Op`, `User`, `Viewer`) is set by the resource the permission is
-granted on, e.g. `arn:aws:airflow:us-east-1:<account>:role/synapse-mwaa-dev/Viewer` for view-only
-access.
-
 # Airflow connections and variables
 
 Airflow reads connections and variables from AWS Secrets Manager in the same account and region
-as the environment, using the same prefixes as the EKS Airflow deployment:
+as the environment:
 
 | Airflow lookup | Secret name |
 | --- | --- |
@@ -101,8 +97,7 @@ as the environment, using the same prefixes as the EKS Airflow deployment:
 | `Variable.get("<name>")` | `airflow/variables/<name>` |
 
 Anything not found in Secrets Manager falls back to the values added in the Airflow UI under
-**Admin** → **Connections** / **Variables**. Secrets encrypted with a customer-managed KMS key
-also need `kms:Decrypt` added to the execution role.
+**Admin** → **Connections** / **Variables**. See [Secrets](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/CONTRIBUTING.md#secrets) for details on adding / modifying our current secrets in the AWS accounts.
 
 # Troubleshooting
 
@@ -157,12 +152,4 @@ to check.
 ## Root stack changes for MWAA are not deployed from a feature branch
 
 The root admin stack tracks `main`. If run promotion is not available, the root stack's branch
-can be pointed at the feature branch temporarily to be deployed with changes from the feature branch. While it is:
-
-- Keep the feature branch rebased on `main`, or the root run will roll back changes merged by
-  others.
-- Do not run the root stack on `main` until the feature branch is merged. `main` would plan to
-  delete the MWAA space and stack, orphaning the AWS resources and their state.
-
-After merging, point the root stack back at `main` and check that its first plan shows no
-deletes.
+can be pointed at the feature branch temporarily to be deployed with changes from the feature branch.

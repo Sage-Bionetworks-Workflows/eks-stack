@@ -160,6 +160,7 @@ module "dpe-sandbox-spacelift-production" {
   eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
+# Managed Airflow (MWAA) environment for DPE workflows, in the DNT dev account
 module "mwaa-spacelift-development" {
   source = "./spacelift/mwaa"
 

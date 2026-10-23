@@ -1,4 +1,5 @@
 locals {
+  # Applied to every resource in this stack
   tags = {
     Purpose    = "Managed Airflow for DPE workflows"
     ManagedBy  = "Terraform"
@@ -6,6 +7,7 @@ locals {
   }
 }
 
+# Dedicated VPC for the MWAA environment
 module "vpc" {
   count = var.enabled ? 1 : 0
 
@@ -25,11 +27,14 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
+  # Leave the VPC's default security group as AWS creates it. MWAA uses the security group
+  # created by the mwaa module
   manage_default_security_group = false
 
   tags = local.tags
 }
 
+# The MWAA environment, running in the private subnets of the VPC above
 module "mwaa" {
   source     = "../../../modules/mwaa"
   enabled    = var.enabled
