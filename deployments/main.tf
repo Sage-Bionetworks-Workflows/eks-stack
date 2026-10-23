@@ -227,7 +227,7 @@ module "mwaa-spacelift-production" {
   public_subnet_cidrs  = ["10.52.54.0/24", "10.52.55.0/24"]
 
   # No AWS resources are created until this is true
-  enabled = false
+  enabled = true
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-prod"
   # AWS MWAA-supported Airflow version (Python 3.12).
