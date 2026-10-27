@@ -2636,10 +2636,13 @@ dags:
     # ssh example: git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
     repo: https://github.com/Sage-Bionetworks-Workflows/orca-recipes
-    branch: main
-    rev: HEAD
-    # The git revision (branch, tag, or hash) to check out, v4 only
-    ref: main
+    # git-sync v4 replaces ref with the deprecated branch, or with rev when branch is empty,
+    # so both stay empty for ref to take effect
+    branch: ""
+    rev: ""
+    # The git revision (branch, tag, or hash) to check out, v4 only.
+    # A commit SHA, so merges to orca-recipes main do not change the DAGs EKS runs
+    ref: 8db2ccfa9ab22916e90f7965d46c08edff25739f
     depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
