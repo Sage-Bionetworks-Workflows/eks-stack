@@ -83,7 +83,7 @@ variable "public_subnet_cidrs" {
 }
 
 variable "airflow_version" {
-  description = "Airflow version of the MWAA environment. Empty uses the latest version MWAA supports. MWAA cannot downgrade an existing environment, so lowering this requires replacing it"
+  description = "Airflow version of the MWAA environment. Empty uses the latest version MWAA supports. Raising the major version (for example 2.x to 3.x) replaces the environment"
   type        = string
   default     = ""
 }

@@ -150,6 +150,21 @@ aws s3 cp s3://<bucket>/requirements.txt - | head -1
 `https://raw.githubusercontent.com/Sage-Bionetworks-Workflows/orca-recipes/<orca_recipes_sha>/requirements-airflow.txt`
 to check.
 
+## Changing `airflow_version` fails
+
+- **Major version upgrade (for example 2.11.2 to 3.3.1)**: the AWS provider replaces the
+  environment, even though MWAA can upgrade 2.11.x in place. The plan shows
+  `aws_mwaa_environment.default[0]` must be replaced. Terraform deletes the environment and
+  creates a new one with the same name, 20–30 minutes each, so Airflow is unavailable in
+  between. The new environment starts with an empty metadata database: run history is gone,
+  every DAG starts paused, and Connections and Variables added in the UI are lost. The ones in
+  Secrets Manager, the bucket, the roles and the security group are kept.
+- **The update fails installing requirements**: `requirements.txt` is installed on the new
+  version, so bump `orca_recipes_sha` in the same change to an orca-recipes commit whose
+  `mwaa/constraints.txt` is for that version. See
+  [Upgrading the MWAA Airflow version](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#upgrading-the-mwaa-airflow-version)
+  in orca-recipes.
+
 ## Root stack changes for MWAA are not deployed from a feature branch
 
 The root admin stack tracks `main`. If run promotion is not available, the root stack's branch

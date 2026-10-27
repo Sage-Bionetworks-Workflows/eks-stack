@@ -22,7 +22,7 @@ locals {
 # This ensures the dependencies deployed to MWAA come from the exact commit
 # specified by var.orca_recipes_sha. Fail early if the file does not exist.
 # MWAA installs them with the constraints file from the same commit, since the upstream
-# Airflow constraints cannot install synapseclient
+# Airflow constraints conflict with them and pin packages with vulnerability alerts
 data "http" "requirements" {
   count = var.enabled ? 1 : 0
 

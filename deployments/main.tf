@@ -7,8 +7,8 @@ locals {
   # orca-recipes commit whose requirements-airflow.txt and mwaa/constraints.txt are installed
   # on MWAA. Shared by dev and prod so they cannot diverge. To bump it, follow
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
-  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/830a4fc167526174fd994062b8bfd7fcc452248d
-  mwaa_orca_recipes_sha = "830a4fc167526174fd994062b8bfd7fcc452248d"
+  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/0d6af01fa58ebd396b0d47c1234a75d2384bf47c
+  mwaa_orca_recipes_sha = "0d6af01fa58ebd396b0d47c1234a75d2384bf47c"
 }
 
 resource "spacelift_space" "development" {
@@ -195,7 +195,7 @@ module "mwaa-spacelift-development" {
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-dev"
   # AWS MWAA-supported Airflow version (Python 3.12).
-  airflow_version        = "2.11.2"
+  airflow_version        = "3.3.1"
   orca_recipes_sha       = local.mwaa_orca_recipes_sha
   deployment_environment = "dev"
 }
@@ -232,7 +232,7 @@ module "mwaa-spacelift-production" {
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-prod"
   # AWS MWAA-supported Airflow version (Python 3.12).
-  airflow_version        = "2.11.2"
+  airflow_version        = "3.3.1"
   orca_recipes_sha       = local.mwaa_orca_recipes_sha
   deployment_environment = "prod"
 }
