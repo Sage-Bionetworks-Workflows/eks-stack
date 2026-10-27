@@ -179,6 +179,7 @@ module "mwaa-spacelift-development" {
   # AWS configuration
   region = "us-east-1"
 
+  # Prefix of the VPC's CloudFormation exports, which organizations-infra 710-tgw looks up by name
   vpc_name = "mwaa-dev"
   # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
   # Picked with IPAM as described in https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC

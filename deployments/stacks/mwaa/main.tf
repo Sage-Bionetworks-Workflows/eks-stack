@@ -34,6 +34,30 @@ module "vpc" {
   tags = local.tags
 }
 
+# Exports the VPC IDs as <region>-<vpc_name>-<key>, the names organizations-infra
+# (org-formation/710-tgw) looks up with !CopyValue to attach this VPC to the Transit Gateway.
+# Renaming vpc_name or replacing the VPC needs a matching organizations-infra deploy
+resource "aws_cloudformation_stack" "vpc_exports" {
+  # ponytail: prod skips this until its VPC is a Transit Gateway spoke; drop the dev check then
+  count = var.enabled && var.deployment_environment == "dev" ? 1 : 0
+
+  name = "${var.vpc_name}-vpc-exports"
+  template_body = jsonencode({
+    # A stack needs at least one resource
+    Resources = { Placeholder = { Type = "AWS::CloudFormation::WaitConditionHandle" } }
+    Outputs = {
+      for key, value in {
+        VPCId             = module.vpc[0].vpc_id
+        PrivateRouteTable = module.vpc[0].private_route_table_ids[0]
+        PrivateSubnet     = module.vpc[0].private_subnets[0]
+        PrivateSubnet1    = module.vpc[0].private_subnets[1]
+      } : key => { Value = value, Export = { Name = "${var.region}-${var.vpc_name}-${key}" } }
+    }
+  })
+
+  tags = local.tags
+}
+
 # The MWAA environment, running in the private subnets of the VPC above
 module "mwaa" {
   source     = "../../../modules/mwaa"

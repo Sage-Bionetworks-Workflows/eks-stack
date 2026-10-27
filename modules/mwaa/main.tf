@@ -7,6 +7,15 @@ locals {
   orca_recipes_url  = "https://raw.githubusercontent.com/Sage-Bionetworks-Workflows/orca-recipes/${var.orca_recipes_sha}"
   requirements_path = "requirements.txt"
   bucket_name       = trimprefix(module.mwaa.s3_bucket_arn, "arn:aws:s3:::")
+
+  # CIDR of the Transit Gateway hub VPC (unionstationvpc, organizations-infra
+  # org-formation/710-tgw). The Sage Client VPN source NATs client traffic to its network
+  # interfaces in this VPC, so VPN traffic reaches spoke VPCs from here and not from the
+  # VPN client CIDR (10.100.0.0/16)
+  sage_vpn_cidr = "10.50.0.0/16"
+
+  # ponytail: prod stays public until its VPC is a Transit Gateway spoke; drop this condition then
+  vpn_only = var.deployment_environment == "dev"
 }
 
 # Download the MWAA Python requirements from the pinned orca-recipes commit.
@@ -92,9 +101,23 @@ module "mwaa" {
 
   airflow_version = var.airflow_version
 
-  # Dev has no VPN or bastion into the VPC, so the UI must be public to be reachable.
-  # Login is still IAM-only
-  webserver_access_mode = "PUBLIC_ONLY"
+  # PRIVATE_ONLY is only reachable over the Sage VPN, which needs this VPC to be a Transit
+  # Gateway spoke (organizations-infra 710-tgw) and authorized for VPN users (720-client-vpn).
+  # Login is IAM-only either way
+  webserver_access_mode = local.vpn_only ? "PRIVATE_ONLY" : "PUBLIC_ONLY"
+
+  # Allows Sage VPN traffic to the webserver's private VPC endpoint
+  additional_security_group_rules = local.vpn_only ? [
+    {
+      key         = "sage-vpn-webserver"
+      type        = "ingress"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = [local.sage_vpn_cidr]
+      description = "Allow HTTPS to the MWAA webserver from the Sage VPN"
+    }
+  ] : []
 
   # Pin MWAA to the S3 version of the generated requirements file.
   # When orca_recipes_sha changes, Terraform uploads new requirements content,
@@ -104,9 +127,11 @@ module "mwaa" {
 
   # All log groups are disabled upstream by default. The requirements install output is
   # written to the scheduler and worker logs
-  scheduler_logs_enabled = true
-  worker_logs_enabled    = true
-  task_logs_enabled      = true
+  scheduler_logs_enabled      = true
+  worker_logs_enabled         = true
+  task_logs_enabled           = true
+  dag_processing_logs_enabled = true
+  webserver_logs_enabled      = true
 
   # Connections and Variables are looked up in Secrets Manager first, then the metadata database
   airflow_configuration_options = {

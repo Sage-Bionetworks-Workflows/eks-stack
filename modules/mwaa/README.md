@@ -80,7 +80,8 @@ check uses the GitHub compare API.
 
 # Accessing the Airflow UI
 
-The web server uses `PUBLIC_ONLY` access: the URL is reachable from the internet.
+Dev uses `PRIVATE_ONLY` access: the URL is only reachable while connected to the Sage VPN.
+Prod uses `PUBLIC_ONLY` access: the URL is reachable from the internet.
 
 1. Log into the AWS Console for the account the environment is deployed to (dev uses the
    `org_sagebase_dnt_dev` account and that is the only one currently available) via JumpCloud.
