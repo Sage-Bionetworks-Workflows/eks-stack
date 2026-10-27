@@ -142,6 +142,9 @@ module "mwaa" {
     })
     # Read by DAGs as AIRFLOW__ORCA__ENVIRONMENT to choose dev or prod values
     "orca.environment" = var.deployment_environment
+    # Lets tasks receive the dataclasses other tasks return. The default only allows
+    # airflow.* classes. Matches the EKS Airflow deployment (modules/apache-airflow)
+    "core.allowed_deserialization_classes_regexp" = ".*"
   }
   additionals_policy_documents = [data.aws_iam_policy_document.secrets.json]
 
