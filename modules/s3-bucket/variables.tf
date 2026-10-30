@@ -18,18 +18,21 @@ variable "enable_versioning" {
 }
 
 variable "aws_account_id" {
-  description = "AWS account ID"
+  description = "AWS account ID. Only used to name the EKS access policy"
   type        = string
+  default     = null
 }
 
 variable "cluster_name" {
-  description = "EKS cluster name"
+  description = "EKS cluster name. Only used to name the EKS access role and policy"
   type        = string
+  default     = null
 }
 
 variable "cluster_oidc_provider_arn" {
-  description = "EKS cluster ARN for the oidc provider"
+  description = "EKS cluster ARN for the oidc provider. When null, no EKS access role is created"
   type        = string
+  default     = null
 }
 
 variable "public_access" {

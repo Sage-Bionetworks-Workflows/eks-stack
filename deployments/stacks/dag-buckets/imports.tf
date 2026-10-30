@@ -7,42 +7,42 @@ locals {
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket.bucket[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket.bucket
   id       = each.key
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_versioning.versioning[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_versioning.versioning
   id       = each.key
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_ownership_controls.ownership[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_ownership_controls.ownership[0]
   id       = each.key
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_public_access_block.access_block[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_public_access_block.access_block[0]
   id       = each.key
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_acl.acl[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_acl.bucket_acl[0]
   id       = "${each.key},public-read"
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_policy.public_read[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_policy.my_bucket_policy[0]
   id       = each.key
 }
 
 import {
   for_each = local.import_buckets
-  to       = aws_s3_bucket_cors_configuration.cors[each.key]
+  to       = module.bucket[each.key].aws_s3_bucket_cors_configuration.cors[0]
   id       = each.key
 }
