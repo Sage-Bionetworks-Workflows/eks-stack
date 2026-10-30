@@ -23,6 +23,8 @@ module "my_beautiful_bucket" {
 
 The module handles creating the necessary IAM policy, role, and role policy attachment for accessing the bucket and provides the role ARN as an output.
 
+The role is only for EKS workloads. Leave out `aws_account_id`, `cluster_name` and `cluster_oidc_provider_arn` to create only the bucket, as `deployments/stacks/dag-buckets` does. Its users then get access through their own IAM policies.
+
 After confirming that the policy and role are configured correctly, you can either use the ARN directly in your application code or configure a kubernetes service account bound to the IAM role. The latter can be done like so:
 ```
 resource "kubernetes_service_account" "my_beautiful_bucket_service_account" {

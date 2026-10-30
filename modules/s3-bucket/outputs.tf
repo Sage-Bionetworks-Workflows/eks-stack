@@ -9,6 +9,6 @@ output "bucket_arn" {
 }
 
 output "access_role_arn" {
-  description = "ARN of the role to access the S3 bucket"
-  value       = aws_iam_role.s3-access-iam-role.arn
+  description = "ARN of the role to access the S3 bucket. null when cluster_oidc_provider_arn is null"
+  value       = one(aws_iam_role.s3-access-iam-role[*].arn)
 }

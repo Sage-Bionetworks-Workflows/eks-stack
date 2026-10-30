@@ -12,6 +12,7 @@ locals {
     airflow_version        = var.airflow_version
     orca_recipes_sha       = var.orca_recipes_sha
     deployment_environment = var.deployment_environment
+    dag_s3_buckets         = var.dag_s3_buckets
   }
 }
 

@@ -9,6 +9,18 @@ locals {
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/0d6af01fa58ebd396b0d47c1234a75d2384bf47c
   mwaa_orca_recipes_sha = "0d6af01fa58ebd396b0d47c1234a75d2384bf47c"
+
+  # S3 buckets the orca-recipes DAGs write to, created by the dag-buckets stacks and
+  # granted to the MWAA execution role of the same environment. Dev buckets are private
+  dag_buckets_development = {
+    "synapse-croissant-metadata-dev"         = { public = false }
+    "synapse-croissant-metadata-minimal-dev" = { public = false }
+  }
+  # Public: Google and the Synapse web client read the croissant files
+  dag_buckets_production = {
+    "synapse-croissant-metadata"         = { public = true }
+    "synapse-croissant-metadata-minimal" = { public = true }
+  }
 }
 
 resource "spacelift_space" "development" {
@@ -198,6 +210,7 @@ module "mwaa-spacelift-development" {
   airflow_version        = "3.3.1"
   orca_recipes_sha       = local.mwaa_orca_recipes_sha
   deployment_environment = "dev"
+  dag_s3_buckets         = keys(local.dag_buckets_development)
 }
 
 module "mwaa-spacelift-production" {
@@ -237,6 +250,34 @@ module "mwaa-spacelift-production" {
   airflow_version        = "3.3.1"
   orca_recipes_sha       = local.mwaa_orca_recipes_sha
   deployment_environment = "prod"
+  dag_s3_buckets         = keys(local.dag_buckets_production)
+}
+
+# S3 buckets the orca-recipes DAGs write to, in the DNT dev account
+module "dag-buckets-spacelift-development" {
+  source = "./spacelift/dag-buckets"
+
+  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
+  git_branch         = var.git_branch
+  space_id           = spacelift_space.development.id
+  stack_name         = "DPE DEV DAG Buckets"
+
+  buckets = local.dag_buckets_development
+}
+
+module "dag-buckets-spacelift-production" {
+  source = "./spacelift/dag-buckets"
+
+  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
+  git_branch         = var.git_branch
+  space_id           = spacelift_space.production.id
+  stack_name         = "DPE PROD DAG Buckets"
+
+  buckets = local.dag_buckets_production
+  # Created by the dpe-k8s production stack, which forgets them (removed blocks in
+  # deployments/stacks/dpe-k8s/main.tf). Remove this line and those blocks once both
+  # stacks have applied
+  import_buckets = keys(local.dag_buckets_production)
 }
 
 module "snowflake-spacelift-development" {

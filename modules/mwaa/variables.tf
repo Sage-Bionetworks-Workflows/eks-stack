@@ -53,3 +53,9 @@ variable "deployment_environment" {
     error_message = "deployment_environment must be dev or prod"
   }
 }
+
+variable "dag_s3_buckets" {
+  description = "S3 buckets that DAGs read and write as the MWAA execution role (S3Hook(aws_conn_id=None)). Created by the dag-buckets stack"
+  type        = list(string)
+  default     = []
+}
