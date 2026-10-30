@@ -227,8 +227,10 @@ module "mwaa-spacelift-production" {
   private_subnet_cidrs = ["10.52.52.0/24", "10.52.53.0/24"]
   public_subnet_cidrs  = ["10.52.54.0/24", "10.52.55.0/24"]
 
-  # No AWS resources are created until this is true
-  enabled = true
+  # No AWS resources are created until this is true. Prod stays disabled until the
+  # organizations-infra PR that adds this VPC to the Transit Gateway is merged and applied,
+  # and prod is ready to go live; see DPE-1836 rollout notes.
+  enabled = false
   # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
   mwaa_name = "synapse-mwaa-prod"
   # AWS MWAA-supported Airflow version (Python 3.12).
