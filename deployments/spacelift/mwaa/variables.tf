@@ -97,3 +97,9 @@ variable "deployment_environment" {
   description = "dev or prod. Exposed to DAGs as AIRFLOW__ORCA__ENVIRONMENT, and selects the orca-recipes GitHub environment (mwaa-<value>) allowed to deploy DAGs"
   type        = string
 }
+
+variable "dag_s3_buckets" {
+  description = "S3 buckets that DAGs read and write as the MWAA execution role (S3Hook(aws_conn_id=None)). Created by the dag-buckets stack"
+  type        = list(string)
+  default     = []
+}

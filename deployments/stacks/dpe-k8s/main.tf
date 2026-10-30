@@ -46,28 +46,63 @@ module "sage-aws-ses" {
   email_identities = var.ses_email_identities
 }
 
-module "synapse_dataset_to_crossiant_metadata" {
-  # This points to the prod cluster - The only location where we want to create the bucket
-  count  = var.cluster_name == "dpe-k8" ? 1 : 0
-  source      = "../../../modules/s3-bucket"
-  bucket_name = "synapse-croissant-metadata"
-  enable_versioning = true
-  aws_account_id = var.aws_account_id
-  cluster_name = var.cluster_name
-  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
-  public_access = true
-  enable_cors = true
+# The croissant buckets moved to the dag-buckets production stack, which imports them.
+# These blocks drop them from this stack's state without deleting them. The buckets' unused
+# EKS access roles and policies (s3-dpe-k8-<bucket>) are destroyed. Remove these blocks
+# once this stack and the dag-buckets production stack have applied
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket.bucket
 }
 
-module "synapse_data_catalog_minimal_jsonld" {
-  # This points to the prod cluster - The only location where we want to create the bucket
-  count  = var.cluster_name == "dpe-k8" ? 1 : 0
-  source      = "../../../modules/s3-bucket"
-  bucket_name = "synapse-croissant-metadata-minimal"
-  enable_versioning = true
-  aws_account_id = var.aws_account_id
-  cluster_name = var.cluster_name
-  cluster_oidc_provider_arn = module.sage-aws-eks.cluster_oidc_provider_arn
-  public_access = true
-  enable_cors = true
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_versioning.versioning
+}
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_ownership_controls.ownership
+}
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_public_access_block.access_block
+}
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_acl.bucket_acl
+}
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_policy.my_bucket_policy
+}
+
+removed {
+  from = module.synapse_dataset_to_crossiant_metadata.aws_s3_bucket_cors_configuration.cors
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket.bucket
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_versioning.versioning
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_ownership_controls.ownership
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_public_access_block.access_block
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_acl.bucket_acl
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_policy.my_bucket_policy
+}
+
+removed {
+  from = module.synapse_data_catalog_minimal_jsonld.aws_s3_bucket_cors_configuration.cors
 }
