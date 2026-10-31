@@ -25,9 +25,7 @@ module "sage-aws-eks-addons" {
 
 module "argo-cd" {
   depends_on = [module.sage-aws-eks-autoscaler]
-  # source     = "spacelift.io/sagebionetworks/argo-cd/aws"
-  # version    = "0.3.1"
-  source = "../../../modules/argo-cd"
+  source     = "../../../modules/argo-cd"
 }
 
 module "flux-cd" {
@@ -36,9 +34,7 @@ module "flux-cd" {
 }
 
 module "victoria-metrics" {
-  depends_on = [module.argo-cd]
-  # source       = "spacelift.io/sagebionetworks/victoria-metrics/aws"
-  # version      = "0.4.8"
+  depends_on   = [module.argo-cd]
   source       = "../../../modules/victoria-metrics"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
@@ -46,9 +42,7 @@ module "victoria-metrics" {
 }
 
 module "trivy-operator" {
-  depends_on = [module.victoria-metrics, module.argo-cd]
-  # source       = "spacelift.io/sagebionetworks/trivy-operator/aws"
-  # version      = "0.3.2"
+  depends_on   = [module.victoria-metrics, module.argo-cd]
   source       = "../../../modules/trivy-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
@@ -56,9 +50,7 @@ module "trivy-operator" {
 }
 
 module "airflow" {
-  depends_on = [module.victoria-metrics, module.argo-cd]
-  # source       = "spacelift.io/sagebionetworks/airflow/aws"
-  # version      = "0.4.0"
+  depends_on                = [module.victoria-metrics, module.argo-cd]
   source                    = "../../../modules/apache-airflow"
   auto_deploy               = var.auto_deploy
   auto_prune                = var.auto_prune
@@ -71,9 +63,7 @@ module "airflow" {
 }
 
 module "postgres-cloud-native-operator" {
-  depends_on = [module.argo-cd]
-  # source       = "spacelift.io/sagebionetworks/postgres-cloud-native-operator/aws"
-  # version      = "0.4.0"
+  depends_on   = [module.argo-cd]
   source       = "../../../modules/postgres-cloud-native-operator"
   auto_deploy  = var.auto_deploy
   auto_prune   = var.auto_prune
@@ -81,9 +71,7 @@ module "postgres-cloud-native-operator" {
 }
 
 module "postgres-cloud-native-database" {
-  depends_on = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
+  depends_on           = [module.postgres-cloud-native-operator, module.airflow, module.argo-cd]
   source               = "../../../modules/postgres-cloud-native"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
@@ -94,10 +82,8 @@ module "postgres-cloud-native-database" {
 }
 
 module "envoy-gateway" {
-  count      = var.enable_cluster_ingress ? 1 : 0
-  depends_on = [module.argo-cd, module.cert-manager]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
+  count                = var.enable_cluster_ingress ? 1 : 0
+  depends_on           = [module.argo-cd, module.cert-manager]
   source               = "../../../modules/envoy-gateway"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune
@@ -110,10 +96,8 @@ module "envoy-gateway" {
 }
 
 module "cert-manager" {
-  count      = var.enable_cluster_ingress ? 1 : 0
-  depends_on = [module.argo-cd]
-  # source               = "spacelift.io/sagebionetworks/postgres-cloud-native-database/aws"
-  # version              = "0.5.0"
+  count                = var.enable_cluster_ingress ? 1 : 0
+  depends_on           = [module.argo-cd]
   source               = "../../../modules/cert-manager"
   auto_deploy          = var.auto_deploy
   auto_prune           = var.auto_prune

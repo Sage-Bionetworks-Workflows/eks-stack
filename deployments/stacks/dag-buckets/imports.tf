@@ -1,8 +1,8 @@
 # Adopts buckets that another stack created, without recreating them. Each address is
-# imported once; on later runs the import is a no-op. The buckets in var.import_buckets
+# imported once; on later runs the import is a no-op. The buckets in import_buckets
 # must be public, because their public access resources are imported too
 locals {
-  import_buckets = toset(var.import_buckets)
+  import_buckets = toset(local.env.import_buckets)
 }
 
 import {

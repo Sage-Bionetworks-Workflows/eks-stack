@@ -20,17 +20,21 @@ resource "spacelift_stack" "root_administrative_stack" {
   }
 
   autodeploy              = false
+  protect_from_deletion   = true
   branch                  = local.git_branch
   description             = "Manages other spacelift resources"
   name                    = "Root Spacelift Administrative Stack"
-  project_root            = ""
+  project_root            = "spacelift-admin"
   terraform_version       = "1.8.6"
   terraform_workflow_tool = "OPEN_TOFU"
   repository              = "eks-stack"
   space_id                = "root"
+  # The files outside project_root that this stack reads. A push that changes nothing here
+  # does not trigger it
   additional_project_globs = [
-    "modules/*",
-    "modules/**/*",
+    "common-resources/**/*.tf",
+    "deployments/*.tf",
+    "deployments/spacelift/**/*.tf",
   ]
 }
 
@@ -53,26 +57,18 @@ resource "spacelift_space" "environment" {
   inherit_entities = true
 }
 
-module "terraform-registry" {
-  source     = "./modules"
-  depends_on = [spacelift_stack.root_administrative_stack]
-  git_branch = local.git_branch
-}
-
 module "common" {
-  source     = "./common-resources"
+  source     = "../common-resources"
   depends_on = [spacelift_stack.root_administrative_stack]
 }
 
 module "deployments" {
-  source = "./deployments"
+  source = "../deployments"
   depends_on = [
     spacelift_stack.root_administrative_stack,
     module.common,
-    module.terraform-registry,
   ]
   parent_space_id                          = spacelift_space.environment.id
-  admin_stack_id                           = spacelift_stack.root_administrative_stack.id
   org_sagebase_dnt_dev_aws_integration_id  = module.common.org_sagebase_dnt_dev_aws_integration_id
   org_sagebase_dpe_prod_aws_integration_id = module.common.org_sagebase_dpe_prod_aws_integration_id
   git_branch                               = local.git_branch
