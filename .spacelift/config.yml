@@ -1,0 +1,7 @@
+# Spacelift runtime configuration. With version 2, these values take precedence over the
+# settings of the stack in the Spacelift UI
+version: "2"
+
+stacks:
+  root-spacelift-administrative-stack:
+    project_root: spacelift-admin
