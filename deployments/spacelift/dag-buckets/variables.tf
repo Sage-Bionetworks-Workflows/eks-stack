@@ -3,12 +3,6 @@ variable "space_id" {
   type        = string
 }
 
-variable "auto_deploy" {
-  description = "Automatically deploy the stack when changes are detected"
-  type        = bool
-  default     = false
-}
-
 variable "git_branch" {
   description = "Git branch to track for deployments"
   type        = string
@@ -36,21 +30,7 @@ variable "stack_project_root" {
   default     = "deployments/stacks/dag-buckets"
 }
 
-variable "region" {
-  description = "AWS region the buckets are created in"
+variable "deployment_environment" {
+  description = "dev or prod. Selects the stack's values in deployments/stacks/dag-buckets/environments.tf. Prod stacks do not allow run promotion"
   type        = string
-  default     = "us-east-1"
-}
-
-variable "buckets" {
-  description = "Buckets to manage, keyed by bucket name. See deployments/stacks/dag-buckets"
-  type = map(object({
-    public = bool
-  }))
-}
-
-variable "import_buckets" {
-  description = "Names of existing public buckets in var.buckets to import into the stack"
-  type        = list(string)
-  default     = []
 }

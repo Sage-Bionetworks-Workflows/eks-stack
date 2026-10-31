@@ -25,8 +25,7 @@ how many instances and with what settings to run the worker pool under.
 
 ```
 module "spacelift-private-workerpool" {
-  source       = "spacelift.io/sagebionetworks/spacelift-private-workerpool/aws"
-  version      = "0.1.3"
+  source       = "../../../modules/spacelift-private-worker"
   cluster_name = var.cluster_name
   # Deployment steps:
   # Deploy with this as false in order to create the K8s CRD

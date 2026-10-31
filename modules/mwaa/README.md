@@ -11,7 +11,7 @@
   - [`ModuleNotFoundError` in a task for a package listed in requirements.txt](#modulenotfounderror-in-a-task-for-a-package-listed-in-requirementstxt)
   - [MWAA stack run fails downloading requirements-airflow.txt](#mwaa-stack-run-fails-downloading-requirements-airflowtxt)
   - [Changing `airflow_version` fails](#changing-airflow_version-fails)
-  - [Root stack changes for MWAA are not deployed from a feature branch](#root-stack-changes-for-mwaa-are-not-deployed-from-a-feature-branch)
+  - [Applying a branch to dev before merging](#applying-a-branch-to-dev-before-merging)
 
 # Purpose
 
@@ -135,11 +135,10 @@ Check which orca-recipes commit is installed:
 aws s3 cp s3://<bucket>/requirements.txt - | head -1
 ```
 
-- **Older commit than expected**: the new `orca_recipes_sha` has not been applied. The value
-  reaches the MWAA stack as `TF_VAR_orca_recipes_sha`, which is written by the root admin stack.
-  If the change to `deployments/main.tf` is only on a feature branch, the root stack (which
-  tracks `main`) has not applied it. Check the MWAA stack's **Environment** tab in Spacelift,
-  then re-run the MWAA stack.
+- **Older commit than expected**: the new `orca_recipes_sha` has not been applied. It is set in
+  `deployments/stacks/mwaa/environments.tf`. If the change is only on a feature branch, see
+  [Applying a branch to dev before merging](#applying-a-branch-to-dev-before-merging). If it is
+  on `main`, confirm the MWAA stack's tracked run.
 - **Expected commit**: the install failed. MWAA keeps running with the previous requirements.
   The pip error is in the `requirements_install_*` stream of the Scheduler log group. Fix it in
   orca-recipes as described in its `mwaa/README.md`, then bump the SHA through a PR again.
@@ -165,7 +164,9 @@ to check.
   [Upgrading the MWAA Airflow version](https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#upgrading-the-mwaa-airflow-version)
   in orca-recipes.
 
-## Root stack changes for MWAA are not deployed from a feature branch
+## Applying a branch to dev before merging
 
-The root admin stack tracks `main`. If run promotion is not available, the root stack's branch
-can be pointed at the feature branch temporarily to be deployed with changes from the feature branch.
+The MWAA stacks track `main`. The dev stack allows run promotion: promote the
+"DPE DEV Managed Airflow" proposed run of the pull request (from the run in Spacelift, or from the
+pull request check), then confirm it. The prod stack does not allow promotion, so it only
+applies `main`.

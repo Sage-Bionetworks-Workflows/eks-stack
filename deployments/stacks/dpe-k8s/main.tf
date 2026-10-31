@@ -1,8 +1,6 @@
 # Spacelift pipeline config: deployments/spacelift/dpe-k8s/
 
 module "sage-aws-vpc" {
-  # source   = "spacelift.io/sagebionetworks/sage-aws-vpc/aws"
-  # version  = "0.4.2"
   source   = "../../../modules/sage-aws-vpc"
   vpc_name = var.vpc_name
   # TODO: Per https://sagebionetworks.jira.com/browse/IT-3824
@@ -19,8 +17,6 @@ module "sage-aws-vpc" {
 }
 
 module "sage-aws-eks" {
-  # source  = "spacelift.io/sagebionetworks/sage-aws-eks/aws"
-  # version = "0.6.0"
   source = "../../../modules/sage-aws-eks"
 
   cluster_name                      = var.cluster_name

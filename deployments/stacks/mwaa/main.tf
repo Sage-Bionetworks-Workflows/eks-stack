@@ -9,17 +9,17 @@ locals {
 
 # Dedicated VPC for the MWAA environment
 module "vpc" {
-  count = var.enabled ? 1 : 0
+  count = local.env.enabled ? 1 : 0
 
   source  = "terraform-aws-modules/vpc/aws"
   version = "6.7.3"
 
-  name = var.vpc_name
-  cidr = var.vpc_cidr_block
+  name = local.env.vpc_name
+  cidr = local.env.vpc_cidr_block
 
-  azs             = var.azs
-  private_subnets = var.private_subnet_cidrs
-  public_subnets  = var.public_subnet_cidrs
+  azs             = local.env.azs
+  private_subnets = local.env.private_subnet_cidrs
+  public_subnets  = local.env.public_subnet_cidrs
 
   # MWAA runs in the private subnets and needs egress to install requirements
   # and reach the AWS APIs it depends on
@@ -39,9 +39,9 @@ module "vpc" {
 # Renaming vpc_name or replacing the VPC needs a matching organizations-infra deploy
 resource "aws_cloudformation_stack" "vpc_exports" {
   # ponytail: prod skips this until its VPC is a Transit Gateway spoke; drop the dev check then
-  count = var.enabled && var.deployment_environment == "dev" ? 1 : 0
+  count = local.env.enabled && var.deployment_environment == "dev" ? 1 : 0
 
-  name = "${var.vpc_name}-vpc-exports"
+  name = "${local.env.vpc_name}-vpc-exports"
   template_body = jsonencode({
     # A stack needs at least one resource
     Resources = { Placeholder = { Type = "AWS::CloudFormation::WaitConditionHandle" } }
@@ -51,7 +51,7 @@ resource "aws_cloudformation_stack" "vpc_exports" {
         PrivateRouteTable = module.vpc[0].private_route_table_ids[0]
         PrivateSubnet     = module.vpc[0].private_subnets[0]
         PrivateSubnet1    = module.vpc[0].private_subnets[1]
-      } : key => { Value = value, Export = { Name = "${var.region}-${var.vpc_name}-${key}" } }
+      } : key => { Value = value, Export = { Name = "${local.env.region}-${local.env.vpc_name}-${key}" } }
     }
   })
 
@@ -61,16 +61,16 @@ resource "aws_cloudformation_stack" "vpc_exports" {
 # The MWAA environment, running in the private subnets of the VPC above
 module "mwaa" {
   source     = "../../../modules/mwaa"
-  enabled    = var.enabled
-  name       = var.name
-  region     = var.region
+  enabled    = local.env.enabled
+  name       = local.env.name
+  region     = local.env.region
   vpc_id     = one(module.vpc[*].vpc_id)
   subnet_ids = flatten(module.vpc[*].private_subnets)
 
-  airflow_version        = var.airflow_version
-  orca_recipes_sha       = var.orca_recipes_sha
+  airflow_version        = local.env.airflow_version
+  orca_recipes_sha       = local.orca_recipes_sha
   deployment_environment = var.deployment_environment
-  dag_s3_buckets         = var.dag_s3_buckets
+  dag_s3_buckets         = keys(module.config.dag_buckets[var.deployment_environment])
 
   tags = local.tags
 }

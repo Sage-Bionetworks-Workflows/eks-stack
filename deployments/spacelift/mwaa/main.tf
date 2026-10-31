@@ -1,21 +1,3 @@
-locals {
-  # Inputs for deployments/stacks/mwaa. Each is set on the stack as TF_VAR_<key>
-  mwaa_stack_variables = {
-    enabled                = var.enabled
-    name                   = var.mwaa_name
-    region                 = var.region
-    vpc_name               = var.vpc_name
-    vpc_cidr_block         = var.vpc_cidr_block
-    azs                    = var.azs
-    private_subnet_cidrs   = var.private_subnet_cidrs
-    public_subnet_cidrs    = var.public_subnet_cidrs
-    airflow_version        = var.airflow_version
-    orca_recipes_sha       = var.orca_recipes_sha
-    deployment_environment = var.deployment_environment
-    dag_s3_buckets         = var.dag_s3_buckets
-  }
-}
-
 # Spacelift space holding the MWAA stack
 resource "spacelift_space" "mwaa-space" {
   name             = var.space_name
@@ -35,8 +17,12 @@ resource "spacelift_stack" "mwaa-stack" {
     spacelift_space.mwaa-space
   ]
 
-  administrative          = false
-  autodeploy              = var.auto_deploy
+  administrative        = false
+  autodeploy            = false
+  protect_from_deletion = true
+  # A pull request's proposed run can be promoted to apply the branch to dev. Prod only
+  # applies commits on the tracked branch
+  allow_run_promotion     = var.deployment_environment != "prod"
   branch                  = var.git_branch
   description             = "Creates an Amazon MWAA (Managed Airflow) environment"
   name                    = var.mwaa_stack_name
@@ -45,16 +31,22 @@ resource "spacelift_stack" "mwaa-stack" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.mwaa-space.id
+  # The files outside project_root that its plan reads
+  additional_project_globs = [
+    "deployments/config/*.tf",
+    "modules/mwaa/*.tf",
+  ]
 }
 
-# Passes mwaa_stack_variables to the stack. Lists are JSON encoded, which Terraform parses
-# back into lists
+# The stack's only input. Every other value is in deployments/stacks/mwaa/environments.tf
 resource "spacelift_environment_variable" "mwaa-stack-environment-variables" {
-  for_each = local.mwaa_stack_variables
+  for_each = {
+    deployment_environment = var.deployment_environment
+  }
 
   stack_id   = spacelift_stack.mwaa-stack.id
   name       = "TF_VAR_${each.key}"
-  value      = try(tostring(each.value), jsonencode(each.value))
+  value      = each.value
   write_only = false
 }
 
