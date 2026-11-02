@@ -20,3 +20,13 @@ output "dag_buckets" {
     }
   }
 }
+
+# AWS account of each deployment_environment. The stacks that source this module fail the plan
+# if their AWS integration is for a different account
+output "aws_account_ids" {
+  description = "AWS account ID keyed by deployment_environment"
+  value = {
+    dev  = "631692904429" # org-sagebase-dnt-dev
+    prod = "766808016710" # org-sagebase-dpe-prod
+  }
+}

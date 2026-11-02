@@ -10,8 +10,7 @@ locals {
   environments = {
     # DNT dev account
     dev = {
-      aws_account_id = "631692904429"
-      region         = "us-east-1"
+      region = "us-east-1"
 
       # Prefix of the VPC's CloudFormation exports, which organizations-infra 710-tgw looks up by name
       vpc_name = "mwaa-dev"
@@ -34,8 +33,7 @@ locals {
 
     # DPE prod account
     prod = {
-      aws_account_id = "766808016710"
-      region         = "us-east-1"
+      region = "us-east-1"
 
       vpc_name = "mwaa-prod"
       # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
@@ -70,8 +68,8 @@ module "config" {
 data "aws_caller_identity" "current" {
   lifecycle {
     postcondition {
-      condition     = self.account_id == local.env.aws_account_id
-      error_message = "deployment_environment ${var.deployment_environment} deploys to account ${local.env.aws_account_id}, but the stack's AWS integration is for account ${self.account_id}"
+      condition     = self.account_id == module.config.aws_account_ids[var.deployment_environment]
+      error_message = "deployment_environment ${var.deployment_environment} deploys to account ${module.config.aws_account_ids[var.deployment_environment]}, but the stack's AWS integration is for account ${self.account_id}"
     }
   }
 }

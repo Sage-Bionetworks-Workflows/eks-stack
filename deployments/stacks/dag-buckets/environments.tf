@@ -4,15 +4,13 @@ locals {
   environments = {
     # DNT dev account
     dev = {
-      aws_account_id = "631692904429"
       region         = "us-east-1"
       import_buckets = []
     }
 
     # DPE prod account
     prod = {
-      aws_account_id = "766808016710"
-      region         = "us-east-1"
+      region = "us-east-1"
       # Created by the dpe-k8s production stack, which forgets them (removed blocks in
       # deployments/stacks/dpe-k8s/main.tf). Empty this list and remove those blocks once both
       # stacks have applied
@@ -33,8 +31,8 @@ module "config" {
 data "aws_caller_identity" "current" {
   lifecycle {
     postcondition {
-      condition     = self.account_id == local.env.aws_account_id
-      error_message = "deployment_environment ${var.deployment_environment} deploys to account ${local.env.aws_account_id}, but the stack's AWS integration is for account ${self.account_id}"
+      condition     = self.account_id == module.config.aws_account_ids[var.deployment_environment]
+      error_message = "deployment_environment ${var.deployment_environment} deploys to account ${module.config.aws_account_ids[var.deployment_environment]}, but the stack's AWS integration is for account ${self.account_id}"
     }
   }
 }
