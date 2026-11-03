@@ -99,7 +99,7 @@ variable "deployment_environment" {
 }
 
 variable "dag_s3_buckets" {
-  description = "S3 buckets that DAGs read and write as the MWAA execution role (S3Hook(aws_conn_id=None)). Created by the dag-buckets stack"
+  description = "Names of S3 buckets that DAGs read and write as the MWAA execution role (S3Hook(aws_conn_id=None)). This only grants access. The dag-buckets stack creates the buckets"
   type        = list(string)
   default     = []
 }
