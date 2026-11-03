@@ -63,7 +63,8 @@ resource "spacelift_stack" "k8s-stack" {
   ]
 
   administrative          = false
-  autodeploy              = var.auto_deploy
+  autodeploy              = false
+  protect_from_deletion   = true
   branch                  = var.git_branch
   description             = "Infrastructure to support deploying to an EKS cluster"
   name                    = var.k8s_stack_name
@@ -72,8 +73,11 @@ resource "spacelift_stack" "k8s-stack" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
+  # The files outside project_root that its plan reads
   additional_project_globs = [
-    "deployments/"
+    "modules/sage-aws-eks/*.tf",
+    "modules/sage-aws-ses/*.tf",
+    "modules/sage-aws-vpc/*.tf",
   ]
 }
 
@@ -97,7 +101,8 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   ]
 
   administrative          = false
-  autodeploy              = var.auto_deploy
+  autodeploy              = false
+  protect_from_deletion   = true
   branch                  = var.git_branch
   description             = "Deployments internal to an EKS cluster"
   name                    = var.k8s_stack_deployments_name
@@ -106,8 +111,23 @@ resource "spacelift_stack" "k8s-stack-deployments" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
+  # The files outside project_root that its plan reads. ArgoCD reads the other templates/ and
+  # resources/ files from git, so changing them does not change this plan
   additional_project_globs = [
-    "deployments/"
+    "modules/apache-airflow/*.tf",
+    "modules/argo-cd/*.tf",
+    "modules/argo-cd/templates/values.yaml",
+    "modules/cert-manager/*.tf",
+    "modules/envoy-gateway/*.tf",
+    "modules/flux-cd/*.tf",
+    "modules/flux-cd/templates/values.yaml",
+    "modules/postgres-cloud-native/*.tf",
+    "modules/postgres-cloud-native-operator/*.tf",
+    "modules/sage-aws-eks-addons/*.tf",
+    "modules/sage-aws-k8s-node-autoscaler/*.tf",
+    "modules/sage-aws-k8s-node-autoscaler/templates/values.yaml",
+    "modules/trivy-operator/*.tf",
+    "modules/victoria-metrics/*.tf",
   ]
 }
 
@@ -120,23 +140,6 @@ resource "spacelift_environment_variable" "k8s-stack-deployments-environment-var
   write_only = false
 }
 
-
-# TODO: There is some work here that is needed:
-# 1) When we increment a module the admin stack needs to run and create the new resources/modules in spacelift
-# 2) We need any stacks that are using that new resource/module then need to run
-# The problem:
-# When this dependent stack is run it might be "Skipped" because the admin stack does not have different values in the `output.tf` that is used here
-# That means the child stack is never run.
-
-# resource "spacelift_stack_dependency" "dependency-on-admin-stack" {
-#   for_each = {
-#     k8s-stack             = spacelift_stack.k8s-stack,
-#     k8s-stack-deployments = spacelift_stack.k8s-stack-deployments
-#   }
-
-#   stack_id            = each.value.id
-#   depends_on_stack_id = var.admin_stack_id
-# }
 
 resource "spacelift_context_attachment" "k8s-kubeconfig-hooks" {
   context_id = "kubernetes-deployments-kubeconfig"
@@ -169,11 +172,6 @@ resource "spacelift_stack_dependency_reference" "cluster-name" {
   output_name         = "cluster_name"
   input_name          = "CLUSTER_NAME"
 }
-
-# resource "spacelift_policy_attachment" "policy-attachment" {
-#   policy_id = each.value.policy_id
-#   stack_id  = spacelift_stack.k8s-stack.id
-# }
 
 resource "spacelift_aws_integration_attachment" "k8s-aws-integration-attachment" {
   integration_id = var.aws_integration_id

@@ -30,7 +30,8 @@ resource "spacelift_stack" "snowflake-stack" {
   ]
 
   administrative          = false
-  autodeploy              = var.auto_deploy
+  autodeploy              = false
+  protect_from_deletion   = true
   branch                  = var.git_branch
   description             = "Creates an S3 bucket for Synapse RDS data to be copied into"
   name                    = var.snowflake_stack_name
@@ -39,6 +40,10 @@ resource "spacelift_stack" "snowflake-stack" {
   terraform_version       = var.opentofu_version
   terraform_workflow_tool = "OPEN_TOFU"
   space_id                = spacelift_space.dpe-space.id
+  # The files outside project_root that its plan reads
+  additional_project_globs = [
+    "modules/snowflake-s3-bucket/*.tf",
+  ]
 }
 
 resource "spacelift_environment_variable" "snowflake-stack-environment-variables" {

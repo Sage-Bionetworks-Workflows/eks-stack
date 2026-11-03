@@ -86,6 +86,26 @@ data "aws_iam_policy_document" "secrets" {
   }
 }
 
+# Lets the execution role read and write the objects in var.dag_s3_buckets. Same grants as
+# the EKS airflow-irsa role (modules/apache-airflow/iam.tf)
+data "aws_iam_policy_document" "dag_s3" {
+  count = length(var.dag_s3_buckets) > 0 ? 1 : 0
+
+  statement {
+    sid       = "DagBucketObjects"
+    effect    = "Allow"
+    actions   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
+    resources = [for bucket in var.dag_s3_buckets : "arn:aws:s3:::${bucket}/*"]
+  }
+
+  statement {
+    sid       = "DagBucketList"
+    effect    = "Allow"
+    actions   = ["s3:ListBucket"]
+    resources = [for bucket in var.dag_s3_buckets : "arn:aws:s3:::${bucket}"]
+  }
+}
+
 # The MWAA environment, plus the S3 bucket, execution role and security group the upstream
 # module creates for it
 module "mwaa" {
@@ -146,7 +166,7 @@ module "mwaa" {
     # airflow.* classes. Matches the EKS Airflow deployment (modules/apache-airflow)
     "core.allowed_deserialization_classes_regexp" = ".*"
   }
-  additionals_policy_documents = [data.aws_iam_policy_document.secrets.json]
+  additionals_policy_documents = concat([data.aws_iam_policy_document.secrets.json], data.aws_iam_policy_document.dag_s3[*].json)
 
   # Workers finish running tasks (up to 12 hours) before being replaced on update.
   # Must be set: the upstream variable validation fails under OpenTofu when it is null.

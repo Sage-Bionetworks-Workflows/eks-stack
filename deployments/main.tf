@@ -3,12 +3,6 @@ locals {
   # Acts as a floor for the Spot Ocean worker AMI lookup. Bump for kernel CVE
   # remediations (e.g., CVE-2026-31431 → v20260505 or later).
   eks_min_ami_release_date = "20260505"
-
-  # orca-recipes commit whose requirements-airflow.txt and mwaa/constraints.txt are installed
-  # on MWAA. Shared by dev and prod so they cannot diverge. To bump it, follow
-  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
-  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/0d6af01fa58ebd396b0d47c1234a75d2384bf47c
-  mwaa_orca_recipes_sha = "0d6af01fa58ebd396b0d47c1234a75d2384bf47c"
 }
 
 resource "spacelift_space" "development" {
@@ -35,7 +29,6 @@ resource "spacelift_space" "production" {
 module "dpe-sandbox-spacelift-development" {
   source           = "./spacelift/dpe-k8s"
   parent_space_id  = spacelift_space.development.id
-  admin_stack_id   = var.admin_stack_id
   spotinst_account = "act-45de6f47"
 
   aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
@@ -79,7 +72,6 @@ module "dpe-sandbox-spacelift-development" {
 module "dpe-sandbox-spacelift-staging" {
   source           = "./spacelift/dpe-k8s"
   parent_space_id  = spacelift_space.staging.id
-  admin_stack_id   = var.admin_stack_id
   spotinst_account = "act-ac6522b4"
 
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
@@ -121,7 +113,6 @@ module "dpe-sandbox-spacelift-staging" {
 module "dpe-sandbox-spacelift-production" {
   source           = "./spacelift/dpe-k8s"
   parent_space_id  = spacelift_space.production.id
-  admin_stack_id   = var.admin_stack_id
   spotinst_account = "act-ac6522b4"
 
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
@@ -161,81 +152,51 @@ module "dpe-sandbox-spacelift-production" {
   eks_min_ami_release_date = local.eks_min_ami_release_date
 }
 
-# Managed Airflow (MWAA) environment for DPE workflows, in the DNT dev account
+# Managed Airflow (MWAA) environment for DPE workflows, in the DNT dev account. Its values
+# are in deployments/stacks/mwaa/environments.tf
 module "mwaa-spacelift-development" {
   source = "./spacelift/mwaa"
 
-  # Spacelift configuration
-  aws_integration_id = var.org_sagebase_dnt_dev_aws_integration_id
-  auto_deploy        = false
-  git_branch         = var.git_branch
-  parent_space_id    = spacelift_space.development.id
-  space_name         = "mwaa-dev"
-
-  # MWAA stack deployment configuration
+  aws_integration_id      = var.org_sagebase_dnt_dev_aws_integration_id
+  git_branch              = var.git_branch
+  parent_space_id         = spacelift_space.development.id
+  space_name              = "mwaa-dev"
   mwaa_stack_name         = "DPE DEV Managed Airflow"
   mwaa_stack_project_root = "deployments/stacks/mwaa"
-
-  # AWS configuration
-  region = "us-east-1"
-
-  # Prefix of the VPC's CloudFormation exports, which organizations-infra 710-tgw looks up by name
-  vpc_name = "mwaa-dev"
-  # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
-  # Picked with IPAM as described in https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC
-  # Changing it replaces the VPC and the MWAA environment
-  vpc_cidr_block = "10.52.48.0/22"
-  azs            = ["us-east-1a", "us-east-1b"]
-  # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway
-  private_subnet_cidrs = ["10.52.48.0/24", "10.52.49.0/24"]
-  public_subnet_cidrs  = ["10.52.50.0/24", "10.52.51.0/24"]
-
-  # No AWS resources are created until this is true
-  enabled = true
-  # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
-  mwaa_name = "synapse-mwaa-dev"
-  # AWS MWAA-supported Airflow version (Python 3.12).
-  airflow_version        = "3.3.1"
-  orca_recipes_sha       = local.mwaa_orca_recipes_sha
-  deployment_environment = "dev"
+  deployment_environment  = "dev"
 }
 
 module "mwaa-spacelift-production" {
   source = "./spacelift/mwaa"
 
-  # Spacelift configuration
-  aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
-  auto_deploy        = false
-  git_branch         = var.git_branch
-  parent_space_id    = spacelift_space.production.id
-  space_name         = "mwaa-prod"
-
-  # MWAA stack deployment configuration
+  aws_integration_id      = var.org_sagebase_dpe_prod_aws_integration_id
+  git_branch              = var.git_branch
+  parent_space_id         = spacelift_space.production.id
+  space_name              = "mwaa-prod"
   mwaa_stack_name         = "DPE PROD Managed Airflow"
   mwaa_stack_project_root = "deployments/stacks/mwaa"
+  deployment_environment  = "prod"
+}
 
-  # AWS configuration
-  region = "us-east-1"
+# S3 buckets the orca-recipes DAGs write to, in the DNT dev account. Its values are in
+# deployments/stacks/dag-buckets/environments.tf and deployments/config
+module "dag-buckets-spacelift-development" {
+  source = "./spacelift/dag-buckets"
 
-  vpc_name = "mwaa-prod"
-  # Must be unique across the Sage AWS organization so the Transit Gateway can route to it.
-  # Picked with IPAM as described in https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC
-  # Changing it replaces the VPC and the MWAA environment
-  vpc_cidr_block = "10.52.52.0/22"
-  azs            = ["us-east-1a", "us-east-1b"]
-  # MWAA requires exactly two private subnets, one per AZ. The public subnets carry the NAT gateway
-  private_subnet_cidrs = ["10.52.52.0/24", "10.52.53.0/24"]
-  public_subnet_cidrs  = ["10.52.54.0/24", "10.52.55.0/24"]
+  aws_integration_id     = var.org_sagebase_dnt_dev_aws_integration_id
+  git_branch             = var.git_branch
+  space_id               = spacelift_space.development.id
+  stack_name             = "DPE DEV DAG Buckets"
+  deployment_environment = "dev"
+}
 
-  # No AWS resources are created until this is true. Prod stays disabled until the
-  # organizations-infra PR that adds this VPC to the Transit Gateway is merged and applied,
-  # and prod is ready to go live; see DPE-1836 rollout notes.
-  enabled = false
-  # The globally unique S3 bucket name is derived from this: <mwaa_name>-s3
-  mwaa_name = "synapse-mwaa-prod"
-  # AWS MWAA-supported Airflow version (Python 3.12).
-  airflow_version        = "3.3.1"
-  orca_recipes_sha       = local.mwaa_orca_recipes_sha
+module "dag-buckets-spacelift-production" {
+  source = "./spacelift/dag-buckets"
+
+  aws_integration_id     = var.org_sagebase_dpe_prod_aws_integration_id
+  git_branch             = var.git_branch
+  space_id               = spacelift_space.production.id
+  stack_name             = "DPE PROD DAG Buckets"
   deployment_environment = "prod"
 }
 
@@ -244,7 +205,6 @@ module "snowflake-spacelift-development" {
 
   # Spacelift configuration
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
-  auto_deploy        = false
   git_branch         = var.git_branch
   parent_space_id    = spacelift_space.production.id
   space_name         = "synapse-dev-to-snowflake"
@@ -271,7 +231,6 @@ module "snowflake-spacelift-production" {
 
   # Spacelift configuration
   aws_integration_id = var.org_sagebase_dpe_prod_aws_integration_id
-  auto_deploy        = false
   git_branch         = var.git_branch
   parent_space_id    = spacelift_space.production.id
   space_name         = "synapse-prod-to-snowflake"

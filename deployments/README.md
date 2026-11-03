@@ -1,10 +1,12 @@
 # Deployments
 
-This directory contains all deployment configurations. It has two subdirectories that work together:
+This directory contains all deployment configurations. It has three subdirectories that work together:
 
-- **`spacelift/`** — Defines the **CI pipelines** in Spacelift. Each subdirectory creates Spacelift stacks that control _which_ AWS account to deploy to, _what_ environment variables to pass, and _how_ stacks relate to each other.
+- **`spacelift/`** — Defines the **CI pipelines** in Spacelift. Each subdirectory creates Spacelift stacks that control _which_ AWS account to deploy to, _which_ file changes trigger a run, and _how_ stacks relate to each other.
 
-- **`stacks/`** — Defines the **cloud resources** that get provisioned. Each subdirectory is a Terraform root module that Spacelift runs `tofu plan/apply` against.
+- **`stacks/`** — Defines the **cloud resources** that get provisioned. Each subdirectory is a Terraform root module that Spacelift runs `tofu plan/apply` against. The `mwaa` and `dag-buckets` stacks also hold their values, in `environments.tf`.
+
+- **`config/`** — Values that more than one stack reads, for example the S3 buckets that the DAG buckets stacks create and the MWAA stacks grant access to.
 
 The `main.tf` in this directory wires each spacelift config into the appropriate environment (development, staging, production) by creating `spacelift_space` resources and instantiating the spacelift modules with environment-specific variables.
 
@@ -19,6 +21,7 @@ Each spacelift config points to one or more stack directories via the `project_r
 | `spacelift/dpe-k8s/` | `stacks/dpe-k8s/`, `stacks/dpe-k8s-deployments/` | EKS cluster infrastructure and in-cluster deployments |
 | `spacelift/snowflake/` | `stacks/snowflake/` | Creates an S3 bucket that stores Synapse platform RDS snapshots |
 | `spacelift/mwaa/` | `stacks/mwaa/` | Creates an Amazon MWAA (Managed Airflow) environment |
+| `spacelift/dag-buckets/` | `stacks/dag-buckets/` | Creates the S3 buckets that the orca-recipes DAGs write to |
 
 ## Adding a New Deployment
 

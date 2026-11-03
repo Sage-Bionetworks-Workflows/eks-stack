@@ -3,11 +3,6 @@ variable "parent_space_id" {
   type        = string
 }
 
-variable "admin_stack_id" {
-  description = "ID of the admin stack"
-  type        = string
-}
-
 variable "org_sagebase_dnt_dev_aws_integration_id" {
   description = "ID of the AWS integration for the org-sagebase-dnt-dev account"
   type        = string
