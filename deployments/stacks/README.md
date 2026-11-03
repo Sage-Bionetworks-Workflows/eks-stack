@@ -10,7 +10,7 @@ Each stack should contain:
 - `variables.tf` — Environment-specific inputs (passed as `TF_VAR_*` from Spacelift)
 - `outputs.tf` — Values to export (used by dependent stacks or for reference)
 - `provider.tf` — AWS provider configuration
-- `versions.tf` — Required providers and OpenTofu version
+- `versions.tf` — Required providers and OpenTofu version. Leave it out if the stack has none
 
 ## Spacelift Pipeline Configs
 

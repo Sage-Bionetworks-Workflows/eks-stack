@@ -9,7 +9,7 @@ Each config subdirectory typically contains these Terraform files:
 - `main.tf` — The primary Spacelift resource definitions (spaces, stacks, variables, AWS integrations)
 - `variables.tf` — Input variables passed from the parent module (e.g., `parent_space_id`, `aws_integration_id`)
 - `outputs.tf` — Stack IDs and other values for reference by dependent modules
-- `versions.tf` — Required Spacelift provider version
+- `versions.tf` — The Spacelift provider source. The `versions.tf` of the admin stack root pins the version
 
 For more on Terraform file organization, see [Spacelift's guide to Terraform files](https://spacelift.io/blog/terraform-files#project-structure-and-file-types-explained).
 
