@@ -80,9 +80,10 @@ check uses the GitHub compare API.
 
 # Accessing the Airflow UI
 
-Dev and prod use `PRIVATE_ONLY` access: the URL is only reachable while connected to the Sage
-VPN. The VPC must be a Transit Gateway spoke (organizations-infra `710-tgw`) and authorized for
-VPN users (`720-client-vpn`).
+Dev and prod use `PRIVATE_ONLY` access: the URL is only reachable while connected to the
+[Sage VPN](https://sagebionetworks.jira.com/wiki/spaces/IT/pages/1705246745). The VPC must be a
+Transit Gateway spoke (organizations-infra `710-tgw`) and authorized for VPN users
+(`720-client-vpn`).
 
 1. Log into the AWS Console for the account the environment is deployed to (`org_sagebase_dnt_dev`
    for dev, `org_sagebase_dpe_prod` for prod) via JumpCloud.
