@@ -24,12 +24,6 @@ variable "snowflake_bucket_name" {
   type        = string
 }
 
-variable "auto_deploy" {
-  description = "Automatically deploy the stack when changes are detected"
-  type        = bool
-  default     = false
-}
-
 variable "git_branch" {
   description = "Git branch to track for deployments"
   type        = string

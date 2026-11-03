@@ -10,16 +10,8 @@ When a new module is made you'll need to do a few tasks:
 
 1) Create a new directory named after your module
 2) Fill that new directory with the required terraform resources
-3) Create a [spacelift_module](https://registry.terraform.io/providers/spacelift-io/spacelift/latest/docs/resources/module) and [spacelift_version](https://registry.terraform.io/providers/spacelift-io/spacelift/latest/docs/resources/version) resource in this `modules` `main.tf` script.
-4) Commit the changes to a branch, get them reviewed, and merged into main. Once merged they will show up in the `Terraform Registry` within spacelift, ready to be used.
-
-### Creating a new version of a module
-Versions of modules are controlled with a terraform resource `spacelift_version` as
-defined in this documentation:
-https://registry.terraform.io/providers/spacelift-io/spacelift/latest/docs/resources/version
-
-As changes are made you'll want to increment the version of the module following
-typical sematic `Major.Minor.Patch` versioning.
+3) Source it from a stack by its local path, `source = "../../../modules/<your-module>"`, and add its files to that stack's `additional_project_globs` in `deployments/spacelift/<config>/main.tf`: `modules/<your-module>/*.tf`, plus any template the module reads with `templatefile()`. Without them, a change to the module does not plan the stack.
+4) Commit the changes to a branch, get them reviewed, and merged into main.
 
 ### Guidelines for creating new modules
 
