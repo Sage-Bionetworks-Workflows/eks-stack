@@ -26,6 +26,14 @@ The `main.tf` file defines these Spacelift resources:
 - `spacelift_aws_integration_attachment` — Binds AWS credentials for the target account
 - `spacelift_stack_dependency` (optional) — Defines execution order between stacks
 
+## How a stack gets its values
+
+- The admin stack applies `../main.tf` and the configs in this directory. This run makes or changes the Spacelift stacks. It does not run them.
+- Each Spacelift stack then runs its `project_root` in `../stacks/`. This is a separate run with a separate state.
+- A stack cannot get module arguments from `../main.tf`. The admin stack can only give it `TF_VAR_*` environment variables.
+- A `TF_VAR_*` value changes only when the admin stack applies. Until then, all runs of the stack use the old value. This includes the proposed runs of a pull request. For this reason, the MWAA and DAG buckets stacks keep their values in their own files.
+- For the EKS and Snowflake configs, the default in `variables.tf` is frequently not the value that the stack gets. Read the module call in `../main.tf`.
+
 ## Activation
 
 Configs here must be referenced via a `module` block in `../main.tf` to be active. Simply creating a subdirectory here does not automatically create Spacelift stacks.
