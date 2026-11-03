@@ -3,19 +3,6 @@ variable "parent_space_id" {
   type        = string
 }
 
-variable "tags" {
-  description = "AWS Resource Tags"
-  type        = map(string)
-  default = {
-    "CostCenter" = "No Program / 000000"
-  }
-}
-
-variable "admin_stack_id" {
-  description = "ID of the admin stack"
-  type        = string
-}
-
 variable "aws_integration_id" {
   description = "ID of the AWS integration"
   type        = string
@@ -32,7 +19,7 @@ variable "git_branch" {
 }
 
 variable "auto_deploy" {
-  description = "Automatically deploy the stack"
+  description = "Turn on automated sync for the ArgoCD applications that the deployments stack creates. The Spacelift stacks never deploy automatically"
   type        = bool
   default     = false
 }
@@ -102,12 +89,6 @@ variable "vpc_cidr_block" {
   type        = string
 }
 
-variable "kube_config_path" {
-  description = "Kube config path"
-  type        = string
-  default     = "~/.kube/config"
-}
-
 variable "spotinst_account" {
   description = "Spot.io account"
   type        = string
@@ -156,18 +137,6 @@ variable "ssl_hostname" {
 variable "ses_email_identities" {
   type        = list(string)
   description = "List of email identities to be added to SES"
-}
-
-variable "smtp_user" {
-  description = "The SMTP user. Required if smtp_user, smtp_password, and smtp_from are set"
-  type        = string
-  default     = ""
-}
-
-variable "smtp_password" {
-  description = "The SMTP password. Required if smtp_user, smtp_password, and smtp_from are set"
-  type        = string
-  default     = ""
 }
 
 variable "smtp_from" {

@@ -5,15 +5,15 @@ This repo manages cloud infrastructure deployed to AWS via [Spacelift](https://s
 ## Directory Structure
 ```
 eks-stack/
-  main.tf                      # Root Spacelift administrative stack
-  provider.tf                  # Spacelift provider config
-  common-resources/            # Shared Spacelift policies, contexts, AWS integrations
+  spacelift-admin/             # Root Spacelift administrative stack (its project root)
+  common-resources/            # Shared Spacelift contexts, AWS integrations
   deployments/
     main.tf                    # Wires spacelift pipeline configs per environment (dev/staging/prod)
+    config/                    # Values that more than one stack reads
     spacelift/                 # CI pipeline definitions (HOW things get deployed)
       dpe-k8s/                 # Pipeline config for EKS stacks
     stacks/                    # Cloud resource definitions (WHAT gets deployed)
-      dpe-k8s/                 # VPC, EKS cluster, SES, S3 buckets
+      dpe-k8s/                 # VPC, EKS cluster, SES
       dpe-k8s-deployments/     # K8s-internal: ArgoCD, Airflow, monitoring, etc.
   modules/                     # Reusable Terraform modules
   docs/                        # Workshop materials
@@ -31,32 +31,31 @@ Before modifying modules, stacks, or configs:
 
 ## Development Guidelines
 
-### Branch Targeting and deployments/main.tf Changes
+### Where a Stack's Values Live
 
-⚠️ **Important**: Don't introduce changes to `deployments/main.tf` unless your branch is pointed at `main`.
-
-When working on feature branches that target other feature branches (rather than `main`), Spacelift may not recognize changes to `deployments/main.tf` because it reads configuration from the targeted branch. This can cause variable resolution errors where required variables appear undefined even though they're properly configured in your branch.
+- **MWAA and DAG buckets**: in `deployments/stacks/<name>/environments.tf`, and in `deployments/config/` for values that both stacks read. A pull request's proposed run plans the change on the stack it changes, and that stack's run applies it. The dev stacks allow run promotion: promote the proposed run to apply a branch to dev before merging. The prod stacks only apply `main`.
+- **EKS and Snowflake**: in `deployments/main.tf`. The root admin stack writes them to the stacks as `TF_VAR_*` environment variables, and it tracks `main`, so a value reaches a stack only after the merge and a confirmed admin run. Then trigger the stack's run by hand: a changed environment variable does not trigger it. A proposed run on a pull request plans with the values already on the stack.
 
 ## How Deployment Works
 
 Deploying a resource involves a **two-step process**:
 
-1. **`deployments/spacelift/<name>/`** defines the **CI pipeline** in Spacelift. This controls _which_ stacks can be deployed, to _which_ AWS account, with _what_ environment variables. Think of this as the build server job configuration.
+1. **`deployments/spacelift/<name>/`** defines the **CI pipeline** in Spacelift. This controls _which_ stacks can be deployed, to _which_ AWS account, and _which_ file changes trigger them. Think of this as the build server job configuration.
 
 2. **`deployments/stacks/<name>/`** defines **what cloud resources** are provisioned when that pipeline runs. Each stack is a Terraform root module that typically sources reusable modules from `modules/`. Think of this as the infrastructure blueprint.
 
 When Spacelift runs a pipeline, it executes `tofu plan/apply` against the corresponding stack directory.
 
+A push triggers a stack only when it changes a file that the stack's plan reads: a file under its `project_root`, or one matching its `additional_project_globs` (the modules it sources, and `deployments/config/` if it reads it). The root admin stack's project root is `spacelift-admin/`, so it runs only for changes to the Spacelift resources. Every stack has `autodeploy = false`, so nothing is applied until someone confirms the run.
+
 ### Architecture Diagram
 
 ```mermaid
 graph TD
-    ROOT["main.tf<br/><i>Root Administrative Stack</i>"] --> COMMON["module 'common'<br/>common-resources/"]
-    ROOT --> REGISTRY["module 'terraform-registry'<br/>modules/"]
+    ROOT["spacelift-admin/main.tf<br/><i>Root Administrative Stack</i>"] --> COMMON["module 'common'<br/>common-resources/"]
     ROOT --> DEPLOY["module 'deployments'<br/>deployments/main.tf"]
 
-    COMMON ~~~ NOTE_C["Shared policies, contexts,<br/>and AWS integrations"]
-    REGISTRY ~~~ NOTE_R["Registers reusable modules<br/>in Spacelift's module registry"]
+    COMMON ~~~ NOTE_C["Shared contexts<br/>and AWS integrations"]
 
     DEPLOY --> DEV["spacelift_space<br/><b>development</b>"]
     DEPLOY --> STG["spacelift_space<br/><b>staging</b>"]
@@ -73,7 +72,6 @@ graph TD
     style ROOT fill:#4a90d9,color:#fff
     style STACKS fill:#2ecc71,color:#fff
     style NOTE_C fill:none,stroke:none
-    style NOTE_R fill:none,stroke:none
 ```
 
 ## When to Add a Module vs. Create a New Stack
@@ -104,7 +102,8 @@ See the [modules README](./modules/README.md) for guidelines.
 
 Create a new directory in `deployments/stacks/<your-stack>/` with:
 - `main.tf` - sources your module: `source = "../../../modules/<your-module>"`
-- `variables.tf` - environment-specific inputs (passed as `TF_VAR_*` from Spacelift)
+- `environments.tf` - every value the stack deploys, keyed by `deployment_environment`. See `deployments/stacks/mwaa/environments.tf`
+- `variables.tf` - only `deployment_environment`, passed as `TF_VAR_deployment_environment` from Spacelift
 - `outputs.tf` - values to export
 - `provider.tf` - AWS provider configuration
 - `versions.tf` - required providers and OpenTofu version
@@ -114,8 +113,8 @@ Create a new directory in `deployments/stacks/<your-stack>/` with:
 Create a new directory in `deployments/spacelift/<your-stack>/` with:
 - `main.tf` - defines:
   - `spacelift_space` - a logical grouping in Spacelift
-  - `spacelift_stack` - points `project_root` to your stack directory
-  - `spacelift_environment_variable` - passes `TF_VAR_*` variables
+  - `spacelift_stack` - points `project_root` to your stack directory. `additional_project_globs` lists every file outside it that the plan reads: the modules it sources, and `deployments/config/*.tf` if it reads it. Set `autodeploy = false`, `protect_from_deletion = true`, and `allow_run_promotion = false` for prod
+  - `spacelift_environment_variable` - sets `TF_VAR_deployment_environment`, the stack's only input
   - `spacelift_aws_integration_attachment` - binds AWS credentials
 - `variables.tf` - inputs from the parent module
 - `outputs.tf` - stack IDs for reference
@@ -124,11 +123,11 @@ Create a new directory in `deployments/spacelift/<your-stack>/` with:
 
 ### 4. Wire it into `deployments/main.tf`
 
-Add a `module` block in `deployments/main.tf` that sources your new spacelift config and passes the required variables (`parent_space_id`, `admin_stack_id`, `aws_integration_id`, `git_branch`, etc.).
+Add a `module` block in `deployments/main.tf` that sources your new spacelift config and passes the required variables (`parent_space_id`, `aws_integration_id`, `git_branch`, `deployment_environment`, etc.).
 
 ### 5. Commit, PR, merge
 
-Once merged to `main`, the root administrative stack detects the changes and creates the new Spacelift stacks automatically.
+Once merged to `main`, confirm the root administrative stack's run, which creates the new Spacelift stacks. Then trigger each new stack's first run: a new stack does not run until a file it reads changes again.
 
 ### 6. View your new resources
 
