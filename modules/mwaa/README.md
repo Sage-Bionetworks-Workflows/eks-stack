@@ -80,12 +80,14 @@ check uses the GitHub compare API.
 
 # Accessing the Airflow UI
 
-Dev uses `PRIVATE_ONLY` access: the URL is only reachable while connected to the Sage VPN.
-Prod uses `PUBLIC_ONLY` access: the URL is reachable from the internet.
+Dev and prod use `PRIVATE_ONLY` access: the URL is only reachable while connected to the Sage
+VPN. The VPC must be a Transit Gateway spoke (organizations-infra `710-tgw`) and authorized for
+VPN users (`720-client-vpn`).
 
-1. Log into the AWS Console for the account the environment is deployed to (dev uses the
-   `org_sagebase_dnt_dev` account and that is the only one currently available) via JumpCloud.
-2. Open **Amazon MWAA** → **Environments** in `us-east-1`, select the environment `synapse-mwaa-dev` for dev and click **Open Airflow UI**.
+1. Log into the AWS Console for the account the environment is deployed to (`org_sagebase_dnt_dev`
+   for dev, `org_sagebase_dpe_prod` for prod) via JumpCloud.
+2. Open **Amazon MWAA** → **Environments** in `us-east-1`, select `synapse-mwaa-dev` or
+   `synapse-mwaa-prod` and click **Open Airflow UI**.
 
 # Airflow connections and variables
 
