@@ -38,8 +38,7 @@ module "vpc" {
 # (org-formation/710-tgw) looks up with !CopyValue to attach this VPC to the Transit Gateway.
 # Renaming vpc_name or replacing the VPC needs a matching organizations-infra deploy
 resource "aws_cloudformation_stack" "vpc_exports" {
-  # ponytail: prod skips this until its VPC is a Transit Gateway spoke; drop the dev check then
-  count = local.env.enabled && var.deployment_environment == "dev" ? 1 : 0
+  count = local.env.enabled ? 1 : 0
 
   name = "${local.env.vpc_name}-vpc-exports"
   template_body = jsonencode({

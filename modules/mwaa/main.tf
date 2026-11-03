@@ -13,9 +13,6 @@ locals {
   # interfaces in this VPC, so VPN traffic reaches spoke VPCs from here and not from the
   # VPN client CIDR (10.100.0.0/16)
   sage_vpn_cidr = "10.50.0.0/16"
-
-  # ponytail: prod stays public until its VPC is a Transit Gateway spoke; drop this condition then
-  vpn_only = var.deployment_environment == "dev"
 }
 
 # Download the MWAA Python requirements from the pinned orca-recipes commit.
@@ -124,10 +121,10 @@ module "mwaa" {
   # PRIVATE_ONLY is only reachable over the Sage VPN, which needs this VPC to be a Transit
   # Gateway spoke (organizations-infra 710-tgw) and authorized for VPN users (720-client-vpn).
   # Login is IAM-only either way
-  webserver_access_mode = local.vpn_only ? "PRIVATE_ONLY" : "PUBLIC_ONLY"
+  webserver_access_mode = "PRIVATE_ONLY"
 
   # Allows Sage VPN traffic to the webserver's private VPC endpoint
-  additional_security_group_rules = local.vpn_only ? [
+  additional_security_group_rules = [
     {
       key         = "sage-vpn-webserver"
       type        = "ingress"
@@ -137,7 +134,7 @@ module "mwaa" {
       cidr_blocks = [local.sage_vpn_cidr]
       description = "Allow HTTPS to the MWAA webserver from the Sage VPN"
     }
-  ] : []
+  ]
 
   # Pin MWAA to the S3 version of the generated requirements file.
   # When orca_recipes_sha changes, Terraform uploads new requirements content,
