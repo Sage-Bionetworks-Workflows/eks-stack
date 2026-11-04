@@ -4,8 +4,8 @@ locals {
   # orca-recipes commit whose requirements-airflow.txt and mwaa/constraints.txt are installed
   # on MWAA. Shared by dev and prod so they cannot diverge. To bump it, follow
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
-  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/0d6af01fa58ebd396b0d47c1234a75d2384bf47c
-  orca_recipes_sha = "0d6af01fa58ebd396b0d47c1234a75d2384bf47c"
+  # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/5173f7f54ff4b0e59817145cc6a2b19873c124f0
+  orca_recipes_sha = "5173f7f54ff4b0e59817145cc6a2b19873c124f0"
 
   environments = {
     # DNT dev account
