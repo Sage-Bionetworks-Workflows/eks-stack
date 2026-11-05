@@ -162,6 +162,10 @@ module "mwaa" {
     # Lets tasks receive the dataclasses other tasks return. The default only allows
     # airflow.* classes. Matches the EKS Airflow deployment (modules/apache-airflow)
     "core.allowed_deserialization_classes_regexp" = ".*"
+    # Largest list a task can return for a downstream expand. The default is 1024, and
+    # synapse-dataset-to-croissant maps over more datasets than that. Matches the EKS
+    # Airflow deployment (modules/apache-airflow)
+    "core.max_map_length" = "8192"
   }
   additionals_policy_documents = concat([data.aws_iam_policy_document.secrets.json], data.aws_iam_policy_document.dag_s3[*].json)
 
