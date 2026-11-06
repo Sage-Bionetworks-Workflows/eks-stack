@@ -22,7 +22,7 @@ The `main.tf` file defines these Spacelift resources:
   - `additional_project_globs` — every file outside `project_root` that its plan reads: the `*.tf` files of the modules it sources, the templates those modules read with `templatefile()`, and `deployments/config/*.tf` if it reads it. A push that changes none of these, and nothing under `project_root`, does not trigger the stack. Files that ArgoCD reads from git do not change a plan, so they are not listed
   - `autodeploy = false` — every run waits for someone to confirm it
   - `protect_from_deletion = true` — deleting a stack also deletes its Spacelift-managed state. To remove a stack, set this to `false` and apply before deleting its module call
-- `spacelift_environment_variable` — The MWAA and DAG buckets stacks get only `TF_VAR_deployment_environment`, and keep every other value in `../stacks/<name>/environments.tf`. Their prod stacks also set `allow_run_promotion = false`, so only dev can be deployed from a pull request. The EKS and Snowflake configs still pass all of their stack's inputs as `TF_VAR_*`
+- `spacelift_environment_variable` — The MWAA and DAG buckets stacks get only `TF_VAR_deployment_environment`, and keep every other value in `../stacks/<name>/environments.tf`. Their prod stacks also set `allow_run_promotion = false`, so only dev can be deployed from a pull request. The Snowflake config still passes all of its stack's inputs as `TF_VAR_*`
 - `spacelift_aws_integration_attachment` — Binds AWS credentials for the target account
 - `spacelift_stack_dependency` (optional) — Defines execution order between stacks
 
@@ -32,7 +32,7 @@ The `main.tf` file defines these Spacelift resources:
 - Each Spacelift stack then runs its `project_root` in `../stacks/`. This is a separate run with a separate state.
 - A stack cannot get module arguments from `../main.tf`. The admin stack can only give it `TF_VAR_*` environment variables.
 - A `TF_VAR_*` value changes only when the admin stack applies. Until then, all runs of the stack use the old value. This includes the proposed runs of a pull request. For this reason, the MWAA and DAG buckets stacks keep their values in their own files.
-- For the EKS and Snowflake configs, the default in `variables.tf` is frequently not the value that the stack gets. Read the module call in `../main.tf`.
+- For the Snowflake config, the default in `variables.tf` is frequently not the value that the stack gets. Read the module call in `../main.tf`.
 
 ## Activation
 

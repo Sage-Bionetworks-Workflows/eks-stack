@@ -1,5 +1,5 @@
 # S3 buckets that the orca-recipes DAGs write to, listed in deployments/config. Kept out of
-# the EKS and MWAA stacks so the buckets and their data outlive the Airflow deployment.
+# the MWAA stack so the buckets and their data outlive the Airflow deployment.
 # Managed by deployments/spacelift/dag-buckets. The MWAA execution role is granted access to
 # them in modules/mwaa (dag_s3_buckets)
 

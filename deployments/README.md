@@ -8,7 +8,7 @@ This directory contains all deployment configurations. It has three subdirectori
 
 - **`config/`** — Values that more than one stack reads, for example the S3 buckets that the DAG buckets stacks create and the MWAA stacks grant access to.
 
-The `main.tf` in this directory wires each spacelift config into the appropriate environment (development, staging, production) by creating `spacelift_space` resources and instantiating the spacelift modules with environment-specific variables.
+The `main.tf` in this directory wires each spacelift config into the appropriate environment (development, production) by creating `spacelift_space` resources and instantiating the spacelift modules with environment-specific variables.
 
 ## How They Relate
 
@@ -18,7 +18,6 @@ Each spacelift config points to one or more stack directories via the `project_r
 
 | Spacelift Config | Stack(s) Targeted | Purpose |
 |---|---|---|
-| `spacelift/dpe-k8s/` | `stacks/dpe-k8s/`, `stacks/dpe-k8s-deployments/` | EKS cluster infrastructure and in-cluster deployments |
 | `spacelift/snowflake/` | `stacks/snowflake/` | Creates an S3 bucket that stores Synapse platform RDS snapshots |
 | `spacelift/mwaa/` | `stacks/mwaa/` | Creates an Amazon MWAA (Managed Airflow) environment |
 | `spacelift/dag-buckets/` | `stacks/dag-buckets/` | Creates the S3 buckets that the orca-recipes DAGs write to |
