@@ -83,8 +83,7 @@ data "aws_iam_policy_document" "secrets" {
   }
 }
 
-# Lets the execution role read and write the objects in var.dag_s3_buckets. Same grants as
-# the EKS airflow-irsa role (modules/apache-airflow/iam.tf)
+# Lets the execution role read and write the objects in var.dag_s3_buckets
 data "aws_iam_policy_document" "dag_s3" {
   count = length(var.dag_s3_buckets) > 0 ? 1 : 0
 
@@ -160,11 +159,10 @@ module "mwaa" {
     # Read by DAGs as AIRFLOW__ORCA__ENVIRONMENT to choose dev or prod values
     "orca.environment" = var.deployment_environment
     # Lets tasks receive the dataclasses other tasks return. The default only allows
-    # airflow.* classes. Matches the EKS Airflow deployment (modules/apache-airflow)
+    # airflow.* classes
     "core.allowed_deserialization_classes_regexp" = ".*"
     # Largest list a task can return for a downstream expand. The default is 1024, and
-    # synapse-dataset-to-croissant maps over more datasets than that. Matches the EKS
-    # Airflow deployment (modules/apache-airflow)
+    # synapse-dataset-to-croissant maps over more datasets than that
     "core.max_map_length" = "8192"
   }
   additionals_policy_documents = concat([data.aws_iam_policy_document.secrets.json], data.aws_iam_policy_document.dag_s3[*].json)

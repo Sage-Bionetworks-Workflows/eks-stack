@@ -2,7 +2,7 @@
 
 This stack makes the S3 buckets that the orca-recipes DAGs write their output to. An example is the croissant files from `synapse-dataset-to-croissant.py`. These buckets do not hold DAG code. The MWAA bucket (`<mwaa_name>-s3`) holds the DAG code.
 
-The buckets are not in the EKS or MWAA stacks. This keeps the buckets and their data when you remove Airflow.
+The buckets are not in the MWAA stack. This keeps the buckets and their data when you remove Airflow.
 
 `deployments/spacelift/dag-buckets` makes one stack for each account:
 
