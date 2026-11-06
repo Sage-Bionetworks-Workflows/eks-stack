@@ -64,7 +64,7 @@ resource "spacelift_stack" "k8s-stack" {
 
   administrative          = false
   autodeploy              = false
-  protect_from_deletion   = true
+  protect_from_deletion   = false
   branch                  = var.git_branch
   description             = "Infrastructure to support deploying to an EKS cluster"
   name                    = var.k8s_stack_name
@@ -102,7 +102,7 @@ resource "spacelift_stack" "k8s-stack-deployments" {
 
   administrative          = false
   autodeploy              = false
-  protect_from_deletion   = true
+  protect_from_deletion   = false
   branch                  = var.git_branch
   description             = "Deployments internal to an EKS cluster"
   name                    = var.k8s_stack_deployments_name
