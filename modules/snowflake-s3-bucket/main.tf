@@ -116,13 +116,21 @@ resource "aws_s3_bucket_versioning" "versioning" {
   }
 }
 
-# Bucket policy to allow cross-account replication
+# Bucket policy that denies plain HTTP and allows cross-account replication
 resource "aws_s3_bucket_policy" "replication_destination_policy" {
   bucket = aws_s3_bucket.bucket.id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
+      {
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource  = [aws_s3_bucket.bucket.arn, "${aws_s3_bucket.bucket.arn}/*"]
+        Condition = { Bool = { "aws:SecureTransport" = "false" } }
+      },
       {
         Sid    = "AllowSpaceliftAdminRole"
         Effect = "Allow"
