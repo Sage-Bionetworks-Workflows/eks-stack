@@ -8,7 +8,7 @@ Each stack should contain:
 
 - `main.tf` — Sources modules from `../../modules/` and defines cloud resources
 - `environments.tf` — Every value the stack deploys, keyed by `deployment_environment`, and a check that the stack runs in that environment's AWS account (`mwaa`, `dag-buckets`)
-- `variables.tf` — `deployment_environment`, passed as `TF_VAR_deployment_environment` from Spacelift. The `dpe-k8s`, `dpe-k8s-deployments` and `snowflake` stacks still take all of their inputs as `TF_VAR_*`
+- `variables.tf` — `deployment_environment`, passed as `TF_VAR_deployment_environment` from Spacelift. The `snowflake` stack still takes all of its inputs as `TF_VAR_*`
 - `outputs.tf` — Values to export (used by dependent stacks or for reference)
 - `provider.tf` — AWS provider configuration
 - `versions.tf` — Required providers and OpenTofu version. Leave it out if the stack has none

@@ -4,17 +4,12 @@ locals {
   environments = {
     # DNT dev account
     dev = {
-      region         = "us-east-1"
-      import_buckets = []
+      region = "us-east-1"
     }
 
     # DPE prod account
     prod = {
       region = "us-east-1"
-      # Created by the dpe-k8s production stack, which forgets them (removed blocks in
-      # deployments/stacks/dpe-k8s/main.tf). Empty this list and remove those blocks once both
-      # stacks have applied
-      import_buckets = ["synapse-croissant-metadata", "synapse-croissant-metadata-minimal"]
     }
   }
 
