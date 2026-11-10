@@ -151,6 +151,22 @@ Reusable Terraform modules in `modules/`:
 
 ---
 
+## Deleting a Stack
+
+Deleting a Spacelift stack also deletes its Spacelift-managed state. Whether the stack's cloud resources are destroyed depends on how the stack is deleted. Reference: [Delete a stack in Spacelift](https://docs.spacelift.io/concepts/stack/creating-a-stack#delete-a-stack-in-spacelift).
+
+1. Set `protect_from_deletion = false` on the stack in `deployments/spacelift/<name>/main.tf`, merge, and confirm the admin stack's run. While it is `true`, any attempt to delete the stack fails ([provider docs](https://github.com/spacelift-io/terraform-provider-spacelift/blob/main/docs/resources/stack.md)).
+2. Destroy the resources. Pick one:
+   - Run `tofu destroy -auto-approve` as a [task](https://docs.spacelift.io/concepts/run/task) on the stack, then check that the task destroyed everything.
+   - Or delete the stack in the UI (**Settings** → **Stack deletion**) and choose to delete the stack's resources. That removes the stack, so do step 3 right after, or the next admin run creates the stack again.
+3. Remove the module call from `deployments/main.tf`, merge, and confirm the admin stack's run. The admin stack deletes the stack, its environment variables and its AWS integration attachment.
+
+Removing the module call by itself does not destroy the stack's resources. The admin stack deletes the stack and its state, and the AWS resources stay behind with no state tracking them. These stacks have no [`spacelift_stack_destructor`](https://github.com/spacelift-io/terraform-provider-spacelift/blob/main/docs/resources/stack_destructor.md), the resource that runs a destroy before deleting the stack.
+
+To keep a resource that the stack manages (for example, a bucket with data), take it out of the stack's state with `tofu state rm` in a task before step 2. Then neither delete method destroys it.
+
+---
+
 ## Spacelift Setup
 
 ### Connecting a New AWS Account
