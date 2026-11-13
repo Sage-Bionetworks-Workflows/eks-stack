@@ -37,22 +37,34 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
   acl    = "public-read"
 }
 
+# Denies plain HTTP requests. Public buckets also let anyone read their objects
 resource "aws_s3_bucket_policy" "my_bucket_policy" {
-  count  = var.public_access ? 1 : 0
   bucket = aws_s3_bucket.bucket.bucket
 
   depends_on = [aws_s3_bucket_acl.bucket_acl, aws_s3_bucket_public_access_block.access_block]
 
   policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Principal = "*",
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.bucket.arn}/*", # Allow access to all objects within the bucket
-      },
-    ],
+    Statement = concat(
+      [
+        {
+          Sid       = "DenyInsecureTransport",
+          Effect    = "Deny",
+          Principal = "*",
+          Action    = "s3:*",
+          Resource  = [aws_s3_bucket.bucket.arn, "${aws_s3_bucket.bucket.arn}/*"],
+          Condition = { Bool = { "aws:SecureTransport" = "false" } },
+        },
+      ],
+      var.public_access ? [
+        {
+          Effect    = "Allow",
+          Principal = "*",
+          Action    = "s3:GetObject",
+          Resource  = "${aws_s3_bucket.bucket.arn}/*", # Allow access to all objects within the bucket
+        },
+      ] : [],
+    ),
   })
 }
 

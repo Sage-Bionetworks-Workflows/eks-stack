@@ -102,6 +102,26 @@ data "aws_iam_policy_document" "dag_s3" {
   }
 }
 
+# Denies plain HTTP requests to the MWAA bucket. The upstream module has no input for this
+resource "aws_s3_bucket_policy" "mwaa_https_only" {
+  count  = var.enabled ? 1 : 0
+  bucket = local.bucket_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource  = [module.mwaa.s3_bucket_arn, "${module.mwaa.s3_bucket_arn}/*"]
+        Condition = { Bool = { "aws:SecureTransport" = "false" } }
+      },
+    ]
+  })
+}
+
 # The MWAA environment, plus the S3 bucket, execution role and security group the upstream
 # module creates for it
 module "mwaa" {
