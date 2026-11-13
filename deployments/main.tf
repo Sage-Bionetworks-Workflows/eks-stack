@@ -78,7 +78,7 @@ module "snowflake-spacelift-development" {
   region                = "us-east-1"
   source_account_id     = "449435941126"
   source_bucket_arn     = "arn:aws:s3:::dev.dpe.rds.backups.sagebase.org"
-  source_iam_role       = "dev-rds-repl-role"
+  source_iam_role       = "source-rds-replication-RdsExportCopyLambdaServiceRo-f5kCV6ILQaXb"
   snowflake_bucket_name = "synapse-snowflake-rds-snapshots-dev"
 
   # Snowflake authentication
@@ -104,7 +104,7 @@ module "snowflake-spacelift-production" {
   region                = "us-east-1"
   source_account_id     = "325565585839"
   source_bucket_arn     = "arn:aws:s3:::prod.dpe.rds.backups.sagebase.org"
-  source_iam_role       = "prod-rds-repl-role"
+  source_iam_role       = "source-rds-replication-RdsExportCopyLambdaServiceRo-M47pAGni8N8e"
   snowflake_bucket_name = "synapse-snowflake-rds-snapshots-prod"
 
   # Snowflake authentication
