@@ -5,7 +5,7 @@ locals {
   # on MWAA. Shared by dev and prod so they cannot diverge. To bump it, follow
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/blob/main/mwaa/README.md#changing-dependencies
   # https://github.com/Sage-Bionetworks-Workflows/orca-recipes/commit/5173f7f54ff4b0e59817145cc6a2b19873c124f0
-  orca_recipes_sha = "5173f7f54ff4b0e59817145cc6a2b19873c124f0"
+  orca_recipes_sha = "92823d97d6222670eff253e4d5775dfcdc10f4ab"
 
   environments = {
     # DNT dev account
